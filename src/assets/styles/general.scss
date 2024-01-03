@@ -1,0 +1,15 @@
+@use './partials/reset' as *;
+@forward './partials/variables'; 
+
+@import url('https://fonts.googleapis.com/css2?family=Gabarito:wght@900&display=swap');
+
+
+@import url('https://fonts.googleapis.com/css2?family=Playball&display=swap');
+
+.material-symbols-outlined {
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+  }
