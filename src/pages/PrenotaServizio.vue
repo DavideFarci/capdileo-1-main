@@ -1,16 +1,15 @@
-<!-- FIXARE IL PROBLEMA DELL'ANNO  -->
-
 <script>
 const { log } = console;
 import { state } from "../state";
 import axios from "axios";
 import sh from "../components/SHeader.vue";
+import { monthConvert } from "../utilities/functions";
 export default {
   components: { sh },
   data() {
     return {
       currentDate: "",
-      calendar: {},
+      calendar: {}, // Ogni chiave dell'oggetto ha come nome il nome del mese
       reservationValues: {
         anno: "",
         mese: "",
@@ -21,9 +20,15 @@ export default {
         n_persone: "",
         messaggio: "",
       },
+      validationErrors: {
+        nameError: "",
+        phoneError: "",
+        npersonError: "",
+        messageError: "",
+      },
       dayTimes: [], // Fasce orarie per il giorno selezionato
-      dateId: null, // id della data scelta
-      firstDayOfMonth: 1,
+      dateId: null, // ID della data scelta
+      firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
     };
   },
@@ -36,48 +41,11 @@ export default {
       this.initialDates = dates.data.results;
     },
 
-    // Elaborare i dati in arrivo e formattarli in un calendario
+    // Elaborare i dati in arrivo e formattarli in un calendario (oggetto)
     getCalendar(arrDates) {
       // Sostituisco i numeri con i nomi dei mesi
       for (let i = 0; i < arrDates.length; i++) {
-        switch (arrDates[i].month) {
-          case 1:
-            arrDates[i].month = "Gennaio";
-            break;
-          case 2:
-            arrDates[i].month = "Febbraio";
-            break;
-          case 3:
-            arrDates[i].month = "Marzo";
-            break;
-          case 4:
-            arrDates[i].month = "Aprile";
-            break;
-          case 5:
-            arrDates[i].month = "Maggio";
-            break;
-          case 6:
-            arrDates[i].month = "Giugno";
-            break;
-          case 7:
-            arrDates[i].month = "Luglio";
-            break;
-          case 8:
-            arrDates[i].month = "Agosto";
-            break;
-          case 9:
-            arrDates[i].month = "Settembre";
-            break;
-          case 10:
-            arrDates[i].month = "Ottobre";
-            break;
-          case 11:
-            arrDates[i].month = "Novembre";
-            break;
-          case 12:
-            arrDates[i].month = "Dicembre";
-            break;
-        }
+        arrDates[i].month = monthConvert(arrDates[i].month);
       }
 
       const arrMonths = {};
@@ -121,7 +89,8 @@ export default {
         return orderedMonths.indexOf(monthA) - orderedMonths.indexOf(monthB);
       });
 
-      // Creazione dell'array finale In cui ogni elemento ha come chiave il nome del mese e come valore l'array di oggetti corrispondenti a quel mese
+      // Creazione dell'array finale In cui ogni elemento ha come chiave
+      // il nome del mese e come valore l'array di oggetti corrispondenti a quel mese (date originali)
       const calendar = _calendar.reduce((acc, obj) => {
         const monthName = Object.keys(obj)[0];
         acc[monthName] = obj[monthName];
@@ -141,10 +110,8 @@ export default {
           message: this.reservationValues.messaggio,
           date_id: this.dateId,
         };
-        const response = await axios.post(
-          state.baseUrl + "api/reservations",
-          reservation
-        );
+
+        await axios.post(state.baseUrl + "api/reservations", reservation);
       } catch (error) {
         log(
           "Errore durante la richiesta di prenotazione, messaggio: " +
@@ -153,20 +120,22 @@ export default {
       }
     },
 
-    // estraggo l'id della data scelta per fare la richiesta
+    // estraggo l'id della data scelta dall'utente per fare la richiesta
     async findIdRequest() {
-      const mese = this.monthNamesInNumber();
+      const mese = monthConvert(this.reservationValues.mese);
+      const params = {
+        year: this.reservationValues.anno,
+        month: mese,
+        day: +this.reservationValues.giorno,
+        time: this.reservationValues.orario,
+      };
       try {
         const data = await axios.get(state.baseUrl + "api/dates/findDate", {
-          params: {
-            year: this.reservationValues.anno,
-            month: mese,
-            day: +this.reservationValues.giorno,
-            time: this.reservationValues.orario,
-          },
+          params,
         });
         const { id } = data.data.results[0];
-
+        log(this.reservationValues);
+        log(params);
         this.dateId = id;
       } catch (error) {
         log(
@@ -195,8 +164,11 @@ export default {
 
     // Settare la var. globale = fasce orarie del giorno selezionato
     getTimes(day, arrTimes) {
+      //reset var. globale
       this.dayTimes = [];
+
       this.reservationValues.giorno = day;
+
       arrTimes.forEach((item) => {
         this.dayTimes.push(item);
       });
@@ -214,8 +186,8 @@ export default {
       const arrMonthsNames = Object.keys(this.calendar);
       this.reservationValues.mese = arrMonthsNames[0];
       // Imposto anche l'anno di reservationValues a quello corrente
-      const year = new Date();
-      this.reservationValues.anno = year.getFullYear();
+      const currentDate = new Date();
+      this.reservationValues.anno = currentDate.getFullYear();
       return arrMonthsNames[0];
     },
 
@@ -228,51 +200,6 @@ export default {
       const gridColumnStart = this.firstDayOfMonth;
 
       return gridColumnStart;
-    },
-
-    // Converte mesi in numeri
-    monthNamesInNumber() {
-      let mese = this.reservationValues.mese;
-      switch (mese) {
-        case "Gennaio":
-          mese = 1;
-          break;
-        case "Febbraio":
-          mese = 2;
-          break;
-        case "Marzo":
-          mese = 3;
-          break;
-        case "Aprile":
-          mese = 4;
-          break;
-        case "Maggio":
-          mese = 5;
-          break;
-        case "Giugno":
-          mese = 6;
-          break;
-        case "Luglio":
-          mese = 7;
-          break;
-        case "Agosto":
-          mese = 8;
-          break;
-        case "Settembre":
-          mese = 9;
-          break;
-        case "Ottobre":
-          mese = 10;
-          break;
-        case "Novembre":
-          mese = 11;
-          break;
-        case "Dicembre":
-          mese = 12;
-          break;
-      }
-
-      return mese;
     },
   },
   async created() {
