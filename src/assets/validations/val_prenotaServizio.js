@@ -1,41 +1,49 @@
-this.isValid = true;
+export function validateReservation(resValues, errValid) {
+  let isValid = true;
 
-// Nome
-if (!this.reservationValues.nome) {
-  this.nameError = "Il campo 'nome' è richiesto!";
-  this.isValid = false;
-} else if (this.name.length < 2) {
-  this.nameError = "Il campo 'nome' è troppo corto!";
-  this.isValid = false;
-} else if (this.name.length > 50) {
-  this.nameError = "Il campo 'name' non può superare i 50 caratteri!";
-  this.isValid = false;
-}
+  // Giorno e ora
+  if (!resValues.giorno || !resValues.orario) {
+    errValid.dateError = "Scegli un giorno e un orario";
+    isValid = false;
+  }
 
-// Telefono
-if (!this.reservationValues.telefono) {
-  this.phoneError = "Il campo 'N° 'telefono' è richiesto!";
-  this.isValid = false;
-} else if (this.reservationValues.telefono.length !== 10) {
-  this.phoneError = "Il campo 'N° 'telefono' deve essere di 10 cifre!";
-  this.isValid = false;
-}
+  // Nome
+  if (!resValues.nome) {
+    errValid.nameError = "Il campo 'nome' è richiesto!";
+    isValid = false;
+  } else if (resValues.nome.length < 2) {
+    errValid.nameError = "Il campo 'nome' è troppo corto!";
+    isValid = false;
+  } else if (resValues.nome.length > 50) {
+    errValid.nameError = "Il campo 'name' non può superare i 50 caratteri!";
+    isValid = false;
+  }
 
-// N di persone
-if (!this.reservationValues.n_persone) {
-  this.npersonError = "Seleziona una numero di ospiti!";
-  this.isValid = false;
-} else if (this.reservationValues.n_persone < 1) {
-  this.npersonError = "Il numero di persone deve essere almeno 1";
-  this.isValid = false;
-}
+  // Telefono
+  if (!resValues.telefono) {
+    errValid.phoneError = "Il campo 'N° 'telefono' è richiesto!";
+    isValid = false;
+  } else if (resValues.telefono.length !== 10) {
+    errValid.phoneError = "Il campo 'N° 'telefono' deve essere di 10 cifre!";
+    isValid = false;
+  }
 
-// Messaggio
-if (this.reservationValues.messaggio.length > 500) {
-  this.messageError = "Il messaggio non può superare i 50 caratteri";
-  this.isValid = false;
-}
+  // N di persone
+  if (!resValues.n_persone) {
+    errValid.npersonError = "Seleziona una numero di ospiti!";
+    isValid = false;
+  } else if (resValues.n_persone < 1) {
+    errValid.npersonError = "Il numero di persone deve essere almeno 1";
+    isValid = false;
+  }
 
-if (!this.isValid) {
-  return;
+  // Messaggio
+  if (resValues.messaggio.length > 500) {
+    errValid.messageError = "Il messaggio non può superare i 50 caratteri";
+    isValid = false;
+  }
+
+  if (!isValid) {
+    return;
+  }
 }

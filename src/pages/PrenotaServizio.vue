@@ -4,12 +4,13 @@ import { state } from "../state";
 import axios from "axios";
 import sh from "../components/SHeader.vue";
 import { monthConvert } from "../utilities/functions";
+import { validateReservation } from "../assets/validations/val_prenotaServizio";
 export default {
   components: { sh },
   data() {
     return {
       currentDate: "",
-      calendar: {}, // Ogni chiave dell'oggetto ha come nome il nome del mese
+      calendar: {}, // calendar = {"Gennaio" : [{..} ...]}, {"Febbraio" : [{..} ...]}, ... }
       reservationValues: {
         anno: "",
         mese: "",
@@ -25,6 +26,7 @@ export default {
         phoneError: "",
         npersonError: "",
         messageError: "",
+        dateError: "",
       },
       dayTimes: [], // Fasce orarie per il giorno selezionato
       dateId: null, // ID della data scelta
@@ -50,12 +52,9 @@ export default {
 
       const arrMonths = {};
 
-      // Itero sugli oggetti nell'array
       arrDates.forEach((obj) => {
-        // Ottengo il valore dell'attributo 'month'
         const month = obj.month;
 
-        // Se l'array per il mese non esiste, lo creo
         if (!arrMonths[month]) {
           arrMonths[month] = [];
         }
@@ -63,41 +62,7 @@ export default {
         arrMonths[month].push(obj);
       });
 
-      // Convertire l'oggetto in un array di oggetti
-      const _calendar = Object.entries(arrMonths).map(([month, objects]) => ({
-        [month]: objects,
-      }));
-
-      // Ordinare l'array finale in base all'ordine dei mesi
-      const orderedMonths = [
-        "Gennaio",
-        "Febbraio",
-        "Marzo",
-        "Aprile",
-        "Maggio",
-        "Giugno",
-        "Luglio",
-        "Agosto",
-        "Settembre",
-        "Ottobre",
-        "Novembre",
-        "Dicembre",
-      ];
-      _calendar.sort((a, b) => {
-        const monthA = Object.keys(a)[0];
-        const monthB = Object.keys(b)[0];
-        return orderedMonths.indexOf(monthA) - orderedMonths.indexOf(monthB);
-      });
-
-      // Creazione dell'array finale In cui ogni elemento ha come chiave
-      // il nome del mese e come valore l'array di oggetti corrispondenti a quel mese (date originali)
-      const calendar = _calendar.reduce((acc, obj) => {
-        const monthName = Object.keys(obj)[0];
-        acc[monthName] = obj[monthName];
-        return acc;
-      }, {});
-
-      return calendar;
+      return arrMonths;
     },
 
     async getReservationRequest() {
@@ -110,6 +75,8 @@ export default {
           message: this.reservationValues.messaggio,
           date_id: this.dateId,
         };
+
+        validateReservation(this.reservationValues, this.validationErrors);
 
         await axios.post(state.baseUrl + "api/reservations", reservation);
       } catch (error) {
@@ -134,8 +101,6 @@ export default {
           params,
         });
         const { id } = data.data.results[0];
-        log(this.reservationValues);
-        log(params);
         this.dateId = id;
       } catch (error) {
         log(
@@ -147,7 +112,6 @@ export default {
 
     // Raggruppare per giorno e estrarre le fasce orarie per singoli giorni
     groupByDay(month) {
-      // Creare un oggetto per raggruppare per day
       const grouped = {};
       month.forEach((item) => {
         if (!grouped[item.day]) {
@@ -176,7 +140,6 @@ export default {
 
     // settare mese e anno per la prenotazione (per evitare problemi se siamo a fine anno)
     setMonthAndYear(month, monthIndex) {
-      // Dal primo elemento del mese selezionato estraggo il valore dell'anno
       const { year } = month;
       this.reservationValues.anno = year;
       this.reservationValues.mese = monthIndex;
@@ -312,18 +275,31 @@ export default {
         </Transition>
       </ul>
 
+      <div v-if="validationErrors.dateError" class="error">
+        {{ validationErrors.dateError }}
+      </div>
+
       <!-- Form  -->
       <form>
         <!-- Nome  -->
         <label for="nome">Nome</label>
+        <span v-if="validationErrors.nameError" class="error">{{
+          validationErrors.nameError
+        }}</span>
         <input type="text" id="nome" v-model="reservationValues.nome" />
 
         <!-- Telefono  -->
         <label for="telefono">Telefono</label>
+        <span v-if="validationErrors.phoneError" class="error">{{
+          validationErrors.phoneError
+        }}</span>
         <input type="text" id="telefono" v-model="reservationValues.telefono" />
 
         <!-- N° di persone  -->
         <label for="n_persone">N° di persone</label>
+        <span v-if="validationErrors.npersonError" class="error">{{
+          validationErrors.npersonError
+        }}</span>
         <input
           type="text"
           id="n_persone"
@@ -332,6 +308,9 @@ export default {
 
         <!-- Messaggio -->
         <label for="messaggio">Messaggio</label>
+        <span v-if="validationErrors.messageError" class="error">{{
+          validationErrors.messageError
+        }}</span>
         <input
           type="text"
           id="messaggio"
@@ -501,6 +480,11 @@ form {
 .active {
   background-color: rgba(231, 0, 0, 0.486);
   transition: all 250ms ease-in-out;
+}
+
+.error {
+  color: rgb(243, 59, 59);
+  font-weight: 500;
 }
 
 // Classi di Vue
