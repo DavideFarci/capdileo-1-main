@@ -28,3 +28,14 @@ export function monthConvert(mese) {
     }
   }
 }
+
+export function numberInCalendar(dayOrMonth) {
+  let calendarNum = "";
+  if (dayOrMonth < 10) {
+    const strDayOrMonth = dayOrMonth.toString();
+    calendarNum = "0" + strDayOrMonth;
+    return calendarNum;
+  } else {
+    return dayOrMonth;
+  }
+}

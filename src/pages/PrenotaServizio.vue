@@ -3,7 +3,7 @@ const { log } = console;
 import { state } from "../state";
 import axios from "axios";
 import sh from "../components/SHeader.vue";
-import { monthConvert } from "../utilities/functions";
+import { monthConvert, numberInCalendar } from "../utilities/functions";
 import { validateReservation } from "../assets/validations/val_prenotaServizio";
 export default {
   components: { sh },
@@ -17,7 +17,7 @@ export default {
         giorno: "",
         orario: "",
         nome: "",
-        telefono: "",
+        telefono: null,
         n_persone: "",
         messaggio: "",
       },
@@ -30,6 +30,7 @@ export default {
       },
       dayTimes: [], // Fasce orarie per il giorno selezionato
       dateId: null, // ID della data scelta
+      seats: 0,
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
     };
@@ -66,6 +67,15 @@ export default {
     },
 
     async getReservationRequest() {
+      // Compongo la data intera con orario (formato d/m/y : 01/01/1990 12:00)
+      const time_slot = `${numberInCalendar(
+        this.reservationValues.giorno
+      )}/${numberInCalendar(monthConvert(this.reservationValues.mese))}/${
+        this.reservationValues.anno
+      } ${this.reservationValues.orario}`;
+
+      validateReservation(this.reservationValues, this.validationErrors);
+
       try {
         await this.findIdRequest();
         const reservation = {
@@ -73,10 +83,9 @@ export default {
           phone: this.reservationValues.telefono,
           n_person: this.reservationValues.n_persone,
           message: this.reservationValues.messaggio,
+          date_slot: time_slot,
           date_id: this.dateId,
         };
-
-        validateReservation(this.reservationValues, this.validationErrors);
 
         await axios.post(state.baseUrl + "api/reservations", reservation);
       } catch (error) {
@@ -100,8 +109,9 @@ export default {
         const data = await axios.get(state.baseUrl + "api/dates/findDate", {
           params,
         });
-        const { id } = data.data.results[0];
+        const { id, reserved, max_res } = data.data.results[0];
         this.dateId = id;
+        this.seats = max_res - reserved;
       } catch (error) {
         log(
           "Errore durante la richiesta di prenotazione, messaggio: " +
@@ -152,6 +162,11 @@ export default {
       const currentDate = new Date();
       this.reservationValues.anno = currentDate.getFullYear();
       return arrMonthsNames[0];
+    },
+
+    getSeats(time) {
+      this.reservationValues.orario = time;
+      this.findIdRequest();
     },
 
     // Far partire il primo giorno del mese dalla colonna del giorno corretto
@@ -263,7 +278,7 @@ export default {
             <li
               v-for="(time, i) in dayTimes"
               :key="i"
-              @click="() => (this.reservationValues.orario = time)"
+              @click="getSeats(time)"
               :class="{
                 time: true,
                 active: time === reservationValues.orario,
@@ -271,6 +286,15 @@ export default {
             >
               {{ time }}
             </li>
+            <div
+              v-if="seats"
+              :class="{
+                seats: seats > 3,
+                last_seats: seats <= 3,
+              }"
+            >
+              {{ seats }} posti disponibili
+            </div>
           </div>
         </Transition>
       </ul>
@@ -301,7 +325,7 @@ export default {
           validationErrors.npersonError
         }}</span>
         <input
-          type="text"
+          type="number"
           id="n_persone"
           v-model="reservationValues.n_persone"
         />
@@ -437,6 +461,7 @@ h2 {
 
 .time_container {
   display: flex;
+  align-items: center;
   gap: 15px;
   margin-bottom: 2rem;
   .time {
@@ -485,6 +510,14 @@ form {
 .error {
   color: rgb(243, 59, 59);
   font-weight: 500;
+}
+
+.seats {
+  color: green;
+}
+
+.last_seats {
+  color: red;
 }
 
 // Classi di Vue
