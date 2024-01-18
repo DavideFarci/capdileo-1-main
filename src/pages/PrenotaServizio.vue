@@ -669,15 +669,3 @@ h1{
     
 }
 .hd{box-shadow: 10px 10px 10px black; }
-
-// Classi di Vue
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-}
-</style>
