@@ -26,6 +26,7 @@
 <style lang="scss" scoped>
 @use '../assets/styles/general.scss' as *;
 header{
+  position: fixed;
     padding: 10px 0;
     background-color: $c-header;
     width: 100%;

@@ -30,7 +30,7 @@ export default {
       },
       dayTimes: [], // Fasce orarie per il giorno selezionato
       dateId: null, // ID della data scelta
-      seats: 0,
+      seats: 'Seleziona un oraio per vedere le disponibilità',
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
     };
@@ -146,6 +146,7 @@ export default {
       arrTimes.forEach((item) => {
         this.dayTimes.push(item);
       });
+      this.seats = 'Seleziona un oraio per vedere le disponibilità'
     },
 
     // settare mese e anno per la prenotazione (per evitare problemi se siamo a fine anno)
@@ -153,6 +154,7 @@ export default {
       const { year } = month;
       this.reservationValues.anno = year;
       this.reservationValues.mese = monthIndex;
+      this.seats = 'Seleziona un oraio per vedere le disponibilità'
     },
 
     getFirstMonthAndYearValue() {
@@ -201,15 +203,14 @@ export default {
 </script>
 
 <template>
-  <div class="menu">
+  <div class="prenota-servizio">
     <sh />
-    <div class="top-menu">
-      <h1>Prenota il tuo tavolo</h1>
-      <div class="calendar_container">
-        <!-- Elenco dei mesi  -->
-        <div class="month">
-          <h2>Seleziona il mese</h2>
-          <h3
+    <h1>Prenota il tuo tavolo</h1>
+    <div class="container_servizio">
+      <section class="month-container">
+        <h2>Seleziona il mese</h2>
+        <div class="months">
+          <div
             v-for="(month, monthIndex) in calendar"
             :key="monthIndex"
             :class="{
@@ -219,63 +220,59 @@ export default {
             @click="setMonthAndYear(month[0], monthIndex)"
           >
             {{ monthIndex }}
-          </h3>
-        </div>
-
-        <!-- Calendario del mese selezionato -->
-        <div class="month_calendar_container">
-          <h2>Seleziona il giorno</h2>
-
-          <div class="month_calendar">
-            <!-- Giorni della settimana  -->
-            <div class="days_w">
-              <div v-for="(day_week, i) in daysWeek" :key="i" class="day_w">
-                {{ day_week }}
-              </div>
-            </div>
-            <div class="position">
-              <template
-                v-for="(month, monthIndex) in calendar"
-                :key="monthIndex"
-              >
-                <Transition>
-                  <!-- Vero e proprio calendario del mese  -->
-                  <div
-                    class="month_grid"
-                    v-if="reservationValues.mese == monthIndex"
-                  >
-                    <div
-                      v-for="(day, dayIndex) in groupByDay(month)"
-                      :key="dayIndex"
-                      @click="getTimes(dayIndex, day.times)"
-                      :class="{
-                        item: true,
-                        active: dayIndex === reservationValues.giorno,
-                      }"
-                      :style="{
-                        gridColumnStart:
-                          day.day_w === firstDayOfMonth
-                            ? getColumnStart(month)
-                            : 'auto',
-                      }"
-                    >
-                      <div>{{ dayIndex }}</div>
-                    </div>
-                  </div>
-                </Transition>
-              </template>
-            </div>
           </div>
         </div>
-      </div>
-      <!-- Fasce orarie -->
-      <ul>
-        <li>
-          <h2>Seleziona la fascia oraria</h2>
-        </li>
+      </section>
+      <section class="calendar_container">
+        <h2>Seleziona il giorno</h2>
+
+     
+          <!-- Giorni della settimana  -->
+          <div class="days_w">
+            <div v-for="(day_week, i) in daysWeek" :key="i" class="day_w">
+              {{ day_week }}
+            </div>
+          </div>
+          <div class="calendar">
+            <template
+              v-for="(month, monthIndex) in calendar"
+              :key="monthIndex"
+            >
+              <Transition>
+                <!-- Vero e proprio calendario del mese  -->
+                <div
+                  class="day_grid"
+                  v-if="reservationValues.mese == monthIndex"
+                >
+                  <div
+                    v-for="(day, dayIndex) in groupByDay(month)"
+                    :key="dayIndex"
+                    @click="getTimes(dayIndex, day.times)"
+                    :class="{
+                      day: true,
+                      active: dayIndex === reservationValues.giorno,
+                    }"
+                    :style="{
+                      gridColumnStart:
+                        day.day_w === firstDayOfMonth
+                          ? getColumnStart(month)
+                          : 'auto',
+                    }"
+                  >
+                    <div>{{ dayIndex }}</div>
+                  </div>
+                </div>
+              </Transition>
+            </template>
+          </div>
+        
+      </section>
+      <section class="orari-fasce">
+        <h2>Seleziona la fascia oraria</h2>
+        
         <Transition>
           <div v-if="dayTimes" class="time_container">
-            <li
+            <div
               v-for="(time, i) in dayTimes"
               :key="i"
               @click="getSeats(time)"
@@ -285,32 +282,44 @@ export default {
               }"
             >
               {{ time }}
-            </li>
-            <div
-              v-if="seats"
-              :class="{
-                seats: seats > 3,
-                last_seats: seats <= 3,
-              }"
-            >
-              {{ seats }} posti disponibili
             </div>
           </div>
         </Transition>
-      </ul>
+        <div
+          v-if="seats"
+          :class="{
+            seats: seats > 3,
+            last_seats: seats <= 3,
+          }"
+        >
+          {{ seats }} posti disponibili
+        </div>
 
-      <div v-if="validationErrors.dateError" class="error">
-        {{ validationErrors.dateError }}
-      </div>
+        <div v-if="validationErrors.dateError" class="error">
+          {{ validationErrors.dateError }}
+        </div>
+      </section>
+      <!-- Fasce orarie -->
+    
+       
+
 
       <!-- Form  -->
-      <form>
+      <form class="dati-cliente">
+        <h2>inserisci i tuoi9 dati</h2>
         <!-- Nome  -->
         <label for="nome">Nome</label>
         <span v-if="validationErrors.nameError" class="error">{{
           validationErrors.nameError
         }}</span>
         <input type="text" id="nome" v-model="reservationValues.nome" />
+
+        <!-- mail  -->
+        <label for="mail">mail</label>
+        <span v-if="validationErrors.mailError" class="error">{{
+          validationErrors.mailError
+        }}</span>
+        <input type="mail" id="mail" v-model="reservationValues.mail" />
 
         <!-- Telefono  -->
         <label for="telefono">Telefono</label>
@@ -335,15 +344,15 @@ export default {
         <span v-if="validationErrors.messageError" class="error">{{
           validationErrors.messageError
         }}</span>
-        <input
-          type="text"
+        <textarea cols="10" rows="10"
+       
           id="messaggio"
           v-model="reservationValues.messaggio"
-        />
+        ></textarea>
       </form>
 
       <!-- Riassunto prenotazione  -->
-      <div>
+      <section class="riepilogo">
         <h2>La tua prenotazione</h2>
         <ul class="reservation">
           <li>
@@ -370,85 +379,198 @@ export default {
             >{{ reservationValues?.messaggio }}
           </li>
         </ul>
-      </div>
+      </section>
 
-      <button class="toReserve" @click="getReservationRequest">Prenota</button>
+      <button class="toReserv btn" @click="getReservationRequest">Prenota</button>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 @use "../assets/styles/general.scss" as *;
-
-h2 {
-  margin-bottom: 1rem;
+.prenota-servizio{
+  height: 100vh;
+  overflow: auto;
 }
-
-.calendar_container {
+h1{
+  margin: 1rem;
+  font-size:clamp(1.9rem, 6vw, 2.5rem)
+}
+.container_servizio{
+  padding: 3rem 0;
   display: flex;
-  gap: 2rem;
-  .month {
-    padding-bottom: 10rem;
-    .month_name {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      padding: 4px 8px;
-      margin-bottom: 0.5rem;
-      border: 1px solid white;
-      border-radius: 10px;
+  flex-direction: column;
+  gap: 3rem;
+
+  width: 90%;
+  margin:0 auto;
+
+  section, form{
+    background-color: $c-nav;
+    padding: 2rem;
+    h2{
+      text-transform: uppercase;
     }
   }
-}
 
-.month_calendar_container {
-  position: relative;
-  .month_calendar {
-    max-width: 34rem;
-    height: 16rem;
-    color: white;
-    padding: 10px;
-    border: 1px solid white;
-    border-radius: 20px;
-    .days_w {
-      width: 450px;
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 10px;
-      margin-bottom: 10px;
-      .day_w {
-        color: white;
-        background-color: rgb(121, 18, 18);
+  .month-container{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    .months{
+      @include dfc;
+      width: 100%;
+      justify-content: space-between;
+      .month_name{
+        text-transform: uppercase;
+        padding: 1rem 2rem;
+        flex: 1 1 auto;
+        border: solid 2px white;
         text-align: center;
-        font-size: 0.9em;
-        padding: 5px;
-        border: 1px solid #ddd;
+      }
+      .active{
+        background-color: $c-footer-nav;
       }
     }
-    .position {
-      position: relative;
-      height: 100%;
-      .month_grid {
+  }
+  .calendar_container{
+    .days_w{
+      @include dfc;
+      padding: 2rem 0;
+      justify-content: space-between;
+    }
+    .calendar{
+      border: solid 1px white;
+      .day_grid{
         display: grid;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        // width: 450px;
         grid-template-columns: repeat(7, 1fr);
-        gap: 10px;
-
-        .item {
-          color: white;
+        .day{
+          padding: 1rem;
           text-align: center;
-          font-size: 0.9em;
-          padding: 5px;
-          border: 1px solid #ddd;
+          border: solid 1px white;
+        }
+        .active{
+          background-color: $c-footer-nav;
         }
       }
     }
   }
+  .orari-fasce{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    .time_container{
+     
+        @include dfc;
+        width: 100%;
+        justify-content: space-between;
+        .time{
+          text-transform: uppercase;
+          padding: 1rem 2rem;
+          flex: 1 1 auto;
+          border: solid 2px white;
+          text-align: center;
+        }
+        .active{
+          background-color: $c-footer-nav;
+        }
+      
+    }
+  }
+  .dati-cliente{
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    label{
+      margin-top: 1rem;
+      text-transform: uppercase;
+    }
+    input{
+      height: 3rem;
+      padding: 10px;
+      font-size: 1.4rem;
+
+    }
+    input, textarea{
+      background-color: $c-nav;
+      border: 3px solid white;
+      border-radius: 10px;
+    }
+
+  }
+  .riepilogo{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
 }
+// h2 {
+//   margin-bottom: 1rem;
+// }
+
+// .month_calendar_container {
+//   display: flex;
+//   gap: 2rem;
+//   .month {
+//     padding-bottom: 10rem;
+//     .month_name {
+//       display: flex;
+//       flex-direction: column;
+//       gap: 2rem;
+//       padding: 4px 8px;
+//       margin-bottom: 0.5rem;
+//       border: 1px solid white;
+//       border-radius: 10px;
+//     }
+//   }
+// }
+
+// .calendar_container {
+//   position: relative;
+//   .month_calendar {
+//     width: 100%;
+  
+//     color: white;
+//     padding: 10px;
+//     border: 1px solid white;
+//     border-radius: 20px;
+//     .days_w {
+//       width: 450px;
+//       display: grid;
+//       grid-template-columns: repeat(7, 1fr);
+//       gap: 10px;
+//       margin-bottom: 10px;
+//       .day_w {
+//         color: white;
+//         background-color: rgb(121, 18, 18);
+//         text-align: center;
+//         font-size: 0.9em;
+//         padding: 5px;
+//         border: 1px solid #ddd;
+//       }
+//     }
+//       .day_grid {
+//         display: grid;
+//         position: absolute;
+//         top: 0;
+//         left: 0;
+//         width: 100%;
+ 
+//         grid-template-columns: repeat(7, 1fr);
+//         gap: 10px;
+
+//         .item {
+//           color: white;
+//           text-align: center;
+//           font-size: 0.9em;
+//           padding: 5px;
+//           border: 1px solid #ddd;
+//         }
+//       }
+//     }
+//   }
+
 
 .toReserve {
   padding: 0.5rem 2rem;
@@ -459,30 +581,33 @@ h2 {
   }
 }
 
-.time_container {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 2rem;
-  .time {
-    padding: 4px 8px;
-    border: 1px solid white;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-}
+// .time_container {
+//   display: flex;
+//   align-items: center;
+//   gap: 15px;
+//   margin-bottom: 2rem;
+//   .time {
+//     padding: 4px 8px;
+//     border: 1px solid white;
+//     border-radius: 10px;
+//     cursor: pointer;
+//   }
+// }
 
 .reservation {
   border: 1px solid white;
-  padding: 0.5rem;
+  padding: 1.5rem;
+  border-radius: 15px;
+  font-size: 1.5rem;
   .reservation_date {
-    max-width: 10rem;
-    display: flex;
-    gap: 0.4rem;
-    padding: 0.2rem 0.5rem;
+    width: 80%;
+    margin: 0 auto;
+    @include dfc;
+    justify-content: space-between;
+    padding: .7rem 2.5rem;
     margin-bottom: 1rem;
     border: 1px solid white;
-    border-radius: 10px;
+    border-radius: 5px;
   }
   .reservation_label {
     color: rgb(172, 172, 172);
@@ -490,22 +615,22 @@ h2 {
   }
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1rem;
-  input {
-    color: black;
-    max-width: 25rem;
-    padding: 0.2rem;
-    border-radius: 10px;
-  }
-}
+// form {
+//   display: flex;
+//   flex-direction: column;
+//   margin-bottom: 1rem;
+//   input {
+//     color: black;
+//     max-width: 25rem;
+//     padding: 0.2rem;
+//     border-radius: 10px;
+//   }
+// }
 
-.active {
-  background-color: rgba(231, 0, 0, 0.486);
-  transition: all 250ms ease-in-out;
-}
+// .active {
+//   background-color: rgba(231, 0, 0, 0.486);
+//   transition: all 250ms ease-in-out;
+// }
 
 .error {
   color: rgb(243, 59, 59);
@@ -518,7 +643,32 @@ form {
 
 .last_seats {
   color: red;
+ }
+
+.prenota-servizio::-webkit-scrollbar{
+      
+      width: 10px;
+      height: 10px;
+      
+  }
+
+.prenota-servizio::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    background: $c-header;
+    
 }
+.prenota-servizio::-webkit-scrollbar-track {
+    border-radius: 20px;
+    background: rgba(52, 4, 7, 0.786);
+    
+}
+.prenota-servizio::-webkit-scrollbar-thumb:hover {
+    border-radius: 20px;
+    background-color: $c-nav-link;
+    border: 2px solid $c-header;
+    
+}
+.hd{box-shadow: 10px 10px 10px black; }
 
 // Classi di Vue
 .v-enter-active,
