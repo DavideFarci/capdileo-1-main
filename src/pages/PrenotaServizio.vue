@@ -31,6 +31,7 @@ export default {
       dayTimes: [], // Fasce orarie per il giorno selezionato
       dateId: null, // ID della data scelta
       seats: "Seleziona un oraio per vedere le disponibilità",
+      isValid: false,
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
     };
@@ -67,6 +68,14 @@ export default {
     },
 
     async getReservationRequest() {
+      this.validationErrors = {
+        nameError: "",
+        phoneError: "",
+        npersonError: "",
+        messageError: "",
+        dateError: "",
+      };
+
       // Compongo la data intera con orario (formato d/m/y : 01/01/1990 12:00)
       const time_slot = `${numberInCalendar(
         this.reservationValues.giorno
@@ -74,25 +83,30 @@ export default {
         this.reservationValues.anno
       } ${this.reservationValues.orario}`;
 
-      validateReservation(this.reservationValues, this.validationErrors);
+      this.isValid = validateReservation(
+        this.reservationValues,
+        this.validationErrors
+      );
 
-      try {
-        await this.findIdRequest();
-        const reservation = {
-          name: this.reservationValues.nome,
-          phone: this.reservationValues.telefono,
-          n_person: this.reservationValues.n_persone,
-          message: this.reservationValues.messaggio,
-          date_slot: time_slot,
-          date_id: this.dateId,
-        };
+      if (this.isValid) {
+        try {
+          await this.findIdRequest();
+          const reservation = {
+            name: this.reservationValues.nome,
+            phone: this.reservationValues.telefono,
+            n_person: this.reservationValues.n_persone,
+            message: this.reservationValues.messaggio,
+            date_slot: time_slot,
+            date_id: this.dateId,
+          };
 
-        await axios.post(state.baseUrl + "api/reservations", reservation);
-      } catch (error) {
-        log(
-          "Errore durante la richiesta di prenotazione, messaggio: " +
-            error.message
-        );
+          await axios.post(state.baseUrl + "api/reservations", reservation);
+        } catch (error) {
+          log(
+            "Errore durante la richiesta di prenotazione, messaggio: " +
+              error.message
+          );
+        }
       }
     },
 
@@ -126,12 +140,34 @@ export default {
       month.forEach((item) => {
         if (!grouped[item.day]) {
           // Se non esiste la chiave day, crea un array
-          grouped[item.day] = { times: [], day_w: "" };
+          grouped[item.day] = {
+            times: [],
+            day_w: "",
+            day_visible: true,
+          };
         }
         // Aggiungi l'orario e il giorno della settimana all'array
-        grouped[item.day].times.push(item.time);
+        grouped[item.day].times.push({
+          time: item.time,
+          visible: item.visible,
+        });
         grouped[item.day].day_w = item.day_w;
       });
+
+      for (const key in grouped) {
+        const el = grouped[key];
+        let _day_visible = true;
+
+        for (let z = 0; z < el.times.length; z++) {
+          const element = el.times[z];
+          if (!element.visible) {
+            _day_visible = false;
+            break; // Se uno degli elementi è visibile, non c'è bisogno di controllare gli altri
+          }
+        }
+
+        el.day_visible = _day_visible;
+      }
 
       return grouped;
     },
@@ -175,9 +211,7 @@ export default {
     getColumnStart(month) {
       // Prendo il giorno della settimana con il quale il mese inizia
       const firstDayOfWeek = month[0].day_w;
-
-      this.firstDayOfMonth = firstDayOfWeek;
-      const gridColumnStart = this.firstDayOfMonth;
+      const gridColumnStart = firstDayOfWeek;
 
       return gridColumnStart;
     },
@@ -188,6 +222,9 @@ export default {
   },
   watch: {
     "reservationValues.mese": function () {
+      this.firstDayOfMonth =
+        this.calendar[this.reservationValues.mese][0].day_w;
+      this.dayTimes = [];
       if (this.reservationValues.giorno) {
         this.reservationValues.giorno = "";
       }
@@ -204,7 +241,9 @@ export default {
 
 <template>
   <div class="prenota-servizio">
+    <!-- Header  -->
     <sh />
+
     <h1>Prenota il tuo tavolo</h1>
     <div class="container_servizio">
       <section class="month-container">
@@ -223,19 +262,21 @@ export default {
           </div>
         </div>
       </section>
+
       <section class="calendar_container">
         <h2>Seleziona il giorno</h2>
 
-        <!-- Giorni della settimana  -->
-        <div class="days_w">
-          <div v-for="(day_week, i) in daysWeek" :key="i" class="day_w">
-            {{ day_week }}
-          </div>
-        </div>
         <div class="calendar">
+          <!-- Giorni della settimana  -->
+          <div class="days_w">
+            <div v-for="(day_week, i) in daysWeek" :key="i" class="day_w">
+              {{ day_week }}
+            </div>
+          </div>
           <template v-for="(month, monthIndex) in calendar" :key="monthIndex">
             <Transition>
               <!-- Vero e proprio calendario del mese  -->
+
               <div class="day_grid" v-if="reservationValues.mese == monthIndex">
                 <div
                   v-for="(day, dayIndex) in groupByDay(month)"
@@ -243,7 +284,8 @@ export default {
                   @click="getTimes(dayIndex, day.times)"
                   :class="{
                     day: true,
-                    active: dayIndex === reservationValues.giorno,
+                    active:
+                      !day.day_visible || dayIndex === reservationValues.giorno,
                   }"
                   :style="{
                     gridColumnStart:
@@ -259,22 +301,25 @@ export default {
           </template>
         </div>
       </section>
+
       <section class="orari-fasce">
         <h2>Seleziona la fascia oraria</h2>
 
         <Transition>
           <div v-if="dayTimes" class="time_container">
-            <div
-              v-for="(time, i) in dayTimes"
-              :key="i"
-              @click="getSeats(time)"
-              :class="{
-                time: true,
-                active: time === reservationValues.orario,
-              }"
-            >
-              {{ time }}
-            </div>
+            <template v-for="(time, i) in dayTimes">
+              <div
+                v-if="time.visible"
+                :key="i"
+                @click="getSeats(time.time)"
+                :class="{
+                  time: true,
+                  active: time.time === reservationValues.orario,
+                }"
+              >
+                {{ time.time }}
+              </div>
+            </template>
           </div>
         </Transition>
         <div
@@ -291,9 +336,7 @@ export default {
           {{ validationErrors.dateError }}
         </div>
       </section>
-      <!-- Fasce orarie -->
 
-      <!-- Form  -->
       <form class="dati-cliente">
         <h2>inserisci i tuoi9 dati</h2>
         <!-- Nome  -->
@@ -341,7 +384,6 @@ export default {
         ></textarea>
       </form>
 
-      <!-- Riassunto prenotazione  -->
       <section class="riepilogo">
         <h2>La tua prenotazione</h2>
         <ul class="reservation">
@@ -426,20 +468,28 @@ h1 {
       }
     }
   }
+
   .calendar_container {
-    .days_w {
-      @include dfc;
-      padding: 2rem 0;
-      justify-content: space-between;
-    }
     .calendar {
-      border: solid 1px white;
+      .days_w {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+
+        .day_w {
+          padding: 1rem;
+          border: solid 1px white;
+          text-align: center;
+          background-color: rgb(48, 6, 6);
+        }
+      }
       .day_grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         .day {
+          display: flex;
+          justify-content: center;
+          align-items: center;
           padding: 1rem;
-          text-align: center;
           border: solid 1px white;
         }
         .active {
@@ -448,6 +498,7 @@ h1 {
       }
     }
   }
+
   .orari-fasce {
     display: flex;
     flex-direction: column;
@@ -468,6 +519,7 @@ h1 {
       }
     }
   }
+
   .dati-cliente {
     display: flex;
     flex-direction: column;
@@ -488,6 +540,7 @@ h1 {
       border-radius: 10px;
     }
   }
+
   .riepilogo {
     display: flex;
     flex-direction: column;
@@ -656,9 +709,12 @@ h1 {
 }
 
 // Classi di Vue
-.v-enter-active,
-.v-leave-active {
+.v-enter-active {
   transition: opacity 0.5s ease;
+  // transition-delay: 0.4s;
+}
+.v-leave-active {
+  // transition: opacity 0.5s ease;
 }
 
 .v-enter-from,
