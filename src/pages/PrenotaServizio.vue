@@ -47,14 +47,16 @@ export default {
 
     // Elaborare i dati in arrivo e formattarli in un calendario (oggetto)
     getCalendar(arrDates) {
+      const _calendar = arrDates.filter((day) => day.status !== 1);
+
       // Sostituisco i numeri con i nomi dei mesi
-      for (let i = 0; i < arrDates.length; i++) {
-        arrDates[i].month = monthConvert(arrDates[i].month);
+      for (let i = 0; i < _calendar.length; i++) {
+        _calendar[i].month = monthConvert(_calendar[i].month);
       }
 
       const arrMonths = {};
 
-      arrDates.forEach((obj) => {
+      _calendar.forEach((obj) => {
         const month = obj.month;
 
         if (!arrMonths[month]) {
@@ -76,7 +78,7 @@ export default {
         dateError: "",
       };
 
-      // Compongo la data intera con orario (formato d/m/y : 01/01/1990 12:00)
+      // Compongo la data intera con orario (formato dd/mm/yyyy : 01/01/1990 12:00)
       const time_slot = `${numberInCalendar(
         this.reservationValues.giorno
       )}/${numberInCalendar(monthConvert(this.reservationValues.mese))}/${
