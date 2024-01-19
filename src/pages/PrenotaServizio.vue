@@ -45,18 +45,18 @@ export default {
       this.initialDates = dates.data.results;
     },
 
-    // Elaborare i dati in arrivo e formattarli in un calendario (oggetto)
+    // Elaborare i dati in arrivo e formattarli in un calendario (obj)
     getCalendar(arrDates) {
-      const _calendar = arrDates.filter((day) => day.status !== 1);
+      arrDates = arrDates.filter((day) => day.status !== 1);
 
       // Sostituisco i numeri con i nomi dei mesi
-      for (let i = 0; i < _calendar.length; i++) {
-        _calendar[i].month = monthConvert(_calendar[i].month);
+      for (let i = 0; i < arrDates.length; i++) {
+        arrDates[i].month = monthConvert(arrDates[i].month);
       }
 
       const arrMonths = {};
 
-      _calendar.forEach((obj) => {
+      arrDates.forEach((obj) => {
         const month = obj.month;
 
         if (!arrMonths[month]) {
@@ -78,7 +78,7 @@ export default {
         dateError: "",
       };
 
-      // Compongo la data intera con orario (formato dd/mm/yyyy : 01/01/1990 12:00)
+      // Compongo la data intera con orario (formato dd/mm/yyyy hh:mm)
       const time_slot = `${numberInCalendar(
         this.reservationValues.giorno
       )}/${numberInCalendar(monthConvert(this.reservationValues.mese))}/${
@@ -112,7 +112,7 @@ export default {
       }
     },
 
-    // estraggo l'id della data scelta dall'utente per fare la richiesta
+    // estraggo l'id della data scelta dall'utente per fare la richiesta e sapere i posti disponibili
     async findIdRequest() {
       const mese = monthConvert(this.reservationValues.mese);
       const params = {
@@ -127,6 +127,7 @@ export default {
         });
         const { id, reserved, max_res } = data.data.results[0];
         this.dateId = id;
+        // Imposto il num di posti disponibili per l'orario scelto
         this.seats = max_res - reserved;
       } catch (error) {
         log(
@@ -136,7 +137,7 @@ export default {
       }
     },
 
-    // Raggruppare per giorno e estrarre le fasce orarie per singoli giorni
+    // Raggruppare per giorno e estrarre fasce orarie, giorno sett e visibilità giornaliera, per i singoli giorni
     groupByDay(month) {
       const grouped = {};
       month.forEach((item) => {
@@ -176,7 +177,7 @@ export default {
 
     // Settare la var. globale = fasce orarie del giorno selezionato
     getTimes(day, arrTimes) {
-      //reset var. globale
+      //reset
       this.dayTimes = [];
 
       this.reservationValues.giorno = day;
@@ -195,7 +196,7 @@ export default {
       this.seats = "Seleziona un oraio per vedere le disponibilità";
     },
 
-    getFirstMonthAndYearValue() {
+    getFirstMonthAndYearValues() {
       const arrMonthsNames = Object.keys(this.calendar);
       this.reservationValues.mese = arrMonthsNames[0];
       // Imposto anche l'anno di reservationValues a quello corrente
@@ -220,7 +221,7 @@ export default {
   },
   async created() {
     await this.getDates();
-    this.getFirstMonthAndYearValue();
+    this.getFirstMonthAndYearValues();
   },
   watch: {
     "reservationValues.mese": function () {
