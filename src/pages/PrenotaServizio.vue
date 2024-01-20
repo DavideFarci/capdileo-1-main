@@ -716,9 +716,6 @@ h1 {
   transition: opacity 0.5s ease;
   // transition-delay: 0.4s;
 }
-.v-leave-active {
-  // transition: opacity 0.5s ease;
-}
 
 .v-enter-from,
 .v-leave-to {
