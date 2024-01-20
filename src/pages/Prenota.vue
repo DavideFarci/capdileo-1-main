@@ -16,9 +16,41 @@
             phone:'',
             time:'',
 
+            arrVariation: [],
+
         }
     },
     methods:{
+      leaveTag(p_id, nametag){
+        this.arrProduct.forEach(element => {
+          if(element.id == p_id){
+            element.tags.forEach(e => {
+              if(e.name == nametag){
+                e.deselected = 1
+              }
+            });
+            
+            element.deselected.push(nametag)
+          }     
+        });
+        
+
+      },
+      addTag(p_id, nametag){
+        this.arrProduct.forEach(element => {
+          if(element.id == p_id){
+            element.tags.forEach(e => {
+              if(e.name == nametag){
+                 e.deselected = 0;
+                // delete e[deselected];
+              }
+            });
+          }      
+        });
+    
+      },
+
+
       getProduct(cat){
         this.categoryId = cat,
         axios
@@ -29,6 +61,9 @@
 				})
 				.then(response => {
 					this.arrProduct = response.data.results.data;
+          this.arrProduct.forEach(element => {
+            element.deselected = []
+          });
 				});
       },
       getCategory(){
@@ -50,20 +85,20 @@
 
         }
       },
-      fixtag(arr){
-        let arrtag='';
-        arr.forEach((element, i) => {
+      // fixtag(arr){
+      //   let arrtag='';
+      //   arr.forEach((element, i) => {
           
-          if(i+1==arr.length){
+      //     if(i+1==arr.length){
             
-            arrtag = arrtag + element.name + '.'
-          }else{
-            arrtag = arrtag + element.name + ', '
+      //       arrtag = arrtag + element.name + '.'
+      //     }else{
+      //       arrtag = arrtag + element.name + ', '
             
-          }
-        });
-        return arrtag
-      },
+      //     }
+      //   });
+      //   return arrtag
+      // },
       getPrice(cent){
         let num = parseFloat(cent);
         num = num / 100;
@@ -89,22 +124,24 @@
         };
         axios.post(state.baseUrl + 'api/orders', {data}).then(response=>(response))
       },
-      newItem(title, counter, tprice, price) {
+      newItem(title, counter, tprice, price, deselected ) {
         let newitem={
           title,
           counter,
           totprice: tprice,
           price: parseInt(price),
+          deselected,
         }
         return newitem;
       },
-      addItem(title, counter, price, id){
+      addItem(title, counter, price, id, deselected){
         if(counter<=0){
           return console.log('ci hai provato amico!')
         }
         let check= false;
-        let newitem= this.newItem(title, counter, price*counter, price);
+        let newitem= this.newItem(title, counter, price*counter, price, deselected);
         console.log(newitem);
+
         this.state.arrCart.forEach((element, index) => {
           if(element.title == title){
             element.counter += counter
@@ -114,6 +151,9 @@
           }
 
         });
+        if(deselected.length !== 0){
+          check=true
+        }
       
         if(!check){
           this.state.arrCart.push(newitem);
@@ -126,6 +166,15 @@
           }
         });
         this.getTot();
+
+        this.arrProduct.forEach(element => {
+           element.deselected = []
+           element.tags.forEach(element => {
+            element.deselected = 0
+           });      
+        });
+        
+       
       },
       removeItem(title){
         this.state.arrCart.forEach((element, i) => {
@@ -209,6 +258,9 @@
           <div class="span" v-if="!state.arrCart.length && !state.sideCartValue">Il carrello è vuoto</div>
           <div v-for="item in state.arrCart" :class="state.sideCartValue ?  'item-off' : 'item-on'" :key="item.id">
             <div>{{ item.title }}</div>
+            <div class="removed">
+              <div class="i-removed" v-for="i in item.deselected" :key="i">- {{ i }}</div>
+            </div>
             <div>* {{ item.counter }}</div>
             <div>{{ getPrice(item.totprice) }}</div>
             <svg :class="state.sideCartValue ?  'sub-item-off' : 'sub-item-on'" @click="removeItem(item.title)"  style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="current-color" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" fill="white"></path> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" fill="white"></path> </svg>
@@ -224,7 +276,18 @@
         <img :src="state.getImageUrl(item.image)" alt="">
         <div class="title">{{ item.name }}</div>
         <div class="c-tp">
-          <div class="tags"> <span>{{fixtag(item.tags) }}</span></div>
+          <div class="tags"> 
+            
+            <!-- <div v-for="tag in item.tags" :key="tag.name" :class="tag.hasOwnProperty('deselected') ? 'tag-off' : 'tag'"> -->
+            <div v-for="tag in item.tags" :key="tag.name" :class="tag.deselected ? 'tag-off' : 'tag'">
+               <span class="minus" @click="leaveTag(item.id, tag.name)" >-</span> 
+               <span class="plus" @click="addTag(item.id, tag.name)">+</span> 
+               {{tag.name }}
+            </div>
+            
+          </div>
+
+
           <div class="price">{{ getPrice(item.price) }}</div>
         </div>
         <div class="add">
@@ -233,7 +296,7 @@
             <span class="counter">{{ item.counter }}</span>
             <span class="minus"  @click="downCounter(item.id)">-</span>
           </div>
-         <div class="mybtn" @click="addItem(item.name, item.counter, item.price, item.id)">aggiungi</div>
+         <div class="mybtn" @click="addItem(item.name, item.counter, item.price, item.id, item.deselected)">aggiungi</div>
         </div>
        </div>
       </div>
@@ -349,8 +412,13 @@
             top: 0;
             left: 0;
             height: 100%;
-            aspect-ratio: 1;
-            border-radius: $h-c;
+            
+            //aspect-ratio: 1;
+           // border-radius: 500px;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+
           }
           .title{
             padding: 1rem;
@@ -380,13 +448,43 @@
               display: flex;
               padding-top: .5rem;
               padding-right: .5rem;
-              span{
+              gap: 10px;
+              .tag{
+                display: flex;
+                gap: 10px;
                 font-size: 10px;
                 font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
                 font-weight: bold!important; 
-                text-transform:capitalize;
-  
-  
+                background-color: $c-nav-link;
+                padding: 2px 7px;
+                border-radius: 10px;
+                .plus{
+                  display: none
+                }
+                .minus{
+                  @include dfc;
+                  background-color: red;
+                  height: 15px !important;
+                  aspect-ratio: 1;
+                  width: 15px !important;
+                  border-radius: 15px;
+                }  
+              }
+              .tag-off{
+                background-color: red;
+                display: flex;
+                gap: 10px;
+                font-size: 10px;
+                font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+                font-weight: bold!important; 
+                padding: 2px 7px;
+                border-radius: 10px;
+                .minus{
+                  display: none;
+                }
+                .plus{
+                  display: block;
+                }
               }
             }
             .price{

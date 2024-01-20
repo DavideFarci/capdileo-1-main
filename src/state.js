@@ -2,7 +2,7 @@ import { reactive } from "vue";
 
 export const state = reactive({
   sideMenuValue: 0,
-  sideCartValue: 1,
+  sideCartValue: 0,
   infomenu: 0,
   arrCart: [],
   arrId: [],
@@ -13,10 +13,13 @@ export const state = reactive({
   actvPage: 1,
    baseUrl: 'https://db.dashboardristorante.it/',
   //baseUrl: "http://127.0.0.1:8000/",
+  // getImageUrl(image) {
+  //   return image
+  //     ? this.baseUrl + "public/storage/" + image
+  //     :  "./assets/img/pizza-5.png";
+  // },
   getImageUrl(image) {
-    return image
-      ? this.baseUrl + "public/storage/" + image
-      : this.baseUrl + "public/storage/default.png";
+    return "src/assets/img/pizza-5.png";
   },
   fakemenu: [
     [
