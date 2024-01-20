@@ -43,7 +43,5 @@ export function validateReservation(resValues, errValid) {
     isValid = false;
   }
 
-  if (!isValid) {
-    return;
-  }
+  return isValid;
 }
