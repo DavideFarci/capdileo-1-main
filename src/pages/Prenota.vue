@@ -16,11 +16,66 @@
             phone:'',
             time:'',
 
-            arrVariation: [],
+            
 
         }
     },
     methods:{
+     
+
+
+      getProduct(cat){
+        this.categoryId = cat,
+        axios
+				.get(this.state.baseUrl+ 'api/projects', {
+					params: {
+						category: this.categoryId,
+					},
+				})
+				.then(response => {
+					this.arrProduct = response.data.results.data;
+          this.arrProduct.forEach(element => {
+            element.deselected = []
+            element.counter = 1
+          });
+				});
+      },
+
+      getCategory(){
+        axios
+        .get(state.baseUrl + 'api/categories', {})
+        .then(response => {
+          this.arrCategory = response.data.results;
+        });
+
+      },
+      changeCategory(value){
+        if(value==1){
+          this.getProduct(0)
+          this.actvcat=value
+          
+        }else{
+          this.getProduct(value)
+          this.actvcat=value
+
+        }
+      },
+
+      getPrice(cent){
+        let num = parseFloat(cent);
+        num = num / 100;
+        num = "€" + num  
+        
+        return num
+      },
+      opencart(){
+        if(state.sideCartValue){
+          state.sideCartValue=0
+        }else{
+          state.sideCartValue=1
+        }
+      },
+      
       leaveTag(p_id, nametag){
         this.arrProduct.forEach(element => {
           if(element.id == p_id){
@@ -49,80 +104,14 @@
         });
     
       },
-
-
-      getProduct(cat){
-        this.categoryId = cat,
-        axios
-				.get(this.state.baseUrl+ 'api/projects', {
-					params: {
-						category: this.categoryId,
-					},
-				})
-				.then(response => {
-					this.arrProduct = response.data.results.data;
-          this.arrProduct.forEach(element => {
-            element.deselected = []
-          });
-				});
-      },
-      getCategory(){
-        axios
-        .get(state.baseUrl + 'api/categories', {})
-        .then(response => {
-          this.arrCategory = response.data.results;
-        });
-
-      },
-      changeCategory(value){
-        if(value==1){
-          this.getProduct(0)
-          this.actvcat=value
-          
-        }else{
-          this.getProduct(value)
-          this.actvcat=value
-
+      
+      newItemVar(p_id, deselected, counter ) {
+        let newitem={
+          p_id,
+          deselected,
+          counter,
         }
-      },
-      // fixtag(arr){
-      //   let arrtag='';
-      //   arr.forEach((element, i) => {
-          
-      //     if(i+1==arr.length){
-            
-      //       arrtag = arrtag + element.name + '.'
-      //     }else{
-      //       arrtag = arrtag + element.name + ', '
-            
-      //     }
-      //   });
-      //   return arrtag
-      // },
-      getPrice(cent){
-        let num = parseFloat(cent);
-        num = num / 100;
-        num = "€" + num  
-
-        return num
-      },
-      opencart(){
-        if(state.sideCartValue){
-          state.sideCartValue=0
-        }else{
-          state.sideCartValue=1
-        }
-      },
-      sendOrder(){
-        let data = {
-          name:this.name,
-          phone:this.phone,
-          time:this.time,
-          arrId:this.state.arrId,
-          arrQt:this.state.arrQt,
-          
-        };
-        axios.post(state.baseUrl + 'api/orders', {data}).then(response=>(response))
+        return newitem;
       },
       newItem(title, counter, tprice, price, deselected ) {
         let newitem={
@@ -140,33 +129,35 @@
         }
         let check= false;
         let newitem= this.newItem(title, counter, price*counter, price, deselected);
+        let newitemVar= this.newItemVar(id, deselected, counter);
         console.log(newitem);
+        //se non ci sono variazioni controllo che l'item non sia gia presente prima di pusharlo
+        if(deselected.length == 0){
+          this.state.arrCart.forEach((element, index) => {
+            if(element.title == title && element.deselected.length == 0){
+              element.counter += counter;
+              element.totprice = element.counter * element.price;
 
-        this.state.arrCart.forEach((element, index) => {
-          if(element.title == title){
-            element.counter += counter
-            element.totprice = element.counter * element.price
-            check=true
-            this.state.arrQt[index] += counter
-          }
-
-        });
-        if(deselected.length !== 0){
-          check=true
+              this.state.arrVariation[index].counter += counter;
+              check=true;
+            }
+  
+          });
         }
-      
+        //se l'item non era gia presente lo aggiungo ora per la prima volta a tutti gli array
         if(!check){
           this.state.arrCart.push(newitem);
-          this.state.arrId.push(id)
-          this.state.arrQt.push(counter)
+          this.state.arrVariation.push(newitemVar);
         }
+        //reimposto il counter a 1
         this.arrProduct.forEach(element => {
           if(element.name == title){
-            element.counter = 0
+            element.counter = 1
           }
         });
+        //ricalcolo il totale
         this.getTot();
-
+        //riporto gli ingredienti deselezionati alla stato di default
         this.arrProduct.forEach(element => {
            element.deselected = []
            element.tags.forEach(element => {
@@ -176,28 +167,16 @@
         
        
       },
-      removeItem(title){
-        this.state.arrCart.forEach((element, i) => {
-          if(element.title== title){
-            if(element.counter>=0){
-            element.counter --;
-            element.totprice -= element.price
-            this.state.arrQt[i]--;
-            }if(element.counter == 0){
-              let nwi = i - 1;
-              this.state.arrId.splice(i, 1)
-              this.state.arrQt.splice(i, 1)
-              let newarrCart = this.state.arrCart.filter((element) => {
-                return element.title !== title;
-              });
-              this.state.arrCart=[];
-              this.state.arrCart = newarrCart;
-              }
+      removeItem( i ){
+        if(this.state.arrCart[i].counter >= 0){
+          this.state.arrCart[i].counter --
+          this.state.arrVariation[i].counter --
+          if(this.state.arrCart[i].counter == 0){
+            this.state.arrCart.splice(i, 1)
+            this.state.arrVariation.splice(i, 1)
           }
-        });
-
+        }
         this.getTot();
-
       },
       upCounter(id){
         this.arrProduct.forEach(element => {
@@ -256,14 +235,16 @@
         </div>
         <div :class="state.sideCartValue ? 'content-cart' : 'ccoff'" >
           <div class="span" v-if="!state.arrCart.length && !state.sideCartValue">Il carrello è vuoto</div>
-          <div v-for="item in state.arrCart" :class="state.sideCartValue ?  'item-off' : 'item-on'" :key="item.id">
-            <div>{{ item.title }}</div>
-            <div class="removed">
-              <div class="i-removed" v-for="i in item.deselected" :key="i">- {{ i }}</div>
+          <div v-for="(item, i) in state.arrCart" :class="state.sideCartValue ?  'item-off' : 'item-on'" :key="item.id">
+            <div>
+              <h4>{{ item.title }}</h4>
+              <div class="removed">
+                <div class="i-removed" v-for="i in item.deselected" :key="i">- {{ i }}</div>
+              </div>
             </div>
             <div>* {{ item.counter }}</div>
             <div>{{ getPrice(item.totprice) }}</div>
-            <svg :class="state.sideCartValue ?  'sub-item-off' : 'sub-item-on'" @click="removeItem(item.title)"  style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="current-color" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" fill="white"></path> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" fill="white"></path> </svg>
+            <svg :class="state.sideCartValue ?  'sub-item-off' : 'sub-item-on'" @click="removeItem( i)"  style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="current-color" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" fill="white"></path> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" fill="white"></path> </svg>
           </div>
           <router-link :to="{ name: 'conferma' }" v-if="state.arrCart.length && !state.sideCartValue" class="next">Completa la tua ordinazione</router-link>
         </div>

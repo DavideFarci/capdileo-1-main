@@ -5,14 +5,14 @@ export const state = reactive({
   sideCartValue: 0,
   infomenu: 0,
   arrCart: [],
-  arrId: [],
-  arrQt: [],
+
   totCart: 0,
+  arrVariation: [],
   //setting:[],
   setting: [{ status: 1 }, { status: 1 }, { status: 1 }],
   actvPage: 1,
-   baseUrl: 'https://db.dashboardristorante.it/',
-  //baseUrl: "http://127.0.0.1:8000/",
+   //baseUrl: 'https://db.dashboardristorante.it/',
+   baseUrl: "http://127.0.0.1:8000/",
   // getImageUrl(image) {
   //   return image
   //     ? this.baseUrl + "public/storage/" + image
