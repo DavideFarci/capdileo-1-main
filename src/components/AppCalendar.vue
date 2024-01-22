@@ -107,7 +107,7 @@ export default {
           if (this.reservation) {
             await axios.post(state.baseUrl + "api/reservations", _reservation);
           } else {
-            await axios.post(state.baseUrl + "api/reservations", _order);
+            await axios.post(state.baseUrl + "api/orders", _order);
           }
         } catch (error) {
           log("Errore durante la richiesta, messaggio: " + error.message);
