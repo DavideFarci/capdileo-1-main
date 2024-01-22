@@ -88,6 +88,7 @@ export default {
           const _reservation = {
             name: this.formValues.nome,
             phone: this.formValues.telefono,
+            email: this.formValues.email,
             n_person: this.formValues.n_persone,
             message: this.formValues.messaggio,
             date_slot: time_slot,
@@ -97,13 +98,12 @@ export default {
           const _order = {
             name: this.formValues.nome,
             phone: this.formValues.telefono,
-            n_person: this.formValues.n_persone,
+            email: this.formValues.email,
             message: this.formValues.messaggio,
             date_slot: time_slot,
             date_id: this.dateId,
           };
 
-          // PARLARE CON CRISTIAN DEI DATI DEL FORM
           if (this.reservation) {
             await axios.post(state.baseUrl + "api/reservations", _reservation);
           } else {
@@ -349,7 +349,6 @@ export default {
     <form class="dati-cliente">
       <h2>Inserisci i tuoi dati</h2>
       <!-- Nome  -->
-      <!-- <app-input forAndId="nome" label="Nome" type="text" /> -->
       <template v-for="(input, i) in inputs" :key="i">
         <label :for="input.name">{{ input.label }}</label>
         <input

@@ -18,8 +18,8 @@ export default {
         nome: "",
         email: "",
         telefono: null,
-        n_persone: "",
         messaggio: "",
+        variations: "",
       },
       inputs: [
         {
@@ -48,31 +48,11 @@ export default {
           type: "text",
         },
       ],
-      // name: "",
-      // phone: "",
-      // idate: "",
-      // timeSlot: "",
-
-      // nameError: "",
-      // phoneError: "",
-      // timeError: "",
-      // dateError: "",
       cartError: "",
-
-      // isValid: true,
       loading: false,
-      succes: false,
-      // DeltaMinuti: 39,
     };
   },
   methods: {
-    //buttare
-    // getTimesSlots() {
-    //   axios.get(this.state.baseUrl + "api/time").then((response) => {
-    //     this.arrTimesSlotApi = response.data.results;
-    //   });
-    // },
-
     getPrice(cent) {
       let num = parseFloat(cent);
       num = num / 100;
@@ -81,47 +61,26 @@ export default {
       return num;
     },
 
-    // spostare
-    order_validations() {
-      this.isValid = true;
-
-      if (!this.name) {
-        this.nameError = "Il campo 'nome' è richiesto!";
-        this.isValid = false;
-      } else if (this.name.length < 2) {
-        this.nameError = "Il campo 'nome' è troppo corto!";
-        this.isValid = false;
-      } else if (this.name.length > 50) {
-        this.nameError = "Il campo 'name' non può superare i 50 caratteri!";
-        this.isValid = false;
-      }
-
-      if (!this.phone) {
-        this.phoneError = "Il campo 'N° 'telefono' è richiesto!";
-        this.isValid = false;
-      }
-      // modificare quando verrà cambiato il tipo di dato per il telefono (numerico)
-      else if (this.phone.length !== 10) {
-        this.phoneError = "Il campo 'N° 'telefono' deve essere di 10 cifre!";
-        this.isValid = false;
-      }
-
-      if (!this.idate) {
-        this.dateError = "Seleziona una data!";
-        this.isValid = false;
-      }
-      if (!this.timeSlot) {
-        this.timeError = "Seleziona una fascia oraria!";
-        this.isValid = false;
-      }
-      if (!this.state.arrId.length) {
-        this.cartError = "IL tuo carrello è vuoto torna nella sezione: ";
-        this.isValid = false;
-      }
-
-      if (!this.isValid) {
-        return;
-      }
+    removeItem(title) {
+      this.state.arrCart.forEach((element, i) => {
+        if (element.title == title) {
+          if (element.counter >= 0) {
+            element.counter--;
+            element.totprice -= element.price;
+            this.state.arrQt[i]--;
+          }
+          if (element.counter == 0) {
+            let nwi = i - 1;
+            this.state.arrId.splice(i, 1);
+            this.state.arrQt.splice(i, 1);
+            let newarrCart = this.state.arrCart.filter((element) => {
+              return element.title !== title;
+            });
+            this.state.arrCart = [];
+            this.state.arrCart = newarrCart;
+          }
+        }
+      });
     },
 
     // buttare
@@ -159,86 +118,6 @@ export default {
     //     this.state.arrCart = [];
     //     this.arrTimesSlot = [];
     //     this.arrTimesSlotApi = [];
-    //   }
-    // },
-
-    removeItem(title) {
-      this.state.arrCart.forEach((element, i) => {
-        if (element.title == title) {
-          if (element.counter >= 0) {
-            element.counter--;
-            element.totprice -= element.price;
-            this.state.arrQt[i]--;
-          }
-          if (element.counter == 0) {
-            let nwi = i - 1;
-            this.state.arrId.splice(i, 1);
-            this.state.arrQt.splice(i, 1);
-            let newarrCart = this.state.arrCart.filter((element) => {
-              return element.title !== title;
-            });
-            this.state.arrCart = [];
-            this.state.arrCart = newarrCart;
-          }
-        }
-      });
-    },
-
-    // inputTime(time, id) {
-    //   this.arrTimesSlot.forEach((element, i) => {
-    //     if (element.id == "active") {
-    //       element.id = i + 1;
-    //     }
-    //   });
-    //   this.arrTimesSlot.forEach((element, i) => {
-    //     if (element.id == id) {
-    //       element.id = "active";
-    //     }
-    //   });
-    //   this.timeSlot = time;
-    // },
-
-    // buttare
-    // checkData(i) {
-    //   let oggi = new Date();
-    //   let di = new Date(i);
-
-    //   if (
-    //     di.getDate() == oggi.getDate() &&
-    //     di.getMonth() == oggi.getMonth() &&
-    //     di.getFullYear() == oggi.getFullYear()
-    //   ) {
-    //     this.arrTimesSlot = [];
-    //     this.getTimesSlots();
-    //     console.log("oggi");
-
-    //     let oraOggi = parseInt(oggi.getHours());
-    //     let minOggi = parseInt(oggi.getMinutes());
-
-    //     console.log("foreach");
-
-    //     this.arrTimesSlotApi.forEach((element) => {
-    //       let ora = parseInt(element.time_slot.slice(0, 2));
-    //       let min = parseInt(element.time_slot.slice(3, 5));
-
-    //       if (oraOggi == ora && this.DeltaMinuti + minOggi < min) {
-    //         console.log("true");
-    //       } else if (
-    //         ora == oraOggi + 1 &&
-    //         60 - minOggi + min > this.DeltaMinuti
-    //       ) {
-    //         this.arrTimesSlot.push(element);
-    //       } else if (ora > oraOggi + 1) {
-    //         this.arrTimesSlot.push(element);
-    //       }
-    //     });
-    //   } else if (Date.parse(di) > Date.now()) {
-    //     this.arrTimesSlot = [];
-    //     console.log("domani");
-    //     this.arrTimesSlot = this.state.defaultTimes;
-    //   } else {
-    //     this.arrTimesSlot = [];
-    //     console.log("scrivi un giorno accettabile");
     //   }
     // },
   },
