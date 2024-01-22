@@ -10,24 +10,44 @@ export default {
   data() {
     return {
       state,
-
       orderValues: {
         anno: "",
         mese: "",
         giorno: "",
         orario: "",
         nome: "",
+        email: "",
         telefono: null,
         n_persone: "",
         messaggio: "",
       },
-      orderErrors: {
-        nameError: "",
-        phoneError: "",
-        npersonError: "",
-        messageError: "",
-        dateError: "",
-      },
+      inputs: [
+        {
+          name: "nome",
+          label: "Nome",
+          type: "text",
+        },
+        {
+          name: "email",
+          label: "Email",
+          type: "email",
+        },
+        {
+          name: "n_persone",
+          label: "N° di persone",
+          type: "number",
+        },
+        {
+          name: "telefono",
+          label: "Telefono",
+          type: "text",
+        },
+        {
+          name: "messaggio",
+          label: "Messaggio",
+          type: "text",
+        },
+      ],
       // name: "",
       // phone: "",
       // idate: "",
@@ -305,7 +325,7 @@ export default {
 
       <AppCalendar
         :formValues="orderValues"
-        :errors="orderErrors"
+        :inputs="inputs"
         :reservation="false"
       />
     </div>

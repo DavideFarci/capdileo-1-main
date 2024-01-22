@@ -3,14 +3,16 @@ const { log } = console;
 import { state } from "../state";
 import axios from "axios";
 import { monthConvert, numberInCalendar } from "../utilities/functions";
+import { validateReservation } from "../assets/validations/val_prenotaServizio";
+import { order_validations } from "../assets/validations/val_conferma";
 export default {
   props: {
     formValues: {
       type: Object,
       required: true,
     },
-    errors: {
-      type: Object,
+    inputs: {
+      type: Array,
       required: true,
     },
     reservation: {
@@ -26,6 +28,7 @@ export default {
       dateId: null, // ID della data scelta
       seats: "Seleziona un oraio per vedere le disponibilità", // viene usato sia per i posti che per i pezzi quindi bisogna cambiare nome
       isValid: false,
+      errorValidation: "",
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
     };
@@ -66,13 +69,7 @@ export default {
     },
 
     async getReservationRequest() {
-      this.errors = {
-        nameError: "",
-        phoneError: "",
-        npersonError: "",
-        messageError: "",
-        dateError: "",
-      };
+      this.errorValidation = "";
 
       // Compongo la data intera con orario (formato dd/mm/yyyy hh:mm)
       const time_slot = `${numberInCalendar(
@@ -81,12 +78,23 @@ export default {
         this.formValues.anno
       } ${this.formValues.orario}`;
 
-      this.isValid = validateReservation(this.formValues, this.errors);
+      this.isValid = this.reservation
+        ? validateReservation(this.formValues, this.errorValidation)
+        : order_validations(this.formValues, this.errorValidation);
 
       if (this.isValid) {
         try {
           await this.findIdRequest();
-          const reservation = {
+          const _reservation = {
+            name: this.formValues.nome,
+            phone: this.formValues.telefono,
+            n_person: this.formValues.n_persone,
+            message: this.formValues.messaggio,
+            date_slot: time_slot,
+            date_id: this.dateId,
+          };
+
+          const _order = {
             name: this.formValues.nome,
             phone: this.formValues.telefono,
             n_person: this.formValues.n_persone,
@@ -96,13 +104,13 @@ export default {
           };
 
           // PARLARE CON CRISTIAN DEI DATI DEL FORM
-
-          await axios.post(state.baseUrl + "api/reservations", reservation);
+          if (this.reservation) {
+            await axios.post(state.baseUrl + "api/reservations", _reservation);
+          } else {
+            await axios.post(state.baseUrl + "api/reservations", _order);
+          }
         } catch (error) {
-          log(
-            "Errore durante la richiesta di prenotazione, messaggio: " +
-              error.message
-          );
+          log("Errore durante la richiesta, messaggio: " + error.message);
         }
       }
     },
@@ -219,11 +227,15 @@ export default {
 
       return gridColumnStart;
     },
+
+    handleInputValue(e, name) {
+      const value = e.target.value;
+      this.formValues[name] = value;
+    },
   },
   async created() {
     await this.getDates();
     this.getFirstMonthAndYearValues();
-    // log(this.formValues, this.errors, this.reservation);
   },
   watch: {
     "formValues.mese": function () {
@@ -332,49 +344,31 @@ export default {
       >
         {{ seats }} {{ reservation ? "posti" : "pezzi" }} disponibili
       </div>
-
-      <div v-if="errors.dateError" class="error">
-        {{ errors.dateError }}
-      </div>
     </section>
 
     <form class="dati-cliente">
-      <h2>inserisci i tuoi9 dati</h2>
+      <h2>Inserisci i tuoi dati</h2>
       <!-- Nome  -->
-      <label for="nome">Nome</label>
-      <span v-if="errors.nameError" class="error">{{ errors.nameError }}</span>
-      <input type="text" id="nome" v-model="formValues.nome" />
-
-      <!-- mail  -->
-      <label for="mail">mail</label>
-      <span v-if="errors.mailError" class="error">{{ errors.mailError }}</span>
-      <input type="mail" id="mail" v-model="formValues.mail" />
-
-      <!-- Telefono  -->
-      <label for="telefono">Telefono</label>
-      <span v-if="errors.phoneError" class="error">{{
-        errors.phoneError
-      }}</span>
-      <input type="text" id="telefono" v-model="formValues.telefono" />
-
-      <!-- N° di persone  -->
-      <label for="n_persone">N° di persone</label>
-      <span v-if="errors.npersonError" class="error">{{
-        errors.npersonError
-      }}</span>
-      <input type="number" id="n_persone" v-model="formValues.n_persone" />
-
-      <!-- Messaggio -->
-      <label for="messaggio">Messaggio</label>
-      <span v-if="errors.messageError" class="error">{{
-        errors.messageError
-      }}</span>
-      <textarea
-        cols="10"
-        rows="10"
-        id="messaggio"
-        v-model="formValues.messaggio"
-      ></textarea>
+      <!-- <app-input forAndId="nome" label="Nome" type="text" /> -->
+      <template v-for="(input, i) in inputs" :key="i">
+        <label :for="input.name">{{ input.label }}</label>
+        <input
+          v-if="input.name !== `messaggio`"
+          :name="input.name"
+          :type="input.type"
+          :id="input.name"
+          @change="(e) => handleInputValue(e, input.name)"
+        />
+        <textarea
+          v-else
+          :name="input.name"
+          :id="input.name"
+          @change="(e) => handleInputValue(e, input.name)"
+          cols="30"
+          rows="10"
+        >
+        </textarea>
+      </template>
     </form>
 
     <section class="riepilogo">
@@ -404,6 +398,8 @@ export default {
         </li>
       </ul>
     </section>
+
+    <div v-if="errorValidation" class="error">{{ errorValidation }}</div>
 
     <button class="toReserv btn" @click="getReservationRequest">Prenota</button>
   </div>
