@@ -1,4 +1,4 @@
-export function validateReservation(resValues, errValid) {
+export function order_validations(resValues, errValue) {
   let isValid = true;
 
   // Giorno e ora
