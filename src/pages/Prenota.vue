@@ -29,6 +29,7 @@
               expanded:0,
               opened:false,
             }
+            
 
             
 
@@ -113,10 +114,13 @@
         this.selectedItem.expanded = 0
         this.selectedItem.opened = false
         this.arrProduct.forEach(element => {
-           element.deselected = []
            element.tags.forEach(element => {
             element.deselected = 0
            });      
+        });
+        this.arrIngredient.forEach(element => {
+           element.active = false
+                
         });
 
 
@@ -131,7 +135,7 @@
             }              
         });
         }else{
-          this.esp(this.selectedItem.deselected, nametag)
+          this.selectedItem.deselected = this.esp(this.selectedItem.deselected, nametag)
           this.selectedItem.tags.forEach(element => {
             if(element.name == nametag){
               element.deselected = 0
@@ -140,23 +144,32 @@
         }
       },
       addRemoveExtraTag(nametag, price, ar){
-        if(ar == 'a'){
+        if(ar == 'remove'){
           this.selectedItem.addicted.push(nametag)
           this.selectedItem.price_variation = this.selectedItem.price_variation + price
           this.arrIngredient.forEach(element => {
             if(element.name == nametag){
-              element.active == true
+              element.active = true
             }
           });
         }else{
-          this.esp(this.selectedItem.addicted, nametag)
+          this.selectedItem.addicted = this.esp(this.selectedItem.addicted, nametag)
           this.selectedItem.price_variation = this.selectedItem.price_variation - price
           this.arrIngredient.forEach(element => {
             if(element.name == nametag){
-              element.active == false
+              element.active = false
             }
           });
         }
+      },
+      removeExtraTagShow(nome){
+        this.selectedItem.addicted = this.esp(this.selectedItem.addicted, nome)
+        this.arrIngredient.forEach(element => {
+          if(element.name == nome){
+            this.selectedItem.price_variation = this.selectedItem.price_variation - element.price
+            element.active = false
+          }
+        });
       },
     
       newItem(p_id, title, counter, totprice, addicted, deselected) {
@@ -233,12 +246,21 @@
         });
         return arrtag
       },
-      getPrice(cent){
-        let num = parseFloat(cent);
-        num = num / 100;
-        num = "€" + num  
-        
-        return num
+      getPrice(cent, sum){
+         if(sum){
+          // console.log(cent)
+          // console.log(sum)
+          let num1 = parseFloat(cent);
+         
+          let num = (num1 + sum) / 100;
+          num = "€" + num 
+          return num
+        }else{
+          let num = parseFloat(cent);
+          num = num / 100;
+          num = "€" + num  
+          return num   
+        }
       },
       opencart(){
         if(state.sideCartValue){
@@ -264,6 +286,9 @@
           console.log(element.totprice)
           this.state.totCart = this.state.totCart + element.totprice
         });
+      },
+      openIng(){
+
       }
     },
     created(){
@@ -305,6 +330,9 @@
               <div class="removed">
                 <div class="i-removed" v-for="i in item.deselected" :key="i">- {{ i }}</div>
               </div>
+              <div class="removed">
+                <div class="i-removed" v-for="i in item.addicted" :key="i">+{{ i }}</div>
+              </div>
             </div>
             <div>* {{ item.counter }}</div>
             <div>{{ getPrice(item.totprice) }}</div>
@@ -345,10 +373,18 @@
                 <span class="plus"  @click="addremoveTagDefault(tag.name )" v-if="tag.deselected">+</span> 
                 {{tag.name }}
               </div>
-              
+            </div>
+            <div class="extra-tags">
+              <h3>ingredienti extra:</h3>
+              <span v-for="i in selectedItem.addicted" :key="i">
+                <span class="minus" @click="removeExtraTagShow(i )">-</span>  
+                  <span>
+                    {{i }}
+                  </span>
+              </span>
             </div>
             <div class="add-ingredient">
-              <h3  v-if="!selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded">Aggiungi un ingrediente</h3>
+              <h3  v-if="!selectedItem.expanded" @click="openIng">Aggiungi un ingrediente</h3>
               <div class="close" v-if="selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded">
                 <div class="line"></div>
                 <div class="line l2"></div>
@@ -356,15 +392,15 @@
               <div class="cont_ex_ing" v-if="selectedItem.expanded">
                 <div class="ex_ing" v-for="(ing, i) in arrIngredient" :key="i">
                   <span class="minus" @click="addRemoveExtraTag(ing.name, ing.price)"      v-if="ing.active">-</span> 
-                  <span class="plus"  @click="addRemoveExtraTag(ing.name, ing.price, 'a')" v-if="!ing.active">+</span> 
-                  <span v-if="ing">
+                  <span class="plus"  @click="addRemoveExtraTag(ing.name, ing.price, 'remove')" v-if="!ing.active">+</span> 
+                  <span >
                     {{ing.name }}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div class="price">{{ getPrice(selectedItem.price + 0) }}</div>
+            <div class="price">{{ getPrice(selectedItem.price , selectedItem.price_variation) }}</div>
           </div>
           
           <div class="add">
@@ -529,12 +565,18 @@
         }
         .content{
           padding: 2rem;
+          width: 80%;
           @include dfc;
           flex-direction: column;
-          width: 80%;
-          gap: 1rem;
+          gap: 3rem;
           align-content: flex-end;
-          background-color: rgb(232, 136, 73)
+          background-color: rgb(232, 136, 73);
+
+          .extra-tags{
+            @include dfj;
+            flex-direction: column;
+            gap: .4rem;
+          }
         }
         .add-ingredient{
           max-height: 250px;

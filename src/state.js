@@ -578,4 +578,18 @@ export const state = reactive({
       this.infomenu = 1;
     }
   },
+  getServeCart(){
+    let arrVar = [];
+    this.arrCart.forEach(element => {
+      let newi={
+        p_id:element.p_id,
+        counter:element.counter,
+        deselected:element.deselected,
+        addicted:element.addicted,
+      }
+      arrVar.push(newi)
+      
+    });
+    return arrVar
+  }
 });
