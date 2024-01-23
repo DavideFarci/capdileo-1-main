@@ -22,6 +22,7 @@ export default {
   },
   data() {
     return {
+      state,
       currentDate: "",
       calendar: {}, // calendar = {"Gennaio" : [{..} ...]}, {"Febbraio" : [{..} ...]}, ... }
       dayTimes: [], // Fasce orarie per il giorno selezionato
@@ -100,6 +101,7 @@ export default {
             phone: this.formValues.telefono,
             email: this.formValues.email,
             message: this.formValues.messaggio,
+            products: this.state.getServeCart(),
             date_slot: time_slot,
             date_id: this.dateId,
           };

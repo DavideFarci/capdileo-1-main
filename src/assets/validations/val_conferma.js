@@ -28,15 +28,6 @@ export function order_validations(resValues, errValue) {
     isValid = false;
   }
 
-  // N di persone
-  if (!resValues.n_persone) {
-    errValid = "Seleziona una numero di ospiti!";
-    isValid = false;
-  } else if (resValues.n_persone < 1) {
-    errValid = "Il numero di persone deve essere almeno 1";
-    isValid = false;
-  }
-
   // Messaggio
   if (resValues.messaggio.length > 500) {
     errValid = "Il messaggio non può superare i 50 caratteri";
