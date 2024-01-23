@@ -15,6 +15,20 @@
             name:'',
             phone:'',
             time:'',
+            arrIngredient:[],
+            selectedItem:{
+              name:'',
+              id:'',
+              image:'',
+              price: 0,
+              tags: [],
+              deselected:[],
+              addicted:[],
+              price_variation:0,
+              counter: 1,
+              expanded:0,
+              opened:false,
+            }
 
             
 
@@ -35,12 +49,26 @@
 				.then(response => {
 					this.arrProduct = response.data.results.data;
           this.arrProduct.forEach(element => {
-            element.deselected = []
-            element.counter = 1
-          });
+           element.deselected = []
+           element.tags.forEach(element => {
+            element.deselected = 0
+           });      
+        });
+         
 				});
       },
 
+      getIngredients(){
+        axios
+        .get(state.baseUrl + 'api/tag', {})
+        .then(response => {
+          this.arrIngredient = response.data.results;
+          this.arrIngredient.forEach(element => {
+            element.active = false;
+          });
+        });
+
+      },
       getCategory(){
         axios
         .get(state.baseUrl + 'api/categories', {})
@@ -61,84 +89,102 @@
         }
       },
 
-      getPrice(cent){
-        let num = parseFloat(cent);
-        num = num / 100;
-        num = "€" + num  
-        
-        return num
-      },
-      opencart(){
-        if(state.sideCartValue){
-          state.sideCartValue=0
-        }else{
-          state.sideCartValue=1
-        }
-      },
-      
-      leaveTag(p_id, nametag){
-        this.arrProduct.forEach(element => {
-          if(element.id == p_id){
-            element.tags.forEach(e => {
-              if(e.name == nametag){
-                e.deselected = 1
-              }
-            });
-            
-            element.deselected.push(nametag)
-          }     
+      esp(array, stringaDaEliminare) {
+        return array.filter(function(elemento) {
+            return elemento !== stringaDaEliminare;
         });
-        
+      },
+      openShow(name, id, tags, price, image){
+        this.selectedItem.name = name
+        this.selectedItem.id = id
+        this.selectedItem.tags = tags
+        this.selectedItem.image = image
+        this.selectedItem.price = price
+        this.selectedItem.opened = true
+      },
+      closeShow(){
+        this.selectedItem.name = ''
+        this.selectedItem.id = ''
+        this.selectedItem.tags = []
+        this.selectedItem.deselected = []
+        this.selectedItem.addicted = []
+        this.selectedItem.image = ''
+        this.selectedItem.price = 0
+        this.selectedItem.expanded = 0
+        this.selectedItem.opened = false
+        this.arrProduct.forEach(element => {
+           element.deselected = []
+           element.tags.forEach(element => {
+            element.deselected = 0
+           });      
+        });
+
 
       },
-      addTag(p_id, nametag){
-        this.arrProduct.forEach(element => {
-          if(element.id == p_id){
-            element.tags.forEach(e => {
-              if(e.name == nametag){
-                 e.deselected = 0;
-                // delete e[deselected];
-              }
-            });
-          }      
-        });
-    
-      },
       
-      newItemVar(p_id, deselected, counter ) {
+      addremoveTagDefault(nametag, ar){
+        if(ar == 'remove'){
+          this.selectedItem.deselected.push(nametag)
+          this.selectedItem.tags.forEach(element => {
+            if(element.name == nametag){
+              element.deselected = 1
+            }              
+        });
+        }else{
+          this.esp(this.selectedItem.deselected, nametag)
+          this.selectedItem.tags.forEach(element => {
+            if(element.name == nametag){
+              element.deselected = 0
+            }              
+        });
+        }
+      },
+      addRemoveExtraTag(nametag, price, ar){
+        if(ar == 'a'){
+          this.selectedItem.addicted.push(nametag)
+          tthis.selectedItem.price_variation = this.selectedItem.price_variation + price
+          this.arrIngredient.forEach(element => {
+            if(element.name == nametag){
+              element.active == true
+            }
+          });
+        }else{
+          this.esp(this.selectedItem.addicted, nametag)
+          this.selectedItem.price_variation = this.selectedItem.price_variation - price
+          this.arrIngredient.forEach(element => {
+            if(element.name == nametag){
+              element.active == false
+            }
+          });
+        }
+      },
+    
+      newItem(p_id, title, counter, totprice, addicted, deselected) {
         let newitem={
           p_id,
-          deselected,
-          counter,
-        }
-        return newitem;
-      },
-      newItem(title, counter, tprice, price, deselected ) {
-        let newitem={
           title,
           counter,
-          totprice: tprice,
-          price: parseInt(price),
+          totprice,
           deselected,
+          addicted,
         }
         return newitem;
       },
-      addItem(title, counter, price, id, deselected){
-        if(counter<=0){
+
+      addItem(){
+        if(this.selectedItem.counter<=0){
           return console.log('ci hai provato amico!')
         }
         let check= false;
-        let newitem= this.newItem(title, counter, price*counter, price, deselected);
-        let newitemVar= this.newItemVar(id, deselected, counter);
+        let newitem= this.newItem(this.selectedItem.id, this.selectedItem.name, this.selectedItem.counter, this.selectedItem.price * this.selectedItem.counter + this.selectedItem.price_variation, this.selectedItem.addicted, this.selectedItem.deselected, );     
         console.log(newitem);
         //se non ci sono variazioni controllo che l'item non sia gia presente prima di pusharlo
-        if(deselected.length == 0){
+        if(this.selectedItem.deselected.length == 0 && this.selectedItem.addicted.length == 0){
           this.state.arrCart.forEach((element, index) => {
             if(element.title == title && element.deselected.length == 0){
-              element.counter += counter;
+              element.counter += this.selectedItem.counter;
               element.totprice = element.counter * element.price;
-
-              this.state.arrVariation[index].counter += counter;
+         
               check=true;
             }
   
@@ -147,14 +193,10 @@
         //se l'item non era gia presente lo aggiungo ora per la prima volta a tutti gli array
         if(!check){
           this.state.arrCart.push(newitem);
-          this.state.arrVariation.push(newitemVar);
+  
         }
         //reimposto il counter a 1
-        this.arrProduct.forEach(element => {
-          if(element.name == title){
-            element.counter = 1
-          }
-        });
+        this.selectedItem.counter= 1
         //ricalcolo il totale
         this.getTot();
         //riporto gli ingredienti deselezionati alla stato di default
@@ -170,30 +212,51 @@
       removeItem( i ){
         if(this.state.arrCart[i].counter >= 0){
           this.state.arrCart[i].counter --
-          this.state.arrVariation[i].counter --
           if(this.state.arrCart[i].counter == 0){
             this.state.arrCart.splice(i, 1)
-            this.state.arrVariation.splice(i, 1)
           }
         }
         this.getTot();
       },
-      upCounter(id){
-        this.arrProduct.forEach(element => {
-          if(element.id == id){
-            element.counter ++
-          }
-        });
 
-      },
-      downCounter(id){
-        this.arrProduct.forEach(element => {
-          if(element.id == id){
-            if(element.counter>=1){
-              element.counter --
-            }
+      fixtag(arr){
+        let arrtag='';
+        arr.forEach((element, i) => {
+          
+          if(i+1==arr.length){
+            
+            arrtag = arrtag + element.name + '.'
+          }else{
+            arrtag = arrtag + element.name + ', '
+            
           }
         });
+        return arrtag
+      },
+      getPrice(cent){
+        let num = parseFloat(cent);
+        num = num / 100;
+        num = "€" + num  
+        
+        return num
+      },
+      opencart(){
+        if(state.sideCartValue){
+          state.sideCartValue=0
+        }else{
+          state.sideCartValue=1
+        }
+      },
+      modCounter(ud){
+        if(ud=='up'){ 
+          this.selectedItem.counter ++
+          }
+          else if(ud=='down'){
+          if(this.selectedItem.counter >1){
+            this.selectedItem.counter --
+          }         
+        }
+
       },
       getTot(){
         this.state.totCart = 0
@@ -206,6 +269,7 @@
     created(){
       this.getProduct(0);
       this.getCategory();
+      this.getIngredients();
 
      
       this.state.actvPage = 5;
@@ -251,36 +315,61 @@
       </div>
       
       <div class="main-prenota">
+        <div class="card-default" @click="openShow(item.name, item.id, item.tags, item.price, item.image)" v-for="item in arrProduct" :key="item.id">
+            <img :src="state.getImageUrl(item.image)" alt="">
 
-      <div class="card-wrap"  v-for="item in arrProduct" :key="item.id">
-        <div class="card">
-        <img :src="state.getImageUrl(item.image)" alt="">
-        <div class="title">{{ item.name }}</div>
-        <div class="c-tp">
-          <div class="tags"> 
-            
-            <!-- <div v-for="tag in item.tags" :key="tag.name" :class="tag.hasOwnProperty('deselected') ? 'tag-off' : 'tag'"> -->
-            <div v-for="tag in item.tags" :key="tag.name" :class="tag.deselected ? 'tag-off' : 'tag'">
-               <span class="minus" @click="leaveTag(item.id, tag.name)" >-</span> 
-               <span class="plus" @click="addTag(item.id, tag.name)">+</span> 
-               {{tag.name }}
+              <div class="title">{{ item.name }}</div>
+              <div class="c-tp">
+                <div class="tags"> <span>{{fixtag(item.tags) }}</span></div>
+                <div class="price">{{ getPrice(item.price) }}</div>
+              </div>
+
+          
+        </div>
+        <div class="card-show" v-if="selectedItem.opened">
+          <div class="img-title">
+            <div class="title">{{ selectedItem.name }}</div>
+            <img :src="state.getImageUrl(selectedItem.image)" alt="">
+
+          </div>
+          <div class="close" v-if="selectedItem.opened" @click="closeShow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5"/>
+            </svg>
+          </div>
+          
+          <div class="content">
+            <div class="tags" v-if="!selectedItem.expanded">            
+              <div v-for="tag in selectedItem.tags" :key="tag.name" :class="tag.deselected ? 'tag-off' : 'tag'">
+                <span class="minus" @click="addremoveTagDefault(tag.name, 'remove')" v-if="!tag.deselected">-</span> 
+                <span class="plus" @click="addremoveTagDefault(tag.name )" v-if="tag.deselected">+</span> 
+                {{tag.name }}
+              </div>
+              
             </div>
-            
-          </div>
+            <div class="add-ingredient">
+              <h3  v-if="!selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded">Aggiungi un ingrediente</h3>
+              <div class="close" v-if="selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded">
+                <div class="line"></div>
+                <div class="line l2"></div>
+              </div>
+              <div class="cont_ex_ing" v-if="selectedItem.expanded">
+                <div class="ex_ing" v-for="(ing, i) in arrIngredient" :key="i">+ {{ ing.name }}</div>
+              </div>
+            </div>
 
-
-          <div class="price">{{ getPrice(item.price) }}</div>
-        </div>
-        <div class="add">
-          <div class="sec">
-            <span class="plus" @click="upCounter(item.id)" >+</span>
-            <span class="counter">{{ item.counter }}</span>
-            <span class="minus"  @click="downCounter(item.id)">-</span>
+            <div class="price">{{ getPrice(selectedItem.price + 0) }}</div>
           </div>
-         <div class="mybtn" @click="addItem(item.name, item.counter, item.price, item.id, item.deselected)">aggiungi</div>
+          
+          <div class="add">
+            <div class="sec">
+              <span class="plus" @click="modCounter('down')" >-</span>
+              <span class="counter">{{selectedItem.counter}}</span>
+              <span class="minus"  @click="modCounter('up')">+</span>
+            </div>
+          <div class="mybtn" @click="addItem()">aggiungi</div>
+          </div>
         </div>
-       </div>
-      </div>
       
   
       </div>
@@ -337,26 +426,124 @@
     
     
     .main-prenota{
-      margin-top: 2rem;
       @include dfc;
+      margin-top: 2rem;
       flex-wrap: wrap;
       gap: 1rem;
-      .card-wrap{
-        position: relative;
+
+      .card-default{
         width: calc((100% - 2rem) / 2);
-        margin-bottom: 60px;
-        .add{
-            position: absolute;
-            //background-color: red;
-            bottom: -40px;
-            left: 0;
+        height: 150px;
+        position: relative;
+        border-radius: 150px 0 0 150px  ;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-end;
+        overflow: hidden;
+
+        
+        img{
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          aspect-ratio: 1;
+          border-radius: 150px;
+        }
+        .title{
+          padding: 1rem;
+          text-align: left;
+          width: calc((100% - 150px));
+          text-transform: uppercase;
+          
+        }
+        .c-tp{
+          background-color: #410606;
+          border-radius: 10px;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: flex-end;
+          
+          .tags, .price{
+            border-radius: 10px;
+            width: calc((100% - 150px - 15px));
+            padding-right: .5rem;
+            padding-bottom: .5rem;
+          }
+          .tags{
+
+            display: flex;
+            padding-top: .5rem;
+            padding-right: .5rem;
+            span{
+              font-size: 10px;
+              font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+              font-weight: bold!important; 
+
+
+            }
+          }
+          .price{
             width: 100%;
+            //border-radius: 10px ;
+            text-align: right;
+  
+          }
+          }
+      }
+      .card-show{
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        width: 70%;
+        height: 70%;
+        background-color: $c-nav;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 2rem;
+        padding: 2rem;
+        .img-title{
+          width:clamp(200px, 40%, 350px);
+          position: absolute;
+          top:0px;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          @include dfc;
+          flex-direction: column;
+          img{
+            width: 100%
+          }
+          
+        }
+        .content{
+          padding: 2rem;
+          @include dfc;
+          flex-direction: column;
+          width: 80%;
+          gap: 1rem;
+          align-content: flex-end;
+          background-color: rgb(232, 136, 73)
+        }
+        .add-ingredient{
+          max-height: 250px;
+          overflow: auto;
+          background-color: rgb(232, 73, 73);
+          padding: 1rem;
+        }
+        
+        .add{
             @include dfc;
             gap: 2rem;
             .sec{
               @include dfc;
               gap: .5rem;
-
+  
               .plus, .minus{
                 height: 2rem;
                 width: 2rem;
@@ -370,112 +557,42 @@
               text-transform: uppercase;
               border: 2px solid white;
               border-radius: 20px;
-
+  
             }
             
+        }
+
+      }
+      .close{
+          background-color: red;
+          position: absolute;
+          top: 100px;
+          right: 30px;
+          height: 40px;
+          width: 40px;
+          @include dfc;
+          svg{
+            scale: 1.2;
           }
 
-        .card{
-          height: $h-c;
-  
-          border-radius: $h-c 0 0 $h-c  ;
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: flex-end;
-          //overflow: hidden;
-          //gap: 1rem;
-          //padding: 1rem;
+          .line{
+            position:absolute;
+            left: 19.5%;
+            bottom: 43%;
+            width: 25px;
+            height: 4px;
+            background-color: white;
+            transform: rotate(45deg);
+            
+            
+          }
+          .l2{
+            transform: rotate(-45deg);
           
-          img{
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            
-            //aspect-ratio: 1;
-           // border-radius: 500px;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
 
-          }
-          .title{
-            padding: 1rem;
-            text-align: left;
-            width: calc((100% - $h-c));
-            text-transform: uppercase;
-            
-          }
-          .c-tp{
-            background-color: #410606;
-            border-radius: 10px;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: flex-end;
-            
-            .tags, .price{
-              border-radius: 10px;
-              width: calc((100% - $h-c - 15px));
-              padding-right: .5rem;
-              padding-bottom: .5rem;
-            }
-            .tags{
-  
-              display: flex;
-              padding-top: .5rem;
-              padding-right: .5rem;
-              gap: 10px;
-              .tag{
-                display: flex;
-                gap: 10px;
-                font-size: 10px;
-                font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-                font-weight: bold!important; 
-                background-color: $c-nav-link;
-                padding: 2px 7px;
-                border-radius: 10px;
-                .plus{
-                  display: none
-                }
-                .minus{
-                  @include dfc;
-                  background-color: red;
-                  height: 15px !important;
-                  aspect-ratio: 1;
-                  width: 15px !important;
-                  border-radius: 15px;
-                }  
-              }
-              .tag-off{
-                background-color: red;
-                display: flex;
-                gap: 10px;
-                font-size: 10px;
-                font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-                font-weight: bold!important; 
-                padding: 2px 7px;
-                border-radius: 10px;
-                .minus{
-                  display: none;
-                }
-                .plus{
-                  display: block;
-                }
-              }
-            }
-            .price{
-              width: 100%;
-              //border-radius: 10px ;
-              text-align: right;
-    
-            }
           }
         }
+
 
       }
 
@@ -484,7 +601,7 @@
   }
 
 
-}
+
 
 /*** */
 
@@ -607,8 +724,11 @@
 }
 
 @media (max-width:$bp2) {
-  .card-wrap{
+  .card-default{
     width: 95% !important;
+  }
+  .card-show{
+    width: 100% !important;
   }
 }
 </style>

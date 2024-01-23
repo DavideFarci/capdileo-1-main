@@ -17,7 +17,7 @@ $c-nav-link:#F96F5D;
 $c-f-t:#A4423B;
 $c-bg: #070608;
 
-$h-c:150px;
+
 ///**MIXIN**///
 @mixin dfc {
     display: flex;
@@ -34,9 +34,9 @@ $h-c:150px;
 }
 
 ///**display-width-responsive**///
-$bp1:920px;
-$bp2:720px;
-$bp3:520px;
+$bp1:980px;
+$bp2:900px;
+$bp3:600px;
 
 ///**font-sizing**///
 $fs-title-max: 7.1rem;
