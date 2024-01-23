@@ -142,7 +142,7 @@
       addRemoveExtraTag(nametag, price, ar){
         if(ar == 'a'){
           this.selectedItem.addicted.push(nametag)
-          tthis.selectedItem.price_variation = this.selectedItem.price_variation + price
+          this.selectedItem.price_variation = this.selectedItem.price_variation + price
           this.arrIngredient.forEach(element => {
             if(element.name == nametag){
               element.active == true
@@ -342,7 +342,7 @@
             <div class="tags" v-if="!selectedItem.expanded">            
               <div v-for="tag in selectedItem.tags" :key="tag.name" :class="tag.deselected ? 'tag-off' : 'tag'">
                 <span class="minus" @click="addremoveTagDefault(tag.name, 'remove')" v-if="!tag.deselected">-</span> 
-                <span class="plus" @click="addremoveTagDefault(tag.name )" v-if="tag.deselected">+</span> 
+                <span class="plus"  @click="addremoveTagDefault(tag.name )" v-if="tag.deselected">+</span> 
                 {{tag.name }}
               </div>
               
@@ -354,7 +354,13 @@
                 <div class="line l2"></div>
               </div>
               <div class="cont_ex_ing" v-if="selectedItem.expanded">
-                <div class="ex_ing" v-for="(ing, i) in arrIngredient" :key="i">+ {{ ing.name }}</div>
+                <div class="ex_ing" v-for="(ing, i) in arrIngredient" :key="i">
+                  <span class="minus" @click="addRemoveExtraTag(ing.name, ing.price)"      v-if="ing.active">-</span> 
+                  <span class="plus"  @click="addRemoveExtraTag(ing.name, ing.price, 'a')" v-if="!ing.active">+</span> 
+                  <span v-if="ing">
+                    {{ing.name }}
+                  </span>
+                </div>
               </div>
             </div>
 
