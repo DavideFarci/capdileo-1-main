@@ -28,7 +28,8 @@
               counter: 1,
               expanded:0,
               opened:false,
-            }
+            },
+            arrCorrectIngredient:[],
             
 
             
@@ -102,6 +103,7 @@
         this.selectedItem.image = image
         this.selectedItem.price = price
         this.selectedItem.opened = true
+        this.openIng()
       },
       closeShow(){
         this.selectedItem.name = ''
@@ -113,12 +115,13 @@
         this.selectedItem.price = 0
         this.selectedItem.expanded = 0
         this.selectedItem.opened = false
+        this.arrCorrectIngredient = []
         this.arrProduct.forEach(element => {
            element.tags.forEach(element => {
             element.deselected = 0
            });      
         });
-        this.arrIngredient.forEach(element => {
+        this.arrCorrectIngredient.forEach(element => {
            element.active = false
                 
         });
@@ -147,7 +150,7 @@
         if(ar == 'remove'){
           this.selectedItem.addicted.push(nametag)
           this.selectedItem.price_variation = this.selectedItem.price_variation + price
-          this.arrIngredient.forEach(element => {
+          this.arrCorrectIngredient.forEach(element => {
             if(element.name == nametag){
               element.active = true
             }
@@ -155,7 +158,7 @@
         }else{
           this.selectedItem.addicted = this.esp(this.selectedItem.addicted, nametag)
           this.selectedItem.price_variation = this.selectedItem.price_variation - price
-          this.arrIngredient.forEach(element => {
+          this.arrCorrectIngredient.forEach(element => {
             if(element.name == nametag){
               element.active = false
             }
@@ -164,7 +167,7 @@
       },
       removeExtraTagShow(nome){
         this.selectedItem.addicted = this.esp(this.selectedItem.addicted, nome)
-        this.arrIngredient.forEach(element => {
+        this.arrCorrectIngredient.forEach(element => {
           if(element.name == nome){
             this.selectedItem.price_variation = this.selectedItem.price_variation - element.price
             element.active = false
@@ -288,7 +291,20 @@
         });
       },
       openIng(){
-
+   
+        let obs= false
+        this.arrIngredient.forEach(element => {
+          this.selectedItem.tags.forEach(e => {
+            if(element.name == e.name){
+              obs = true
+            }
+          });
+          if(obs){         
+            obs = false
+          }else{
+            this.arrCorrectIngredient.push(element)
+          }
+        });
       }
     },
     created(){
@@ -384,13 +400,13 @@
               </span>
             </div>
             <div class="add-ingredient">
-              <h3  v-if="!selectedItem.expanded" @click="openIng">Aggiungi un ingrediente</h3>
+              <h3  v-if="!selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded">Aggiungi un ingrediente</h3>
               <div class="close" v-if="selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded">
                 <div class="line"></div>
                 <div class="line l2"></div>
               </div>
               <div class="cont_ex_ing" v-if="selectedItem.expanded">
-                <div class="ex_ing" v-for="(ing, i) in arrIngredient" :key="i">
+                <div class="ex_ing" v-for="(ing, i) in arrCorrectIngredient" :key="i">
                   <span class="minus" @click="addRemoveExtraTag(ing.name, ing.price)"      v-if="ing.active">-</span> 
                   <span class="plus"  @click="addRemoveExtraTag(ing.name, ing.price, 'remove')" v-if="!ing.active">+</span> 
                   <span >
