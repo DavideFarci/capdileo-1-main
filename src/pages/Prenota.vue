@@ -15,6 +15,7 @@
             name:'',
             phone:'',
             time:'',
+            actvcat: 1,
             arrIngredient:[],
             selectedItem:{
               name:'',
@@ -103,6 +104,7 @@
         this.selectedItem.image = image
         this.selectedItem.price = price
         this.selectedItem.opened = true
+        this.arrCorrectIngredient = []
         this.openIng()
       },
       closeShow(){
@@ -304,6 +306,9 @@
           }else{
             this.arrCorrectIngredient.push(element)
           }
+        });
+        this.arrCorrectIngredient.forEach(element => {
+          element.active= false
         });
       }
     },
