@@ -167,10 +167,10 @@
       flex-wrap: wrap;
       gap: 1rem;
       .card{
-        height: $h-c;
+        height: 150px;
         width: calc((100% - 2rem) / 2);
 
-        border-radius: $h-c 0 0 $h-c  ;
+        border-radius: 150px 0 0 150px  ;
         position: relative;
         display: flex;
         flex-direction: column;
@@ -186,12 +186,12 @@
           left: 0;
           height: 100%;
           aspect-ratio: 1;
-          border-radius: $h-c;
+          border-radius: 150px;
         }
         .title{
           padding: 1rem;
           text-align: left;
-          width: calc((100% - $h-c));
+          width: calc((100% - 150px));
           text-transform: uppercase;
           
         }
@@ -207,7 +207,7 @@
           
           .tags, .price{
             border-radius: 10px;
-            width: calc((100% - $h-c - 15px));
+            width: calc((100% - 150px - 15px));
             padding-right: .5rem;
             padding-bottom: .5rem;
           }

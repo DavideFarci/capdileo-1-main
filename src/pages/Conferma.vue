@@ -61,65 +61,18 @@ export default {
       return num;
     },
 
-    removeItem(title) {
-      this.state.arrCart.forEach((element, i) => {
-        if (element.title == title) {
-          if (element.counter >= 0) {
-            element.counter--;
-            element.totprice -= element.price;
-            this.state.arrQt[i]--;
+    removeItem( i ){
+        if(this.state.arrCart[i].counter >= 0){
+          this.state.arrCart[i].counter --
+          this.state.arrVariation[i].counter --
+          if(this.state.arrCart[i].counter == 0){
+            this.state.arrCart.splice(i, 1)
+            this.state.arrVariation.splice(i, 1)
           }
-          if (element.counter == 0) {
-            let nwi = i - 1;
-            this.state.arrId.splice(i, 1);
-            this.state.arrQt.splice(i, 1);
-            let newarrCart = this.state.arrCart.filter((element) => {
-              return element.title !== title;
-            });
-            this.state.arrCart = [];
-            this.state.arrCart = newarrCart;
-          }
+
         }
-      });
-    },
-
-    // buttare
-    // sendOrder() {
-    //   this.phoneError = "";
-    //   this.nameError = "";
-    //   this.dateError = "";
-    //   this.timeError = "";
-    //   this.isValid = true;
-    //   this.order_validations();
-    //   if (this.isValid) {
-    //     this.loading = true;
-    //     let data = {
-    //       name: this.name,
-    //       phone: this.phone,
-    //       date: this.idate,
-    //       time: this.timeSlot,
-    //       arrId: JSON.stringify(this.state.arrId),
-    //       arrQt: JSON.stringify(this.state.arrQt),
-    //     };
-
-    //     console.log(data);
-
-    //     console.log(JSON.stringify(this.state.arrQt));
-    //     axios.post(state.baseUrl + "api/orders", data).then((response) => {
-    //       this.success = response;
-    //       this.loading = false;
-    //     });
-    //     this.name = "";
-    //     this.phone = "";
-    //     this.idate = "";
-    //     this.timeSlot = "";
-    //     this.state.arrId = [];
-    //     this.state.arrQt = [];
-    //     this.state.arrCart = [];
-    //     this.arrTimesSlot = [];
-    //     this.arrTimesSlotApi = [];
-    //   }
-    // },
+        this.getTot();
+      },
   },
   created() {
     // this.getTimesSlots();
@@ -171,27 +124,7 @@ export default {
             <div>{{ item.title }}</div>
             <div>* {{ item.counter }}</div>
             <div>{{ getPrice(item.totprice) }}</div>
-            <svg
-              :class="state.sideCartValue ? 'sub-item-off' : 'sub-item-on'"
-              @click="removeItem(item.title)"
-              style="color: white"
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="current-color"
-              class="bi bi-trash"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
-                fill="white"
-              ></path>
-              <path
-                fill-rule="evenodd"
-                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-                fill="white"
-              ></path>
-            </svg>
+            <svg :class="state.sideCartValue ?  'sub-item-off' : 'sub-item-on'" @click="removeItem(i)"  style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="current-color" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" fill="white"></path> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" fill="white"></path> </svg>
           </div>
         </div>
       </div>
