@@ -21,11 +21,11 @@
               name:'',
               id:'',
               image:'',
-              price: 0,
               tags: [],
               deselected:[],
               addicted:[],
               price_variation:0,
+              price: 0,
               counter: 1,
               expanded:0,
               opened:false,
@@ -116,6 +116,7 @@
         this.selectedItem.image = ''
         this.selectedItem.price = 0
         this.selectedItem.expanded = 0
+        this.selectedItem.price_variation = 0
         this.selectedItem.opened = false
         this.arrCorrectIngredient = []
         this.arrProduct.forEach(element => {
@@ -194,12 +195,13 @@
           return console.log('ci hai provato amico!')
         }
         let check= false;
-        let newitem= this.newItem(this.selectedItem.id, this.selectedItem.name, this.selectedItem.counter, this.selectedItem.price * this.selectedItem.counter + this.selectedItem.price_variation, this.selectedItem.addicted, this.selectedItem.deselected, );     
+        let newitem= this.newItem(this.selectedItem.id, this.selectedItem.name, this.selectedItem.counter, (parseInt(this.selectedItem.price) + this.selectedItem.price_variation) * this.selectedItem.counter , this.selectedItem.addicted, this.selectedItem.deselected, );     
         console.log(newitem);
         //se non ci sono variazioni controllo che l'item non sia gia presente prima di pusharlo
-        if(this.selectedItem.deselected.length == 0 && this.selectedItem.addicted.length == 0){
-          this.state.arrCart.forEach((element, index) => {
-            if(element.title == title && element.deselected.length == 0){
+        // if(this.selectedItem.deselected.length == 0 && this.selectedItem.addicted.length == 0){
+        // }
+          this.state.arrCart.forEach((element) => {
+            if(element.title == this.selectedItem.name && this.selectedItem.deselected == element.deselected && this.selectedItem.addicted == element.addicted){
               element.counter += this.selectedItem.counter;
               element.totprice = element.counter * element.price;
          
@@ -207,7 +209,6 @@
             }
   
           });
-        }
         //se l'item non era gia presente lo aggiungo ora per la prima volta a tutti gli array
         if(!check){
           this.state.arrCart.push(newitem);
@@ -230,6 +231,8 @@
       removeItem( i ){
         if(this.state.arrCart[i].counter >= 0){
           this.state.arrCart[i].counter --
+          this.state.arrCart[i].totprice = (this.state.arrCart[i].totprice / (this.state.arrCart[i].counter + 1)) * this.state.arrCart[i].counter
+
           if(this.state.arrCart[i].counter == 0){
             this.state.arrCart.splice(i, 1)
           }
