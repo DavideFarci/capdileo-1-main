@@ -200,14 +200,26 @@
         //se non ci sono variazioni controllo che l'item non sia gia presente prima di pusharlo
         // if(this.selectedItem.deselected.length == 0 && this.selectedItem.addicted.length == 0){
         // }
+        let second_check = false
           this.state.arrCart.forEach((element) => {
-            if(element.title == this.selectedItem.name && this.selectedItem.deselected == element.deselected && this.selectedItem.addicted == element.addicted){
+            element.deselected.forEach(e => {
+              if(!this.selectedItem.deselected.includes(e)){
+                second_check = true
+              }
+            });
+            element.addicted.forEach(e => {
+              if(!this.selectedItem.addicted.includes(e)){
+                second_check = true
+              }
+            });            
+          });
+          this.state.arrCart.forEach((element) => {
+            if(element.title == this.selectedItem.name && !second_check){
               element.counter += this.selectedItem.counter;
-              element.totprice = element.counter * element.price;
-         
+              element.totprice = element.counter * element.totprice;
+        
               check=true;
             }
-  
           });
         //se l'item non era gia presente lo aggiungo ora per la prima volta a tutti gli array
         if(!check){
@@ -225,6 +237,7 @@
             element.deselected = 0
            });      
         });
+        this.closeShow()
         
        
       },
@@ -341,28 +354,40 @@
       <div class="cart">
         <div class="top-cart" @click="opencart">
           <svg   xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cart-fill" viewBox="0 0 16 16"> <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/> </svg>
-          <div class="state.totcart">
-            {{ getPrice(state.totCart)}}
-          </div>
+          
 
         </div>
         <div :class="state.sideCartValue ? 'content-cart' : 'ccoff'" >
-          <div class="span" v-if="!state.arrCart.length && !state.sideCartValue">Il carrello è vuoto</div>
-          <div v-for="(item, i) in state.arrCart" :class="state.sideCartValue ?  'item-off' : 'item-on'" :key="item.id">
-            <div>
-              <h4>{{ item.title }}</h4>
-              <div class="removed">
-                <div class="i-removed" v-for="i in item.deselected" :key="i">- {{ i }}</div>
+          <div class="" v-if="!state.arrCart.length && !state.sideCartValue">Il carrello è vuoto</div>
+          <div class="top-content-cart">
+            <div v-for="(item, i) in state.arrCart" :class="state.sideCartValue ?  'item-off' : 'item-on'" :key="item.id">
+              <div class="top-item">
+                <h4>{{ item.title }}</h4>
+                <div>* {{ item.counter }}</div>
+                <div>{{ getPrice(item.totprice) }}</div>
+                <svg :class="state.sideCartValue ?  'sub-item-off' : 'sub-item-on'" @click="removeItem( i)"  style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="current-color" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" fill="white"></path> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" fill="white"></path> 
+                </svg>
               </div>
-              <div class="removed">
-                <div class="i-removed" v-for="i in item.addicted" :key="i">+{{ i }}</div>
+              <div class="bottom-item" v-if="item.deselected.length!== 0 || item.addicted.length!== 0">
+                <h3>modifiche</h3>
+                <div class="removed">
+                  <div class="" v-for="i in item.deselected" :key="i">- {{ i }}</div>
+                </div>
+                <div class="addicted">
+                  <div class="" v-for="i in item.addicted" :key="i">+{{ i }}</div>
+                </div>
               </div>
             </div>
-            <div>* {{ item.counter }}</div>
-            <div>{{ getPrice(item.totprice) }}</div>
-            <svg :class="state.sideCartValue ?  'sub-item-off' : 'sub-item-on'" @click="removeItem( i)"  style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="current-color" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" fill="white"></path> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" fill="white"></path> </svg>
           </div>
-          <router-link :to="{ name: 'conferma' }" v-if="state.arrCart.length && !state.sideCartValue" class="next">Completa la tua ordinazione</router-link>
+          <div class="bottom-content-cart">
+            <div class="totcart">
+              <span>TOTALE:</span>
+              <span>
+                {{ getPrice(state.totCart)}}
+              </span>
+            </div>
+            <router-link :to="{ name: 'conferma' }" v-if="state.arrCart.length && !state.sideCartValue" class="next">Completa la tua ordinazione</router-link>
+          </div>
         </div>
       </div>
       
@@ -391,6 +416,7 @@
           </div>
           
           <div class="content">
+            <h3>Modifica ingredienti:</h3>
             <div class="tags" v-if="!selectedItem.expanded">            
               <div v-for="tag in selectedItem.tags" :key="tag.name" :class="tag.deselected ? 'tag-off' : 'tag'">
                 <span class="minus" @click="addremoveTagDefault(tag.name, 'remove')" v-if="!tag.deselected">-</span> 
@@ -415,16 +441,15 @@
               </div>
               <div class="cont_ex_ing" v-if="selectedItem.expanded">
                 <div class="ex_ing" v-for="(ing, i) in arrCorrectIngredient" :key="i">
-                  <span class="minus" @click="addRemoveExtraTag(ing.name, ing.price)"      v-if="ing.active">-</span> 
-                  <span class="plus"  @click="addRemoveExtraTag(ing.name, ing.price, 'remove')" v-if="!ing.active">+</span> 
-                  <span >
-                    {{ing.name }}
-                  </span>
+                  <span class="minus" @click="addRemoveExtraTag(ing.name, ing.price)"      v-if="ing.active">- {{ing.name }}</span> 
+                  <span class="plus"  @click="addRemoveExtraTag(ing.name, ing.price, 'remove')" v-if="!ing.active">+ {{ing.name }}</span> 
+                  
+                  <span>{{getPrice(ing.price)}}</span>
                 </div>
               </div>
             </div>
 
-            <div class="price">{{ getPrice(selectedItem.price , selectedItem.price_variation) }}</div>
+            <div class="price">{{ getPrice(parseInt(selectedItem.price) * selectedItem.counter, parseInt(selectedItem.price_variation) * selectedItem.counter) }}</div>
           </div>
           
           <div class="add">
@@ -588,21 +613,50 @@
           
         }
         .content{
-          padding: 2rem;
-          width: 80%;
+          padding: 2rem 1rem;
+          width: 90%;
           @include dfc;
           flex-direction: column;
           gap: 3rem;
           align-content: flex-end;
           background-color: rgb(232, 136, 73);
-
+          .tags{
+            overflow: auto;
+            background-color: rgb(172, 90, 36);
+            padding: 1rem;
+            min-height: 150px;
+          }
           .extra-tags{
             @include dfj;
             flex-direction: column;
+            width: 100%;
             gap: .4rem;
+            .ex_ing{
+              width: 100%;
+              display: flex;
+              
+              justify-content: space-between;
+
+            }
+          }
+          .cont_ex_ing{
+            @include dfj;
+            flex-direction: column;
+            gap: .4rem;
+            .ex_ing{
+              width: 100%;
+              display: flex;
+
+              justify-content: space-between;
+              .minus, .plus{
+                width: 100%;
+              }
+            }
+            
           }
         }
         .add-ingredient{
+          width: 99%;
           max-height: 250px;
           overflow: auto;
           background-color: rgb(232, 73, 73);
@@ -763,14 +817,26 @@
   transition: all .2s linear ;
 }
 .ccoff{
-  padding: 2rem;
+  padding: 1rem;
   height: 100%;
   display: block;
+  transition: all .2s linear ;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  transition: all .2s linear ;
-  
+  gap: 2rem;
+  .top-content-cart{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    
+  }
+  .bottom-content-cart{
+    
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
   
 }
 .item-off{
@@ -782,12 +848,49 @@
 }
 .item-on{
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  border: 2px solid white;
   height: auto;
   opacity: 1;
   transition: all .2s linear .2s;
-  div{
-    width: 45%;
+  gap: 1rem;
+  .top-item{
+    @include dfc;
+    justify-content: space-between;
+  }
+  .bottom-item{
+    display: flex;
+    //flex-direction: column;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border: 2px solid rgb(11, 21, 116);
+    h3{
+      width: 100%;
+      text-align: center;
+    }
+    .removed, .addicted{
+      padding: 5px;
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    @media (max-width:$bp2) {
+      .removed, .addicted{
+        width: 100% !important
+        
+      }
+      
+    }
+    .removed{
+      border: 2px solid rgb(11, 116, 71);
+      
+    }
+    .addicted{
+      border: 2px solid rgb(113, 11, 116);
+
+    }
   }
   svg{
     width: 10%;
