@@ -194,35 +194,68 @@
         if(this.selectedItem.counter<=0){
           return console.log('ci hai provato amico!')
         }
-        let check= false;
-        let newitem= this.newItem(this.selectedItem.id, this.selectedItem.name, this.selectedItem.counter, (parseInt(this.selectedItem.price) + this.selectedItem.price_variation) * this.selectedItem.counter , this.selectedItem.addicted, this.selectedItem.deselected, );     
-        console.log(newitem);
-        //se non ci sono variazioni controllo che l'item non sia gia presente prima di pusharlo
-        // if(this.selectedItem.deselected.length == 0 && this.selectedItem.addicted.length == 0){
-        // }
+        let check= false;       
         let second_check = false
-          this.state.arrCart.forEach((element) => {
-            element.deselected.forEach(e => {
-              if(!this.selectedItem.deselected.includes(e)){
-                second_check = true
-              }
-            });
-            element.addicted.forEach(e => {
-              if(!this.selectedItem.addicted.includes(e)){
-                second_check = true
-              }
-            });            
-          });
-          this.state.arrCart.forEach((element) => {
-            if(element.title == this.selectedItem.name && !second_check){
+        let double_check = false
+        let r_id = ''
+
+        if(this.selectedItem.deselected.length == 0 && this.selectedItem.addicted.length == 0){
+
+          this.state.arrCart.forEach((element, i) => {
+            if(element.p_id == this.selectedItem.id && element.deselected.length == 0 && element.addicted.length == 0){
+              console.log(element.totprice)
+              console.log(element.counter)
+              element.totprice = (element.counter + this.selectedItem.counter) * (element.totprice / element.counter);
               element.counter += this.selectedItem.counter;
-              element.totprice = element.counter * element.totprice;
-        
               check=true;
             }
           });
+        }else{
+          console.log('dicoane')
+
+          this.state.arrCart.forEach((element, i) => {
+            if(element.p_id == this.selectedItem.id){
+              console.log('dicoane2')
+               
+              if(this.selectedItem.addicted.length == element.addicted.length && this.selectedItem.deselected.length == element.deselected.length){
+               
+                element.deselected.forEach(e => {
+                  console.log(this.selectedItem.deselected.includes(e))
+                  if(!this.selectedItem.deselected.includes(e)){
+                    second_check = true
+                    console.log('sd:' + second_check)
+                  }
+                });
+                element.addicted.forEach(e => {
+                  console.log(this.selectedItem.addicted.includes(e))
+                  if(!this.selectedItem.addicted.includes(e)){
+                    second_check = true
+                    console.log('sa:' +second_check)
+                  }
+                }); 
+                if(!second_check){
+                  r_id = i 
+                  double_check = true       
+                  console.log(r_id )
+                }  
+              }
+            }
+          });
+          this.state.arrCart.forEach((element, i) => {
+            if(double_check && i == r_id){
+              console.log(element.counter)
+              console.log(element.totprice)
+              element.totprice = (element.counter + this.selectedItem.counter) * (element.totprice / element.counter);
+              element.counter += this.selectedItem.counter;
+              check=true;
+            }
+          });
+        }
+
         //se l'item non era gia presente lo aggiungo ora per la prima volta a tutti gli array
         if(!check){
+          let newitem= this.newItem(this.selectedItem.id, this.selectedItem.name, this.selectedItem.counter, (parseInt(this.selectedItem.price) + this.selectedItem.price_variation) * this.selectedItem.counter , this.selectedItem.addicted, this.selectedItem.deselected, );     
+          console.log(newitem);
           this.state.arrCart.push(newitem);
   
         }
@@ -238,7 +271,7 @@
            });      
         });
         this.closeShow()
-        
+
        
       },
       removeItem( i ){
@@ -269,8 +302,6 @@
       },
       getPrice(cent, sum){
          if(sum){
-          // console.log(cent)
-          // console.log(sum)
           let num1 = parseFloat(cent);
          
           let num = (num1 + sum) / 100;
@@ -304,7 +335,6 @@
       getTot(){
         this.state.totCart = 0
         this.state.arrCart.forEach(element => {
-          console.log(element.totprice)
           this.state.totCart = this.state.totCart + element.totprice
         });
       },
@@ -326,7 +356,8 @@
         this.arrCorrectIngredient.forEach(element => {
           element.active= false
         });
-      }
+      },
+      
     },
     created(){
       this.getProduct(0);
@@ -363,7 +394,10 @@
             <div v-for="(item, i) in state.arrCart" :class="state.sideCartValue ?  'item-off' : 'item-on'" :key="item.id">
               <div class="top-item">
                 <h4>{{ item.title }}</h4>
-                <div>* {{ item.counter }}</div>
+                <div>
+
+                  * <input type="number" name="" v-model="item.counter" id="">   
+                </div>
                 <div>{{ getPrice(item.totprice) }}</div>
                 <svg :class="state.sideCartValue ?  'sub-item-off' : 'sub-item-on'" @click="removeItem( i)"  style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="current-color" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" fill="white"></path> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" fill="white"></path> 
                 </svg>
@@ -386,8 +420,8 @@
                 {{ getPrice(state.totCart)}}
               </span>
             </div>
-            <router-link :to="{ name: 'conferma' }" v-if="state.arrCart.length && !state.sideCartValue" class="next">Completa la tua ordinazione</router-link>
           </div>
+          <router-link :to="{ name: 'conferma' }" v-if="state.arrCart.length && !state.sideCartValue" class="next">Completa la tua ordinazione</router-link>
         </div>
       </div>
       
@@ -824,18 +858,25 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  text-transform: uppercase;
   .top-content-cart{
     display: flex;
     flex-direction: column;
     gap: 2px;
     width: 100%;
-    
+    input{
+      width: 30px;
+      border: none;
+      background-color: rgba(255, 255, 255, 0);
+      text-align: center;
+    }
   }
   .bottom-content-cart{
-    
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    .totcart{
+      
+      display: flex;
+      justify-content: space-between;
+    }
   }
   
 }
@@ -849,29 +890,31 @@
 .item-on{
   display: flex;
   flex-direction: column;
-  border: 2px solid white;
+  border: 1px solid white;
   height: auto;
   opacity: 1;
   transition: all .2s linear .2s;
   gap: 1rem;
+  padding: 15px;
   .top-item{
-    @include dfc;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr .5fr;
   }
   .bottom-item{
     display: flex;
     //flex-direction: column;
-    gap: 1rem;
+    
     flex-wrap: wrap;
     justify-content: space-between;
-    border: 2px solid rgb(11, 21, 116);
+    // border: 2px solid rgb(11, 21, 116);
     h3{
       width: 100%;
       text-align: center;
     }
     .removed, .addicted{
+      text-transform: lowercase;
       padding: 5px;
-      width: 50%;
+      width: 48%;
       display: flex;
       flex-direction: column;
       gap: 3px;
@@ -884,26 +927,30 @@
       
     }
     .removed{
-      border: 2px solid rgb(11, 116, 71);
+     // border: 2px solid rgb(11, 116, 71);
       
     }
     .addicted{
-      border: 2px solid rgb(113, 11, 116);
+     // border: 2px solid rgb(113, 11, 116);
 
     }
   }
+  
   svg{
-    width: 10%;
+    width: 90%;
   }
   
 }
 
+@media (max-width:$bp1) {
+
+  .card-show{
+    width: 100% !important;
+  }
+}
 @media (max-width:$bp2) {
   .card-default{
     width: 95% !important;
-  }
-  .card-show{
-    width: 100% !important;
   }
 }
 </style>

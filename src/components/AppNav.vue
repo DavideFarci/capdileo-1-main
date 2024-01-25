@@ -27,11 +27,11 @@
     </div>
     <div class="bottom-footer">
       <div class="sec-1">
-        <h4>Dove puoi trovarci</h4>
+        <h4>DOVE PUOI TROVARCI</h4>
         <p>Borghetto | via borghetto 69</p>
       </div>
       <div class="sec-2">
-        <h4>Orari d'apertura</h4>
+        <h3>ORARI D'APERTURA</h3>
         <div class="cont-giorni">
           <span>lunedì</span>
           <span>martedì</span>
@@ -279,10 +279,8 @@ info-off{
       gap:1rem;
       width: 100%;
       justify-content: space-around;
-      h4{
-        
+      h3{      
         width: 100%;
-        
       }
       .cont-giorni, .cont-orari{
         font-size: 11px;
