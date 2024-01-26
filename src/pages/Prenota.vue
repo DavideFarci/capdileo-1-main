@@ -450,17 +450,17 @@
           </div>
           
           <div class="content">
-            <h3>Modifica ingredienti:</h3>
             <div class="tags" v-if="!selectedItem.expanded">            
-              <div v-for="tag in selectedItem.tags" :key="tag.name" :class="tag.deselected ? 'tag-off' : 'tag'">
+              <h3>Modifica ingredienti:</h3>
+              <div v-for="tag in selectedItem.tags" :key="tag.name" class="tag-pills" :class="tag.deselected ? 'tag-off' : ''">
                 <span class="minus" @click="addremoveTagDefault(tag.name, 'remove')" v-if="!tag.deselected">-</span> 
                 <span class="plus"  @click="addremoveTagDefault(tag.name )" v-if="tag.deselected">+</span> 
                 {{tag.name }}
               </div>
             </div>
-            <div class="extra-tags">
-              <h3>ingredienti extra:</h3>
-              <span v-for="i in selectedItem.addicted" :key="i">
+            <div class="extra-tags" v-if="!selectedItem.expanded && selectedItem.addicted.length">
+              <h3>Ingredienti extra:</h3>
+              <span class="tag-pills" v-for="i in selectedItem.addicted" :key="i">
                 <span class="minus" @click="removeExtraTagShow(i )">-</span>  
                   <span>
                     {{i }}
@@ -468,13 +468,12 @@
               </span>
             </div>
             <div class="add-ingredient">
+              <img :class="selectedItem.expanded ? 'open' : ''" v-if="selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded" src="../assets/img/plus.png" alt="">
+              
               <h3  v-if="!selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded">Aggiungi un ingrediente</h3>
-              <div class="close" v-if="selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded">
-                <div class="line"></div>
-                <div class="line l2"></div>
-              </div>
+              <img  v-if="!selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded" src="../assets/img/plus.png" alt="">
               <div class="cont_ex_ing" v-if="selectedItem.expanded">
-                <div class="ex_ing" v-for="(ing, i) in arrCorrectIngredient" :key="i">
+                <div class="ex_ing tag-pills" :class="ing.active ? 'tag-off' : ''" v-for="(ing, i) in arrCorrectIngredient" :key="i">
                   <span class="minus" @click="addRemoveExtraTag(ing.name, ing.price)"      v-if="ing.active">- {{ing.name }}</span> 
                   <span class="plus"  @click="addRemoveExtraTag(ing.name, ing.price, 'remove')" v-if="!ing.active">+ {{ing.name }}</span> 
                   
@@ -483,17 +482,17 @@
               </div>
             </div>
 
-            <div class="price">{{ getPrice(parseInt(selectedItem.price) * selectedItem.counter, parseInt(selectedItem.price_variation) * selectedItem.counter) }}</div>
+            <div class="add">
+              <div class="sec">
+                <span class="plus" @click="modCounter('down')" >-</span>
+                <span class="counter">{{selectedItem.counter}}</span>
+                <span class="minus"  @click="modCounter('up')">+</span>
+              </div>
+              <div class="mybtn" @click="addItem()">aggiungi</div>
+              <div class="price">{{ getPrice(parseInt(selectedItem.price) * selectedItem.counter, parseInt(selectedItem.price_variation) * selectedItem.counter) }}</div>
+            </div>
           </div>
           
-          <div class="add">
-            <div class="sec">
-              <span class="plus" @click="modCounter('down')" >-</span>
-              <span class="counter">{{selectedItem.counter}}</span>
-              <span class="minus"  @click="modCounter('up')">+</span>
-            </div>
-          <div class="mybtn" @click="addItem()">aggiungi</div>
-          </div>
         </div>
       
   
@@ -626,100 +625,126 @@
         bottom: 0;
         width: 70%;
         height: 70%;
-        background-color: $c-nav;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
         align-items: center;
         gap: 2rem;
-        padding: 2rem;
+
+        
         .img-title{
-          width:clamp(200px, 40%, 350px);
-          position: absolute;
-          top:0px;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          @include dfc;
-          flex-direction: column;
+          @include dfa;
+          justify-content: space-between;
+          
           img{
-            width: 100%
+            width: 40%
           }
           
         }
         .content{
+          background-color: $c-nav;
+          width: 100% !important;
           padding: 2rem 1rem;
           width: 90%;
-          @include dfc;
+          @include dfj;
+          gap: 2rem;
           flex-direction: column;
-          gap: 3rem;
+
           align-content: flex-end;
-          background-color: rgb(232, 136, 73);
+          
           .tags{
             overflow: auto;
             background-color: rgb(172, 90, 36);
             padding: 1rem;
             min-height: 150px;
+            display: flex;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 3px;
+            h3{
+              width: 100%
+            }
           }
           .extra-tags{
             @include dfj;
             flex-direction: column;
             width: 100%;
             gap: .4rem;
+          }
+          .add-ingredient{
+            position: relative;
+            width: 100%;
+            background-color: $c-panna;
+            padding: 1rem;
+            max-height: 300px;
+            overflow: auto;
+           
+            .cont_ex_ing{
+              @include dfj;
+              flex-direction: column;
+              gap: .4rem;
+              width: 100%;
+              
+              .ex_ing{
+                width: 100%;
+                display: flex;
+  
+                justify-content: space-between;
+                .minus, .plus{
+                  width: 100%;
+                }
+              }
+              
+            }
             .ex_ing{
               width: 100%;
               display: flex;
               
               justify-content: space-between;
-
-            }
-          }
-          .cont_ex_ing{
-            @include dfj;
-            flex-direction: column;
-            gap: .4rem;
-            .ex_ing{
-              width: 100%;
-              display: flex;
-
-              justify-content: space-between;
-              .minus, .plus{
-                width: 100%;
-              }
-            }
-            
-          }
-        }
-        .add-ingredient{
-          width: 99%;
-          max-height: 250px;
-          overflow: auto;
-          background-color: rgb(232, 73, 73);
-          padding: 1rem;
-        }
-        
-        .add{
-            @include dfc;
-            gap: 2rem;
-            .sec{
-              @include dfc;
-              gap: .5rem;
   
-              .plus, .minus{
-                height: 2rem;
-                width: 2rem;
+            }
+            h3{
+              text-transform: uppercase;
+              color: $c-nav !important;
+            }
+            img{
+              height: 30px
+            }
+            .open{
+              position:sticky;
+              top: 10px;
+              right: 10px
+            }
+          }
+          .add-off{
+            @include dfa;
+            justify-content: space-between;
+          }
+          
+          .add{
+              @include dfc;
+              gap: 2rem;
+              .sec{
                 @include dfc;
+                gap: .5rem;
+    
+                .plus, .minus{
+                  height: 2rem;
+                  width: 2rem;
+                  @include dfc;
+                  border: 2px solid white;
+                  border-radius: 20px;
+                }
+              }
+              .mybtn{
+                padding: 5px 25px;
+                text-transform: uppercase;
                 border: 2px solid white;
                 border-radius: 20px;
+    
               }
-            }
-            .mybtn{
-              padding: 5px 25px;
-              text-transform: uppercase;
-              border: 2px solid white;
-              border-radius: 20px;
-  
-            }
-            
+              
+          }
         }
 
       }
@@ -759,7 +784,15 @@
     }
     
   }
-
+.tag-off{
+  opacity: .4;
+}
+.tag-pills{
+  padding: 5px 10px;
+  border-radius: 20px;
+  background-color: black;
+  color: white !important;
+}
 
 
 
