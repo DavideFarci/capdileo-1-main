@@ -437,9 +437,10 @@
 
           
         </div>
+        <div v-if="selectedItem.opened" class="overlay"></div>
         <div class="card-show" v-if="selectedItem.opened">
           <div class="img-title">
-            <div class="title">{{ selectedItem.name }}</div>
+            <h3 class="title">{{ selectedItem.name }}</h3>
             <img :src="state.getImageUrl(selectedItem.image)" alt="">
 
           </div>
@@ -452,27 +453,21 @@
           <div class="content">
             <div class="tags" v-if="!selectedItem.expanded">            
               <h3>Modifica ingredienti:</h3>
-              <div v-for="tag in selectedItem.tags" :key="tag.name" class="tag-pills" :class="tag.deselected ? 'tag-off' : ''">
-                <span class="minus" @click="addremoveTagDefault(tag.name, 'remove')" v-if="!tag.deselected">-</span> 
-                <span class="plus"  @click="addremoveTagDefault(tag.name )" v-if="tag.deselected">+</span> 
-                {{tag.name }}
+              <div v-for="tag in selectedItem.tags" :key="tag.name" >
+                <span class="tag-pills" :class="tag.deselected ? 'tag-off' : ''" @click="addremoveTagDefault(tag.name, 'remove')" v-if="!tag.deselected">- {{tag.name }}</span> 
+                <span class="tag-pills" :class="tag.deselected ? 'tag-off' : ''" @click="addremoveTagDefault(tag.name )" v-if="tag.deselected">+ {{tag.name }}</span>     
               </div>
             </div>
             <div class="extra-tags" v-if="!selectedItem.expanded && selectedItem.addicted.length">
               <h3>Ingredienti extra:</h3>
-              <span class="tag-pills" v-for="i in selectedItem.addicted" :key="i">
-                <span class="minus" @click="removeExtraTagShow(i )">-</span>  
-                  <span>
-                    {{i }}
-                  </span>
-              </span>
+              <span class="tag-pills" v-for="i in selectedItem.addicted" :key="i" @click="removeExtraTagShow(i )">-  {{i }}</span>
             </div>
-            <div class="add-ingredient">
+            <div class="add-ingredient" :class="selectedItem.expanded ? '' : 'add-off'" >
               <img :class="selectedItem.expanded ? 'open' : ''" v-if="selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded" src="../assets/img/plus.png" alt="">
               
-              <h3  v-if="!selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded">Aggiungi un ingrediente</h3>
+              <h3  @click="selectedItem.expanded = !selectedItem.expanded">Aggiungi un ingrediente</h3>
               <img  v-if="!selectedItem.expanded" @click="selectedItem.expanded = !selectedItem.expanded" src="../assets/img/plus.png" alt="">
-              <div class="cont_ex_ing" v-if="selectedItem.expanded">
+              <div class="" :class="selectedItem.expanded ? 'cont_ex_ing' : 'cont_ex_off'">
                 <div class="ex_ing tag-pills" :class="ing.active ? 'tag-off' : ''" v-for="(ing, i) in arrCorrectIngredient" :key="i">
                   <span class="minus" @click="addRemoveExtraTag(ing.name, ing.price)"      v-if="ing.active">- {{ing.name }}</span> 
                   <span class="plus"  @click="addRemoveExtraTag(ing.name, ing.price, 'remove')" v-if="!ing.active">+ {{ing.name }}</span> 
@@ -574,6 +569,7 @@
           height: 100%;
           aspect-ratio: 1;
           border-radius: 150px;
+          object-fit: cover;
         }
         .title{
           padding: 1rem;
@@ -619,8 +615,21 @@
           }
           }
       }
+      .overlay{
+        position: fixed;
+        z-index: 20;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.629);
+
+      }
       .card-show{
         position: fixed;
+        z-index: 30;
         right: 0;
         bottom: 0;
         width: 70%;
@@ -630,21 +639,37 @@
         justify-content: flex-end;
         align-items: center;
         gap: 2rem;
-
+        
+        h3{
+          font-size: 25px;
+          text-transform: uppercase
+        }
         
         .img-title{
           @include dfa;
+          align-items: flex-end;
           justify-content: space-between;
-          
+          h3{
+            padding: 0 1rem;
+            font-size: 40px;
+            text-transform: uppercase;
+            text-shadow: 0 10px 20px black;
+          }
           img{
-            width: 40%
+            width: 30%;
+            margin-bottom: -80px;
+            z-index: 40;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 100%;
           }
           
         }
         .content{
           background-color: $c-nav;
           width: 100% !important;
-          padding: 2rem 1rem;
+          padding: 2rem 0rem;
+          padding-top: 100px;
           width: 90%;
           @include dfj;
           gap: 2rem;
@@ -654,7 +679,7 @@
           
           .tags{
             overflow: auto;
-            background-color: rgb(172, 90, 36);
+            
             padding: 1rem;
             min-height: 150px;
             display: flex;
@@ -663,6 +688,10 @@
             gap: 3px;
             h3{
               width: 100%
+            }
+            .tag-pills{
+              background-color: $c-panna;
+              color: $c-nav !important
             }
           }
           .extra-tags{
@@ -678,17 +707,20 @@
             padding: 1rem;
             max-height: 300px;
             overflow: auto;
-           
+
+            
             .cont_ex_ing{
+
               @include dfj;
               flex-direction: column;
               gap: .4rem;
               width: 100%;
+
               
               .ex_ing{
                 width: 100%;
                 display: flex;
-  
+                
                 justify-content: space-between;
                 .minus, .plus{
                   width: 100%;
@@ -696,29 +728,38 @@
               }
               
             }
-            .ex_ing{
-              width: 100%;
-              display: flex;
-              
-              justify-content: space-between;
-  
+            .cont_ex_off{
+              height: 0;
+              display: none;
+
             }
             h3{
               text-transform: uppercase;
               color: $c-nav !important;
             }
             img{
-              height: 30px
+              height: 30px;
+              border-radius: 15px;
+              box-shadow: 0 0 10px black;
+
             }
+            
+            
+            
             .open{
+              transform: rotate(405deg);
+              transition: all 1s ease-in-out;
               position:sticky;
-              top: 10px;
+              top: 0px;
+              left: 100%;
               right: 10px
             }
           }
           .add-off{
             @include dfa;
             justify-content: space-between;
+            transition: display .1s ease-in-out, height .5s ease-in-out .2;
+
           }
           
           .add{
@@ -737,6 +778,8 @@
                 }
               }
               .mybtn{
+                align-self: flex-start;
+                align-self: flex-start;
                 padding: 5px 25px;
                 text-transform: uppercase;
                 border: 2px solid white;
@@ -749,15 +792,17 @@
 
       }
       .close{
-          background-color: red;
+          background-color: $c-nav;
           position: absolute;
           top: 100px;
-          right: 30px;
+          left: 10px;
           height: 40px;
           width: 40px;
           @include dfc;
+          border-radius: 10px;
           svg{
             scale: 1.2;
+            
           }
 
           .line{
@@ -785,12 +830,12 @@
     
   }
 .tag-off{
-  opacity: .4;
+  opacity: .2;
 }
 .tag-pills{
   padding: 5px 10px;
   border-radius: 20px;
-  background-color: black;
+  background-color: $c-nav;
   color: white !important;
 }
 
