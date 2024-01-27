@@ -203,48 +203,43 @@
 
           this.state.arrCart.forEach((element, i) => {
             if(element.p_id == this.selectedItem.id && element.deselected.length == 0 && element.addicted.length == 0){
-              console.log(element.totprice)
-              console.log(element.counter)
+
               element.totprice = (element.counter + this.selectedItem.counter) * (element.totprice / element.counter);
               element.counter += this.selectedItem.counter;
               check=true;
             }
           });
         }else{
-          console.log('dicoane')
+
 
           this.state.arrCart.forEach((element, i) => {
             if(element.p_id == this.selectedItem.id){
-              console.log('dicoane2')
+
                
               if(this.selectedItem.addicted.length == element.addicted.length && this.selectedItem.deselected.length == element.deselected.length){
                
                 element.deselected.forEach(e => {
-                  console.log(this.selectedItem.deselected.includes(e))
+
                   if(!this.selectedItem.deselected.includes(e)){
                     second_check = true
-                    console.log('sd:' + second_check)
                   }
                 });
                 element.addicted.forEach(e => {
-                  console.log(this.selectedItem.addicted.includes(e))
+    
                   if(!this.selectedItem.addicted.includes(e)){
                     second_check = true
-                    console.log('sa:' +second_check)
                   }
                 }); 
                 if(!second_check){
                   r_id = i 
                   double_check = true       
-                  console.log(r_id )
                 }  
               }
             }
           });
           this.state.arrCart.forEach((element, i) => {
             if(double_check && i == r_id){
-              console.log(element.counter)
-              console.log(element.totprice)
+
               element.totprice = (element.counter + this.selectedItem.counter) * (element.totprice / element.counter);
               element.counter += this.selectedItem.counter;
               check=true;
@@ -255,7 +250,7 @@
         //se l'item non era gia presente lo aggiungo ora per la prima volta a tutti gli array
         if(!check){
           let newitem= this.newItem(this.selectedItem.id, this.selectedItem.name, this.selectedItem.counter, (parseInt(this.selectedItem.price) + this.selectedItem.price_variation) * this.selectedItem.counter , this.selectedItem.addicted, this.selectedItem.deselected, );     
-          console.log(newitem);
+        
           this.state.arrCart.push(newitem);
   
         }
