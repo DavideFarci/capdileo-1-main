@@ -28,8 +28,7 @@ export default {
       dayTimes: [], // Fasce orarie per il giorno selezionato
       dateId: null, // ID della data scelta
       seats: "Seleziona un oraio per vedere le disponibilità", // viene usato sia per i posti che per i pezzi quindi bisogna cambiare nome
-      isValid: false,
-      errorValidation: "",
+      isValid: [],
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
     };
@@ -80,7 +79,7 @@ export default {
       } ${this.formValues.orario}`;
 
       this.isValid = this.reservation
-        ? validateReservation(this.formValues, this.errorValidation)
+        ? validateReservation(this.formValues, this.isValid)
         : order_validations(this.formValues, this.errorValidation);
 
       if (this.isValid) {
@@ -303,10 +302,10 @@ export default {
                   active: !day.day_visible || dayIndex === formValues.giorno,
                 }"
                 :style="{
-                  gridColumnStart: day.day_w
-                    // day.day_w === firstDayOfMonth
-                    //   ? getColumnStart(month)
-                    //   : 'auto',
+                  gridColumnStart: day.day_w,
+                  // day.day_w === firstDayOfMonth
+                  //   ? getColumnStart(month)
+                  //   : 'auto',
                 }"
               >
                 <div>{{ dayIndex }}</div>
@@ -370,6 +369,7 @@ export default {
         >
         </textarea>
       </template>
+      <div>I campi contrassegnati con * sono obbligatori</div>
     </form>
 
     <section class="riepilogo">
@@ -400,7 +400,7 @@ export default {
       </ul>
     </section>
 
-    <div v-if="errorValidation" class="error">{{ errorValidation }}</div>
+    <div v-for="(valid, i) in isValid" :key="i" class="error">{{ valid }}</div>
 
     <button class="toReserv btn" @click="getReservationRequest">Prenota</button>
   </div>
@@ -459,7 +459,9 @@ h1 {
         grid-template-columns: repeat(7, 1fr);
 
         .day_w {
-          padding: 1rem .2rem;
+          font-size: clamp(10px, 2vw, 20px);
+          font-weight: lighter;
+          padding: 1rem 0.2rem;
           border: solid 1px white;
           text-align: center;
           background-color: rgb(48, 6, 6);
@@ -472,7 +474,8 @@ h1 {
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: 1rem .2rem;
+          font-size: clamp(12px, 2vw, 20px);
+          padding: 1rem 0.2rem;
           border: solid 1px white;
         }
         .active {
@@ -513,14 +516,14 @@ h1 {
     }
     input {
       height: 3rem;
-      padding: 10px;
-      font-size: 1.4rem;
     }
     input,
     textarea {
+      font-size: 1.4rem;
       background-color: $c-nav;
       border: 3px solid white;
       border-radius: 10px;
+      padding: 10px;
     }
   }
 
@@ -539,8 +542,11 @@ h1 {
   .reservation_date {
     width: 80%;
     margin: 0 auto;
+    font-size: clamp(14px, 4vw, 20px);
     @include dfc;
+    flex-wrap: wrap;
     justify-content: space-between;
+    gap: 0.2rem;
     padding: 0.7rem 2.5rem;
     margin-bottom: 1rem;
     border: 1px solid white;
@@ -566,14 +572,22 @@ h1 {
 }
 
 @media (max-width: $bp2) {
-
-  .months{
+  .months {
     flex-direction: column !important;
     width: 100%;
-    .month_name{
-      
+    .month_name {
       width: 100%;
     }
   }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  /* -webkit-background-clip: text; */
+  -webkit-text-fill-color: #ffffff;
+  transition: background-color 5000s ease-in-out 0s;
+  box-shadow: inset 0 0 20px 20px #23232329;
 }
 </style>

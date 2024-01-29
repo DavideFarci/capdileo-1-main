@@ -19,22 +19,22 @@ export default {
       inputs: [
         {
           name: "nome",
-          label: "Nome",
+          label: "Nome *",
           type: "text",
         },
         {
           name: "email",
-          label: "Email",
+          label: "Email *",
           type: "email",
         },
         {
           name: "n_persone",
-          label: "N° di persone",
+          label: "N° di persone *",
           type: "number",
         },
         {
           name: "telefono",
-          label: "Telefono",
+          label: "Telefono *",
           type: "text",
         },
         {
