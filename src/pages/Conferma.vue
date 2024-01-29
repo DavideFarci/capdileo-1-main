@@ -336,6 +336,9 @@ export default {
   .card {
     width: 95% !important;
   }
+  .month-container{
+    flex-direction: column !important;
+  }
 }
 
 .actv {

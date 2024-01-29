@@ -168,11 +168,15 @@
           left: auto;
           right: 25px;
         }
+        .img-cont{
+          align-items: flex-start;
+          .hashtags{
+            justify-content: flex-start
+          }
+        }
       }
       
-      .p2{
-        background-image: url(../assets/img/farine.png) !important;
-      }
+
       .post{
         //background-image: url(../assets/img/abus.png);
         @include dfc;
@@ -213,6 +217,7 @@
           position: relative;
           z-index: 3;
           width: 50%;
+          gap: 10px;
           img{
             width: 100%;
             max-width: 300px;
@@ -220,6 +225,7 @@
           }
           .hashtags{
             @include dfc ;
+            justify-content: flex-end;
             gap: .3rem;
             flex-wrap: wrap;
             width: 100%;
@@ -241,9 +247,8 @@
   .post{
     display: flex;
     flex-direction: column !important;
-    img{
-      width: 70% !important;
-    }
+    gap: 10px;
+
     .text{
       width: 70% !important;
     }

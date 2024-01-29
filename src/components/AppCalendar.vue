@@ -303,10 +303,10 @@ export default {
                   active: !day.day_visible || dayIndex === formValues.giorno,
                 }"
                 :style="{
-                  gridColumnStart:
-                    day.day_w === firstDayOfMonth
-                      ? getColumnStart(month)
-                      : 'auto',
+                  gridColumnStart: day.day_w
+                    // day.day_w === firstDayOfMonth
+                    //   ? getColumnStart(month)
+                    //   : 'auto',
                 }"
               >
                 <div>{{ dayIndex }}</div>
@@ -358,13 +358,13 @@ export default {
           :name="input.name"
           :type="input.type"
           :id="input.name"
-          @change="(e) => handleInputValue(e, input.name)"
+          @input="(e) => handleInputValue(e, input.name)"
         />
         <textarea
           v-else
           :name="input.name"
           :id="input.name"
-          @change="(e) => handleInputValue(e, input.name)"
+          @input="(e) => handleInputValue(e, input.name)"
           cols="30"
           rows="10"
         >
@@ -459,7 +459,7 @@ h1 {
         grid-template-columns: repeat(7, 1fr);
 
         .day_w {
-          padding: 1rem;
+          padding: 1rem .2rem;
           border: solid 1px white;
           text-align: center;
           background-color: rgb(48, 6, 6);
@@ -472,7 +472,7 @@ h1 {
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: 1rem;
+          padding: 1rem .2rem;
           border: solid 1px white;
         }
         .active {
@@ -563,5 +563,17 @@ h1 {
 
 .last_seats {
   color: red;
+}
+
+@media (max-width: $bp2) {
+
+  .months{
+    flex-direction: column !important;
+    width: 100%;
+    .month_name{
+      
+      width: 100%;
+    }
+  }
 }
 </style>

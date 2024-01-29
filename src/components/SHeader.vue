@@ -30,7 +30,7 @@ header{
     padding: 10px 0;
     background-color: $c-header;
     width: 100%;
-    z-index: 1;
+    z-index: 1000;
     h1{
       // max-width:150px;
       // margin: 0 auto;

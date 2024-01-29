@@ -27,7 +27,7 @@
     </div>
     <div class="bottom-footer">
       <div class="sec-1">
-        <h4>DOVE PUOI TROVARCI</h4>
+        <h3>DOVE PUOI TROVARCI</h3>
         <p>Borghetto | via borghetto 69</p>
       </div>
       <div class="sec-2">
@@ -211,7 +211,7 @@ info-off{
 }
 .sec-3{
   background-color: rgba(0, 0, 0, 0.43);
-  font-size: 10px;
+  font-size: 14px;
   padding: 10px;
 }
 .sec-3-off{
@@ -267,6 +267,11 @@ info-off{
     height: 40%;
     width: 100%;
     background-color: $c-footer-nav;
+    h3{      
+      width: 100%;
+      margin-bottom: 10px;
+      font-size: clamp(20px, 3vw, 22px);
+    }
     .sec-1{
       @include dfj;
       flex-direction: column;
@@ -276,12 +281,9 @@ info-off{
     .sec-2{
       @include dfa;
       flex-wrap: wrap;
-      gap:1rem;
+      gap:5%;
       width: 100%;
       justify-content: space-around;
-      h3{      
-        width: 100%;
-      }
       .cont-giorni, .cont-orari{
         font-size: 11px;
         @include dfj;
@@ -289,7 +291,7 @@ info-off{
         gap: .5rem;
         text-align: left;
         text-transform: uppercase;
-        
+        font-size: clamp(16px, 1vw, 20px);
         .time{
           text-align: center;
         }
@@ -298,7 +300,7 @@ info-off{
     }
     .sec-3{
       background-color: rgba(0, 0, 0, 0.43);
-      font-size: 8px;
+      
       padding: 10px;
     }
     
