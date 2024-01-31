@@ -34,7 +34,7 @@ export default {
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
       loader: false,
-      message: true,
+      message: false,
     };
   },
   methods: {
