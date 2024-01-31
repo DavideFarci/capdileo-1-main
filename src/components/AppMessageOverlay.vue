@@ -1,16 +1,22 @@
 <script>
 export default {
   props: {
-    reservation: {
-      type: Boolean,
+    // reservation: {
+    //   type: Boolean,
+    //   required: true,
+    // },
+    // show: {
+    //   type: Boolean,
+    //   required: true,
+    // },
+    // loader: {
+    //   type: Boolean,
+    //   required: true
+    // },
+    booleans: {
+      type: Object,
       required: true,
     },
-    show: {
-      type: Boolean,
-      required: true,
-    },
-    loader: Boolean,
-    required: true,
   },
   data() {
     return {};
@@ -20,18 +26,24 @@ export default {
       this.$emit("toggle_message");
     },
   },
+  mounted() {
+    console.log(this.booleans);
+  },
 };
 </script>
 
 <template>
-  <div v-if="show" class="overlay" @click="closeOverlay">
+  <div v-if="booleans.show" class="overlay" @click="closeOverlay">
     <div class="panel" @click="(e) => e.stopPropagation()">
-      <div v-if="!loader" class="message">
-        {{
-          reservation
-            ? "La prenotazione è avvenuta con successo"
-            : "L'ordine è avvenuto con successo"
-        }}
+      <div v-if="!booleans.loader" class="message">
+        <span v-if="booleans.success">
+          {{
+            booleans.reservation
+              ? "La prenotazione è avvenuta con successo"
+              : "L'ordine è avvenuto con successo"
+          }}
+        </span>
+        <span v-else> Qualcosa è andato storto, riprova! </span>
       </div>
 
       <div v-else class="loader">

@@ -42,7 +42,7 @@ export function validateReservation(resValues) {
   // Messaggio
   if (resValues.messaggio.length > 500) {
     errValid.push("Il messaggio non può superare i 500 caratteri");
-  } else if (resValues.messaggio.length < 5) {
+  } else if (resValues.messaggio && resValues.messaggio.length < 5) {
     errValid.push("Il messaggio deve essere di almeno 5 caratteri");
   }
 

@@ -34,6 +34,7 @@ export default {
       isValid: [],
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
+      success: true,
       loader: false,
       loaderSeat: false,
       message: true,
@@ -116,22 +117,33 @@ export default {
         };
 
         if (this.reservation) {
-          await axios.post(state.baseUrl + "api/reservations", _reservation);
+          const resp = await axios.post(
+            state.baseUrl + "api/reservations",
+            _reservation
+          );
           this.loader = false;
-          this.formValues.n_persone = "";
+          if (!resp.status !== 200) {
+            this.success = false;
+          }
+          this.success && (this.formValues.n_persone = "");
         } else {
-          await axios.post(state.baseUrl + "api/orders", _order);
+          const resp = await axios.post(state.baseUrl + "api/orders", _order);
           this.loader = false;
+          if (!resp.status !== 200) {
+            this.success = false;
+          }
         }
 
-        this.formValues.anno = "";
-        this.formValues.mese = this.getFirstMonthAndYearValues();
-        this.formValues.giorno = "";
-        this.formValues.orario = "";
-        this.formValues.nome = "";
-        this.formValues.email = "";
-        this.formValues.telefono = "";
-        this.formValues.messaggio = "";
+        if (this.success) {
+          this.formValues.anno = "";
+          this.formValues.mese = this.getFirstMonthAndYearValues();
+          this.formValues.giorno = "";
+          this.formValues.orario = "";
+          this.formValues.nome = "";
+          this.formValues.email = "";
+          this.formValues.telefono = "";
+          this.formValues.messaggio = "";
+        }
       } catch (error) {
         log("Errore durante la richiesta, messaggio: " + error.message);
       }
@@ -448,9 +460,12 @@ export default {
 
     <app-message-overlay
       v-if="message"
-      :reservation="reservation"
-      :show="message"
-      :loader="loader"
+      :booleans="{
+        reservation: reservation,
+        show: message,
+        loader: loader,
+        success: success,
+      }"
       @toggle_message="toggleMessage"
     />
   </div>
