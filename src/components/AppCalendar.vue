@@ -5,7 +5,9 @@ import axios from "axios";
 import { monthConvert, numberInCalendar } from "../utilities/functions";
 import { validateReservation } from "../assets/validations/val_prenotaServizio";
 import { order_validations } from "../assets/validations/val_conferma";
+import AppMessageOverlay from "./AppMessageOverlay.vue";
 export default {
+  components: { AppMessageOverlay },
   props: {
     formValues: {
       type: Object,
@@ -27,10 +29,12 @@ export default {
       calendar: {}, // calendar = {"Gennaio" : [{..} ...]}, {"Febbraio" : [{..} ...]}, ... }
       dayTimes: [], // Fasce orarie per il giorno selezionato
       dateId: null, // ID della data scelta
-      seats: "Seleziona un oraio per vedere le disponibilità", // viene usato sia per i posti che per i pezzi quindi bisogna cambiare nome
+      seats: "Seleziona un orario per vedere le disponibilità", // viene usato sia per i posti che per i pezzi
       isValid: [],
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
+      loader: false,
+      message: false,
     };
   },
   methods: {
@@ -69,6 +73,7 @@ export default {
     },
 
     async getReservationRequest() {
+      this.loader = true;
       this.errorValidation = "";
 
       // Compongo la data intera con orario (formato dd/mm/yyyy hh:mm)
@@ -107,8 +112,12 @@ export default {
 
           if (this.reservation) {
             await axios.post(state.baseUrl + "api/reservations", _reservation);
+            this.loader = false;
+            this.message = true;
           } else {
             await axios.post(state.baseUrl + "api/orders", _order);
+            this.loader = false;
+            this.message = true;
           }
         } catch (error) {
           log("Errore durante la richiesta, messaggio: " + error.message);
@@ -196,7 +205,6 @@ export default {
       arrTimes.forEach((item) => {
         this.dayTimes.push(item);
       });
-      this.seats = "Seleziona un oraio per vedere le disponibilità";
     },
 
     // settare mese e anno per la prenotazione (per evitare problemi se siamo a fine anno)
@@ -233,6 +241,10 @@ export default {
       const value = e.target.value;
       this.formValues[name] = value;
     },
+
+    toggleMessage() {
+      this.message = false;
+    },
   },
   async created() {
     await this.getDates();
@@ -242,14 +254,14 @@ export default {
     "formValues.mese": function () {
       this.firstDayOfMonth = this.calendar[this.formValues.mese][0].day_w;
       this.dayTimes = [];
-      this.seats = "Seleziona un oraio per vedere le disponibilità";
       if (this.formValues.giorno) {
         this.formValues.giorno = "";
       }
+      this.seats = "Seleziona un orario per vedere le disponibilità";
     },
 
     "formValues.giorno": function () {
-      this.seats = "Seleziona un oraio per vedere le disponibilità";
+      this.seats = "Seleziona un orario per vedere le disponibilità";
       if (this.formValues.orario) {
         this.formValues.orario = "";
       }
@@ -337,13 +349,21 @@ export default {
         </div>
       </Transition>
       <div
-        v-if="seats"
         :class="{
           seats: seats > 3,
           last_seats: seats <= 3,
         }"
       >
-        {{ seats }} {{ reservation ? "posti" : "pezzi" }} disponibili
+        {{ seats }}
+        <span
+          v-if="formValues.orario"
+          :class="{
+            seats: seats > 3,
+            last_seats: seats <= 3,
+          }"
+        >
+          {{ reservation ? "posti disponibili" : "pezzi disponibili" }}
+        </span>
       </div>
     </section>
 
@@ -402,7 +422,16 @@ export default {
 
     <div v-for="(valid, i) in isValid" :key="i" class="error">{{ valid }}</div>
 
-    <button class="toReserv btn" @click="getReservationRequest">Prenota</button>
+    <button v-if="!loader" class="toReserv btn" @click="getReservationRequest">
+      Prenota
+    </button>
+    <div v-else class="loader"></div>
+    <app-message-overlay
+      v-if="message"
+      :reservation="reservation"
+      :show="message"
+      @toggle_message="toggleMessage"
+    />
   </div>
 </template>
 
@@ -569,6 +598,30 @@ h1 {
 
 .last_seats {
   color: red;
+}
+
+.loader {
+  position: relative;
+  margin: 0 auto;
+  width: 700px;
+  height: 3px;
+  background: linear-gradient(to right, transparent, $c-f-t, transparent);
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    translate: -200px 0;
+    width: 150px;
+    height: 100%;
+    background: linear-gradient(to right, transparent, #212121, transparent);
+    animation: slide 1s infinite;
+  }
+}
+
+@keyframes slide {
+  100% {
+    translate: 300px 0;
+  }
 }
 
 @media (max-width: $bp2) {
