@@ -422,6 +422,9 @@ export default {
           <span class="reservation_label">Telefono: </span
           >{{ formValues?.telefono }}
         </li>
+        <li>
+          <span class="reservation_label">Email: </span>{{ formValues?.email }}
+        </li>
         <li v-if="reservation">
           <span class="reservation_label">N° di persone: </span
           >{{ formValues?.n_persone }}
