@@ -24,8 +24,8 @@ export default {
 </script>
 
 <template>
-  <div v-if="show" class="overlay">
-    <div class="panel">
+  <div v-if="show" class="overlay" @click="closeOverlay">
+    <div class="panel" @click="(e) => e.stopPropagation()">
       <div v-if="!loader" class="message">
         {{
           reservation

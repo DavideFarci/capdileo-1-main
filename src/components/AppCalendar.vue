@@ -29,12 +29,12 @@ export default {
       calendar: {}, // calendar = {"Gennaio" : [{objDate} ...]}, {"Febbraio" : [{objDate} ...]}, ... }
       dayTimes: [], // Fasce orarie per il giorno selezionato
       dateId: null, // ID della data scelta
-      seats: "Seleziona un orario per vedere le disponibilità", // viene usato sia per i posti che per i pezzi
+      seats: "Seleziona un orario per vedere le disponibilità", // usato sia per i posti che per i pezzi
       isValid: [],
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
       loader: false,
-      message: false,
+      message: true,
     };
   },
   methods: {
