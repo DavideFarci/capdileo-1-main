@@ -6,8 +6,9 @@ import { monthConvert, numberInCalendar } from "../utilities/functions";
 import { validateReservation } from "../assets/validations/val_prenotaServizio";
 import { order_validations } from "../assets/validations/val_conferma";
 import AppMessageOverlay from "./AppMessageOverlay.vue";
+import AppLoader from "./AppLoader.vue";
 export default {
-  components: { AppMessageOverlay },
+  components: { AppMessageOverlay, AppLoader },
   props: {
     formValues: {
       type: Object,
@@ -34,7 +35,8 @@ export default {
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
       loader: false,
-      message: false,
+      loaderSeat: false,
+      message: true,
     };
   },
   methods: {
@@ -78,7 +80,7 @@ export default {
         ? validateReservation(this.formValues)
         : order_validations(this.formValues, this.errorValidation);
 
-      if (this.isValid.lenght) {
+      if (this.isValid.length !== 0) {
         return;
       }
       this.loader = true;
@@ -137,6 +139,7 @@ export default {
 
     // estraggo l'id della data scelta dall'utente per fare la richiesta e sapere i posti disponibili
     async findIdRequest() {
+      this.loaderSeat = true;
       const mese = monthConvert(this.formValues.mese);
       const params = {
         year: this.formValues.anno,
@@ -148,6 +151,7 @@ export default {
         const data = await axios.get(state.baseUrl + "api/dates/findDate", {
           params,
         });
+        this.loaderSeat = false;
         if (this.reservation) {
           const { id, reserved, max_res } = data.data.results[0];
           this.dateId = id;
@@ -360,6 +364,7 @@ export default {
         </div>
       </Transition>
       <div
+        v-if="!loaderSeat"
         :class="{
           seats: seats > 3,
           last_seats: seats <= 3,
@@ -376,6 +381,7 @@ export default {
           {{ reservation ? "posti disponibili" : "pezzi disponibili" }}
         </span>
       </div>
+      <app-loader v-else :show="loaderSeat" />
     </section>
 
     <form class="dati-cliente">

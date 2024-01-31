@@ -69,7 +69,7 @@ export default {
     align-items: center;
     gap: 3rem;
     background: $c-nav;
-    padding: 5rem 7rem;
+    padding: 2rem 7rem;
     border-radius: 15px;
     border: 2px solid $c-footer-nav;
     box-shadow: 0px 17px 31px 19px rgba(0, 0, 0, 0.4);
