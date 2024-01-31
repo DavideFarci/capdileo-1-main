@@ -14,6 +14,17 @@ export function validateReservation(resValues) {
     errValid.push("Il campo 'name' non può superare i 50 caratteri!");
   }
 
+  // Email
+  if (!resValues.email) {
+    errValid.push("Il campo 'Email' è richiesto!");
+  } else if (!this.email.includes("@")) {
+    errValid.push("Il campo 'Email' deve includere '@'");
+  } else if (!(this.email.endsWith(".com") || this.email.endsWith(".it"))) {
+    errValid.push("Il campo 'Email' deve terminare con '.com' o '.it'");
+  } else if (this.email.length < 5) {
+    errValid.push("Il campo 'Email' deve contenere almeno 5 caratteri");
+  }
+
   // Telefono
   if (!resValues.telefono) {
     errValid.push("Il campo 'N° 'telefono' è richiesto!");

@@ -1,38 +1,42 @@
-export function order_validations(resValues, errValue) {
-  let isValid = true;
+export function order_validations(resValues) {
+  let errValid = [];
 
   // Giorno e ora
   if (!resValues.giorno || !resValues.orario) {
-    errValid = "Scegli un giorno e un orario";
-    isValid = false;
+    errValid.push("Scegli un giorno e un orario");
   }
 
   // Nome
   if (!resValues.nome) {
-    errValid = "Il campo 'nome' è richiesto!";
-    isValid = false;
+    errValid.push("Il campo 'nome' è richiesto!");
   } else if (resValues.nome.length < 2) {
-    errValid = "Il campo 'nome' è troppo corto!";
-    isValid = false;
+    errValid.push("Il campo 'nome' è troppo corto!");
   } else if (resValues.nome.length > 50) {
-    errValid = "Il campo 'name' non può superare i 50 caratteri!";
-    isValid = false;
+    errValid.push("Il campo 'name' non può superare i 50 caratteri!");
+  }
+
+  // Email
+  if (!resValues.email) {
+    errValid.push("Il campo 'Email' è richiesto!");
+  } else if (!this.email.includes("@")) {
+    errValid.push("Il campo 'Email' deve includere '@'");
+  } else if (!(this.email.endsWith(".com") || this.email.endsWith(".it"))) {
+    errValid.push("Il campo 'Email' deve terminare con '.com' o '.it'");
+  } else if (this.email.length < 5) {
+    errValid.push("Il campo 'Email' deve contenere almeno 5 caratteri");
   }
 
   // Telefono
   if (!resValues.telefono) {
-    errValid = "Il campo 'N° 'telefono' è richiesto!";
-    isValid = false;
+    errValid.push("Il campo 'N° 'telefono' è richiesto!");
   } else if (resValues.telefono.length !== 10) {
-    errValid = "Il campo 'N° 'telefono' deve essere di 10 cifre!";
-    isValid = false;
+    errValid.push("Il campo 'N° 'telefono' deve essere di 10 cifre!");
   }
 
   // Messaggio
   if (resValues.messaggio.length > 500) {
-    errValid = "Il messaggio non può superare i 50 caratteri";
-    isValid = false;
+    errValid.push("Il messaggio non può superare i 50 caratteri");
   }
 
-  return isValid;
+  return errValid;
 }
