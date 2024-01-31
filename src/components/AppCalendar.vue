@@ -37,7 +37,7 @@ export default {
       success: true,
       loader: false,
       loaderSeat: false,
-      message: true,
+      message: false,
     };
   },
   methods: {
