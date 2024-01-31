@@ -9,6 +9,8 @@ export default {
       type: Boolean,
       required: true,
     },
+    loader: Boolean,
+    required: true,
   },
   data() {
     return {};
@@ -24,13 +26,14 @@ export default {
 <template>
   <div v-if="show" class="overlay">
     <div class="panel">
-      <div class="message">
+      <div v-if="!loader" class="message">
         {{
           reservation
             ? "La prenotazione è avvenuta con successo"
             : "L'ordine è avvemito con successo"
         }}
       </div>
+      <div v-else class="loader"></div>
       <button class="btn" @click="closeOverlay">chiudi</button>
     </div>
   </div>
@@ -63,6 +66,30 @@ export default {
       font-size: clamp(20px, 4vw, 1rem);
       font-weight: bold;
     }
+  }
+}
+
+.loader {
+  position: relative;
+  margin: 0 auto;
+  width: 700px;
+  height: 3px;
+  background: linear-gradient(to right, transparent, $c-f-t, transparent);
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    translate: -200px 0;
+    width: 150px;
+    height: 100%;
+    background: linear-gradient(to right, transparent, #212121, transparent);
+    animation: slide 1s infinite;
+  }
+}
+
+@keyframes slide {
+  100% {
+    translate: 300px 0;
   }
 }
 </style>

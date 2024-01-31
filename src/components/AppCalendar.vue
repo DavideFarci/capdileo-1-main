@@ -26,7 +26,7 @@ export default {
     return {
       state,
       currentDate: "",
-      calendar: {}, // calendar = {"Gennaio" : [{..} ...]}, {"Febbraio" : [{..} ...]}, ... }
+      calendar: {}, // calendar = {"Gennaio" : [{objDate} ...]}, {"Febbraio" : [{objDate} ...]}, ... }
       dayTimes: [], // Fasce orarie per il giorno selezionato
       dateId: null, // ID della data scelta
       seats: "Seleziona un orario per vedere le disponibilità", // viene usato sia per i posti che per i pezzi
@@ -72,9 +72,17 @@ export default {
       return arrMonths;
     },
 
-    async getReservationRequest() {
-      this.loader = true;
+    async getRequest() {
       this.errorValidation = "";
+      this.isValid = this.reservation
+        ? validateReservation(this.formValues)
+        : order_validations(this.formValues, this.errorValidation);
+
+      if (this.isValid.lenght) {
+        return;
+      }
+      this.loader = true;
+      this.message = true;
 
       // Compongo la data intera con orario (formato dd/mm/yyyy hh:mm)
       const time_slot = `${numberInCalendar(
@@ -83,45 +91,47 @@ export default {
         this.formValues.anno
       } ${this.formValues.orario}`;
 
-      this.isValid = this.reservation
-        ? validateReservation(this.formValues, this.isValid)
-        : order_validations(this.formValues, this.errorValidation);
+      try {
+        await this.findIdRequest();
+        const _reservation = {
+          name: this.formValues.nome,
+          phone: this.formValues.telefono,
+          email: this.formValues.email,
+          n_person: this.formValues.n_persone,
+          message: this.formValues.messaggio,
+          date_slot: time_slot,
+          date_id: this.dateId,
+        };
 
-      if (this.isValid) {
-        try {
-          await this.findIdRequest();
-          const _reservation = {
-            name: this.formValues.nome,
-            phone: this.formValues.telefono,
-            email: this.formValues.email,
-            n_person: this.formValues.n_persone,
-            message: this.formValues.messaggio,
-            date_slot: time_slot,
-            date_id: this.dateId,
-          };
+        const _order = {
+          name: this.formValues.nome,
+          phone: this.formValues.telefono,
+          email: this.formValues.email,
+          message: this.formValues.messaggio,
+          products: this.state.getServeCart(),
+          date_slot: time_slot,
+          date_id: this.dateId,
+        };
 
-          const _order = {
-            name: this.formValues.nome,
-            phone: this.formValues.telefono,
-            email: this.formValues.email,
-            message: this.formValues.messaggio,
-            products: this.state.getServeCart(),
-            date_slot: time_slot,
-            date_id: this.dateId,
-          };
-
-          if (this.reservation) {
-            await axios.post(state.baseUrl + "api/reservations", _reservation);
-            this.loader = false;
-            this.message = true;
-          } else {
-            await axios.post(state.baseUrl + "api/orders", _order);
-            this.loader = false;
-            this.message = true;
-          }
-        } catch (error) {
-          log("Errore durante la richiesta, messaggio: " + error.message);
+        if (this.reservation) {
+          await axios.post(state.baseUrl + "api/reservations", _reservation);
+          this.loader = false;
+          this.formValues.n_persone = "";
+        } else {
+          await axios.post(state.baseUrl + "api/orders", _order);
+          this.loader = false;
         }
+
+        this.formValues.anno = "";
+        this.formValues.mese = this.getFirstMonthAndYearValues();
+        this.formValues.giorno = "";
+        this.formValues.orario = "";
+        this.formValues.nome = "";
+        this.formValues.email = "";
+        this.formValues.telefono = "";
+        this.formValues.messaggio = "";
+      } catch (error) {
+        log("Errore durante la richiesta, messaggio: " + error.message);
       }
     },
 
@@ -243,6 +253,7 @@ export default {
     },
 
     toggleMessage() {
+      this.loader = false;
       this.message = false;
     },
   },
@@ -377,12 +388,14 @@ export default {
           :name="input.name"
           :type="input.type"
           :id="input.name"
+          :value="formValues[input.name]"
           @input="(e) => handleInputValue(e, input.name)"
         />
         <textarea
           v-else
           :name="input.name"
           :id="input.name"
+          :value="formValues[input.name]"
           @input="(e) => handleInputValue(e, input.name)"
           cols="30"
           rows="10"
@@ -422,14 +435,13 @@ export default {
 
     <div v-for="(valid, i) in isValid" :key="i" class="error">{{ valid }}</div>
 
-    <button v-if="!loader" class="toReserv btn" @click="getReservationRequest">
-      Prenota
-    </button>
-    <div v-else class="loader"></div>
+    <button class="toReserv btn" @click="getRequest">Prenota</button>
+
     <app-message-overlay
       v-if="message"
       :reservation="reservation"
       :show="message"
+      :loader="loader"
       @toggle_message="toggleMessage"
     />
   </div>
@@ -598,30 +610,6 @@ h1 {
 
 .last_seats {
   color: red;
-}
-
-.loader {
-  position: relative;
-  margin: 0 auto;
-  width: 700px;
-  height: 3px;
-  background: linear-gradient(to right, transparent, $c-f-t, transparent);
-  overflow: hidden;
-  &::after {
-    content: "";
-    position: absolute;
-    translate: -200px 0;
-    width: 150px;
-    height: 100%;
-    background: linear-gradient(to right, transparent, #212121, transparent);
-    animation: slide 1s infinite;
-  }
-}
-
-@keyframes slide {
-  100% {
-    translate: 300px 0;
-  }
 }
 
 @media (max-width: $bp2) {
