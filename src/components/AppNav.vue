@@ -100,36 +100,42 @@ export default {
       <router-link
         :to="{ name: 'home' }"
         class="nav-link"
+        active-class="active-link"
         @click="state.updateActvPage()"
         >home</router-link
       >
       <router-link
         :to="{ name: 'menu' }"
         class="nav-link"
+        active-class="active-link"
         @click="state.updateActvPage()"
         >menu</router-link
       >
       <router-link
         :to="{ name: 'chi-siamo' }"
         class="nav-link"
+        active-class="active-link"
         @click="state.updateActvPage()"
         >chi siamo?</router-link
       >
       <router-link
         :to="{ name: 'contatti' }"
         class="nav-link"
+        active-class="active-link"
         @click="state.updateActvPage()"
         >contatti</router-link
       >
       <router-link
         :to="{ name: 'prenota' }"
         class="nav-link"
+        active-class="active-link"
         @click="state.updateActvPage()"
         >Ordina d'Asporto</router-link
       >
       <router-link
         :to="{ name: 'prenotaServizio' }"
         class="nav-link"
+        active-class="active-link"
         @click="state.updateActvPage()"
         >Prenota tavolo</router-link
       >
