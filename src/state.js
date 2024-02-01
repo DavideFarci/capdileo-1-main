@@ -200,9 +200,9 @@ export const state = reactive({
       this.sideMenuValue = 1;
     }
   },
-  updateActvPage(page) {
+  updateActvPage() {
     this.sideMenuValue = 0;
-    this.actvPage = page;
+    // this.actvPage = page;
   },
   infoside() {
     if (this.infomenu) {
@@ -225,12 +225,10 @@ export const state = reactive({
 
     return JSON.stringify(arrVar);
   },
-  changeCouter(id, c){
-    this.arrCart.forEach(element => {
-      if(element.p_id == id){
-        
+  changeCouter(id, c) {
+    this.arrCart.forEach((element) => {
+      if (element.p_id == id) {
       }
     });
-
-  }
+  },
 });
