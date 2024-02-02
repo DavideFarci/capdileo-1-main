@@ -84,8 +84,8 @@ export default {
       if (this.isValid.length !== 0) {
         return;
       }
-      this.loader = true;
       this.message = true;
+      this.loader = true;
 
       // Compongo la data intera con orario (formato dd/mm/yyyy hh:mm)
       const time_slot = `${numberInCalendar(
@@ -94,8 +94,8 @@ export default {
         this.formValues.anno
       } ${this.formValues.orario}`;
 
+      await this.findIdRequest();
       try {
-        await this.findIdRequest();
         const _reservation = {
           name: this.formValues.nome,
           phone: this.formValues.telefono,
@@ -116,24 +116,22 @@ export default {
           date_id: this.dateId,
         };
 
+        // SE AVVIENE UNA PRENOTAZIONE TAVOLO
         if (this.reservation) {
           const resp = await axios.post(
             state.baseUrl + "api/reservations",
             _reservation
           );
           this.loader = false;
-          if (!resp.status !== 200) {
-            this.success = false;
-            this.loader = false;
-          }
           this.success && (this.formValues.n_persone = "");
+
+          // SE AVVIENE UN ORDINE D'ASPORTO
         } else {
           const resp = await axios.post(state.baseUrl + "api/orders", _order);
           this.loader = false;
-          if (!resp.status !== 200) {
-            this.loader = false;
-            this.success = false;
-          }
+          setTimeout(() => {
+            this.$router.replace("/prenota");
+          }, 2000);
         }
 
         if (this.success) {
@@ -146,8 +144,15 @@ export default {
           this.formValues.telefono = "";
           this.formValues.messaggio = "";
         }
-      } catch (error) {
-        log("Errore durante la richiesta, messaggio: " + error.message);
+      } catch (resp) {
+        if (data.code) {
+          this.message = true;
+          this.success = false;
+        }
+        if (resp.status !== 200) {
+          this.loader = false;
+          this.success = false;
+        }
       }
     },
 
@@ -177,11 +182,15 @@ export default {
           // Imposto il num di pezzi disponibili per l'orario scelto
           this.seats = max_pz - reserved_pz;
         }
-      } catch (error) {
-        log(
-          "Errore durante la richiesta di prenotazione, messaggio: " +
-            error.message
-        );
+      } catch (data) {
+        if (data.code) {
+          this.message = true;
+          this.success = false;
+        }
+        if (!data.data.success) {
+          this.message = true;
+          this.success = false;
+        }
       }
     },
 

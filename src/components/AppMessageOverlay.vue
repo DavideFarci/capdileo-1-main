@@ -1,18 +1,6 @@
 <script>
 export default {
   props: {
-    // reservation: {
-    //   type: Boolean,
-    //   required: true,
-    // },
-    // show: {
-    //   type: Boolean,
-    //   required: true,
-    // },
-    // loader: {
-    //   type: Boolean,
-    //   required: true
-    // },
     booleans: {
       type: Object,
       required: true,
@@ -25,9 +13,6 @@ export default {
     closeOverlay() {
       this.$emit("toggle_message");
     },
-  },
-  mounted() {
-    console.log(this.booleans);
   },
 };
 </script>
@@ -43,7 +28,9 @@ export default {
               : "L'ordine è avvenuto con successo"
           }}
         </span>
-        <span v-else> Qualcosa è andato storto, riprova! </span>
+        <span v-if="!booleans.success">
+          Qualcosa è andato storto, riprova!
+        </span>
       </div>
 
       <div v-else class="loader">
