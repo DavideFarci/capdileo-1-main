@@ -124,12 +124,14 @@ export default {
           this.loader = false;
           if (!resp.status !== 200) {
             this.success = false;
+            this.loader = false;
           }
           this.success && (this.formValues.n_persone = "");
         } else {
           const resp = await axios.post(state.baseUrl + "api/orders", _order);
           this.loader = false;
           if (!resp.status !== 200) {
+            this.loader = false;
             this.success = false;
           }
         }
