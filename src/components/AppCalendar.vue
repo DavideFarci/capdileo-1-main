@@ -118,7 +118,7 @@ export default {
 
         // SE AVVIENE UNA PRENOTAZIONE TAVOLO
         if (this.reservation) {
-          const resp = await axios.post(
+          const data = await axios.post(
             state.baseUrl + "api/reservations",
             _reservation
           );
@@ -127,7 +127,7 @@ export default {
 
           // SE AVVIENE UN ORDINE D'ASPORTO
         } else {
-          const resp = await axios.post(state.baseUrl + "api/orders", _order);
+          const data = await axios.post(state.baseUrl + "api/orders", _order);
           this.loader = false;
           setTimeout(() => {
             this.$router.replace("/prenota");
@@ -144,12 +144,13 @@ export default {
           this.formValues.telefono = "";
           this.formValues.messaggio = "";
         }
-      } catch (resp) {
-        if (data.code) {
-          this.message = true;
+      } catch (data) {
+        if ((data.code = "ERR_NETWORK")) {
+          this.loader = false;
           this.success = false;
+          return;
         }
-        if (resp.status !== 200) {
+        if (data.status !== 200) {
           this.loader = false;
           this.success = false;
         }
@@ -183,12 +184,13 @@ export default {
           this.seats = max_pz - reserved_pz;
         }
       } catch (data) {
-        if (data.code) {
-          this.message = true;
+        if (data.code == "ERR_NETWORK") {
+          this.loader = false;
           this.success = false;
+          return;
         }
         if (!data.data.success) {
-          this.message = true;
+          this.loader = false;
           this.success = false;
         }
       }

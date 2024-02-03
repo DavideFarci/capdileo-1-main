@@ -13,6 +13,9 @@ export default {
     closeOverlay() {
       this.$emit("toggle_message");
     },
+    reloadPage() {
+      location.reload();
+    },
   },
 };
 </script>
@@ -45,7 +48,10 @@ export default {
         <div class="bar9"></div>
       </div>
 
-      <button class="btn" @click="closeOverlay">chiudi</button>
+      <button v-if="booleans.success" class="btn" @click="closeOverlay">
+        chiudi
+      </button>
+      <button v-else class="btn" @click="reloadPage">ricarica</button>
     </div>
   </div>
 </template>
