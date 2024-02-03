@@ -23,17 +23,17 @@ export default {
       inputs: [
         {
           name: "nome",
-          label: "Nome",
+          label: "Nome *",
           type: "text",
         },
         {
           name: "email",
-          label: "Email",
+          label: "Email *",
           type: "email",
         },
         {
           name: "telefono",
-          label: "Telefono",
+          label: "Telefono *",
           type: "text",
         },
         {
