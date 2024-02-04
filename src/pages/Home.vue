@@ -166,10 +166,11 @@
                     flex-direction: column;
                     gap: 1rem;
                     max-width: 70%;
+                    font-size: clamp(19px, 2vw, 25px);
                     h2{
-                        line-height: 38px;
+                        line-height: 100%;
                         max-width: 200px;
-                        font-size: 40px;
+                        font-size: clamp(35px, 4vw, 60px);
                         .s1{
                             font-size: 115%;
                             
