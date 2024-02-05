@@ -359,6 +359,7 @@ export default {
   created() {
     localStorage.getItem("cart") &&
       (this.state.arrCart = JSON.parse(localStorage.getItem("cart")));
+    this.getTot();
     this.getProduct(0);
     this.getCategory();
     this.getIngredients();

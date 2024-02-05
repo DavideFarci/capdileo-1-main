@@ -90,7 +90,9 @@ export default {
     },
   },
   created() {
-    this.state.arrCart = JSON.parse(localStorage.getItem("cart"));
+    localStorage.getItem("cart") &&
+      (this.state.arrCart = JSON.parse(localStorage.getItem("cart")));
+    this.getTot;
   },
 };
 </script>
