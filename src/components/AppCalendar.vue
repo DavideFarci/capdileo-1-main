@@ -145,6 +145,8 @@ export default {
           this.formValues.email = "";
           this.formValues.telefono = "";
           this.formValues.messaggio = "";
+          this.formValues.privacy = false;
+          state.arrCart = [];
         }
       } catch (data) {
         if ((data.code = "ERR_NETWORK")) {
@@ -436,7 +438,10 @@ export default {
         </textarea>
       </template>
 
-      <label for="privacy">Accetto i termini</label>
+      <label for="privacy"
+        >Ho letto e accetto la politica sulla privacy ai sensi del Regolamento
+        EU n. 679/2016</label
+      >
       <input
         @change="formValues.privacy = !formValues.privacy"
         type="checkbox"
