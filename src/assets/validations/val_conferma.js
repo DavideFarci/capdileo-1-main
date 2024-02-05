@@ -42,5 +42,10 @@ export function order_validations(resValues) {
     errValid.push("Il messaggio deve essere di almeno 5 caratteri");
   }
 
+  // Privacy
+  if (!resValues.privacy) {
+    errValid.push("Accetta i termini della privacy");
+  }
+
   return errValid;
 }

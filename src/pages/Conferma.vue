@@ -19,6 +19,7 @@ export default {
         email: "",
         telefono: null,
         messaggio: "",
+        privacy: false,
       },
       inputs: [
         {
@@ -47,40 +48,43 @@ export default {
     };
   },
   methods: {
-    removeItem( i ){
-        if(this.state.arrCart[i].counter >= 0){
-          this.state.arrCart[i].counter --
-          this.state.arrCart[i].totprice = (this.state.arrCart[i].totprice / (this.state.arrCart[i].counter + 1)) * this.state.arrCart[i].counter
+    removeItem(i) {
+      if (this.state.arrCart[i].counter >= 0) {
+        this.state.arrCart[i].counter--;
+        this.state.arrCart[i].totprice =
+          (this.state.arrCart[i].totprice /
+            (this.state.arrCart[i].counter + 1)) *
+          this.state.arrCart[i].counter;
 
-          if(this.state.arrCart[i].counter == 0){
-            this.state.arrCart.splice(i, 1)
-          }
+        if (this.state.arrCart[i].counter == 0) {
+          this.state.arrCart.splice(i, 1);
         }
-        this.getTot();
-      },
-      getTot(){
-        this.state.totCart = 0
-        this.state.arrCart.forEach(element => {
-          console.log(element.totprice)
-          this.state.totCart = this.state.totCart + element.totprice
-        });
-      },
-      getPrice(cent, sum){
-         if(sum){
-          // console.log(cent)
-          // console.log(sum)
-          let num1 = parseFloat(cent);
-         
-          let num = (num1 + sum) / 100;
-          num = "€" + num 
-          return num
-        }else{
-          let num = parseFloat(cent);
-          num = num / 100;
-          num = "€" + num  
-          return num   
-        }
-      },
+      }
+      this.getTot();
+    },
+    getTot() {
+      this.state.totCart = 0;
+      this.state.arrCart.forEach((element) => {
+        console.log(element.totprice);
+        this.state.totCart = this.state.totCart + element.totprice;
+      });
+    },
+    getPrice(cent, sum) {
+      if (sum) {
+        // console.log(cent)
+        // console.log(sum)
+        let num1 = parseFloat(cent);
+
+        let num = (num1 + sum) / 100;
+        num = "€" + num;
+        return num;
+      } else {
+        let num = parseFloat(cent);
+        num = num / 100;
+        num = "€" + num;
+        return num;
+      }
+    },
   },
   created() {},
 };
@@ -94,28 +98,71 @@ export default {
 
       <div class="cart">
         <div class="top-cart" @click="opencart">
-          <svg   xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cart-fill" viewBox="0 0 16 16"> <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/> </svg>
-          
-
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            fill="currentColor"
+            class="bi bi-cart-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+            />
+          </svg>
         </div>
-        <div :class="state.sideCartValue ? 'content-cart' : 'ccoff'" >
-          <div class="" v-if="!state.arrCart.length && !state.sideCartValue">Il carrello è vuoto</div>
+        <div :class="state.sideCartValue ? 'content-cart' : 'ccoff'">
+          <div class="" v-if="!state.arrCart.length && !state.sideCartValue">
+            Il carrello è vuoto
+          </div>
           <div class="top-content-cart">
-            <div v-for="(item, i) in state.arrCart" :class="state.sideCartValue ?  'item-off' : 'item-on'" :key="item.id">
+            <div
+              v-for="(item, i) in state.arrCart"
+              :class="state.sideCartValue ? 'item-off' : 'item-on'"
+              :key="item.id"
+            >
               <div class="top-item">
                 <h4>{{ item.title }}</h4>
                 <div>* {{ item.counter }}</div>
                 <div>{{ getPrice(item.totprice) }}</div>
-                <svg :class="state.sideCartValue ?  'sub-item-off' : 'sub-item-on'" @click="removeItem( i)"  style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="current-color" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" fill="white"></path> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" fill="white"></path> 
+                <svg
+                  :class="state.sideCartValue ? 'sub-item-off' : 'sub-item-on'"
+                  @click="removeItem(i)"
+                  style="color: white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="current-color"
+                  class="bi bi-trash"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                    fill="white"
+                  ></path>
+                  <path
+                    fill-rule="evenodd"
+                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                    fill="white"
+                  ></path>
                 </svg>
               </div>
-              <div class="bottom-item" v-if="item.deselected.length!== 0 || item.addicted.length!== 0">
+              <div
+                class="bottom-item"
+                v-if="
+                  item.deselected.length !== 0 || item.addicted.length !== 0
+                "
+              >
                 <h3>modifiche</h3>
                 <div class="removed">
-                  <div class="" v-for="i in item.deselected" :key="i">- {{ i }}</div>
+                  <div class="" v-for="i in item.deselected" :key="i">
+                    - {{ i }}
+                  </div>
                 </div>
                 <div class="addicted">
-                  <div class="" v-for="i in item.addicted" :key="i">+{{ i }}</div>
+                  <div class="" v-for="i in item.addicted" :key="i">
+                    +{{ i }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -124,11 +171,13 @@ export default {
             <div class="totcart">
               <span>TOTALE:</span>
               <span>
-                {{ getPrice(state.totCart)}}
+                {{ getPrice(state.totCart) }}
               </span>
             </div>
           </div>
-          <router-link :to="{ name: 'prenota' }" class="next">AGGIUNGI ALTRI PRODOTTI</router-link>
+          <router-link :to="{ name: 'prenota' }" class="next"
+            >AGGIUNGI ALTRI PRODOTTI</router-link
+          >
         </div>
       </div>
       <div v-if="cartError" class="carterror">
@@ -197,102 +246,99 @@ export default {
   flex-direction: column;
   width: 70%;
 
-    .prenota-cont {
-      overflow: auto;
-      height: 100%;
-      padding: 1rem 1rem;
-      h1 {
-        text-align: center;
-        text-transform: uppercase;
-        padding: 1rem;
-        font-size: 30px;
-      }
-      .cart{
+  .prenota-cont {
+    overflow: auto;
+    height: 100%;
+    padding: 1rem 1rem;
+    h1 {
+      text-align: center;
+      text-transform: uppercase;
+      padding: 1rem;
+      font-size: 30px;
+    }
+    .cart {
       color: $c-nav-link;
 
       border: 1px solid $c-nav-link;
       background-color: $c-header;
       width: 90%;
       border-radius: 4px;
-      padding: .4rem;
+      padding: 0.4rem;
       margin: 0 auto;
-      .top-cart{
-        padding: .2rem;
+      .top-cart {
+        padding: 0.2rem;
         @include dfc;
         justify-content: space-between;
       }
     }
-    .next{
-        border: 2px solid white;
-        text-transform: uppercase;
-        padding: 5px ;
-        text-align: center;
-        border-radius: 5px;
-      }
-    .content-cart{
+    .next {
+      border: 2px solid white;
+      text-transform: uppercase;
+      padding: 5px;
+      text-align: center;
+      border-radius: 5px;
+    }
+    .content-cart {
       height: 0;
       padding: 0rem;
       display: flex;
       flex-direction: column;
-      transition: all .2s linear ;
+      transition: all 0.2s linear;
     }
-    .ccoff{
+    .ccoff {
       padding: 1rem;
       height: 100%;
       display: block;
-      transition: all .2s linear ;
+      transition: all 0.2s linear;
       display: flex;
       flex-direction: column;
       gap: 2rem;
       text-transform: uppercase;
-      .top-content-cart{
+      .top-content-cart {
         display: flex;
         flex-direction: column;
         gap: 2px;
         width: 100%;
-        
       }
-      .bottom-content-cart{
-        .totcart{
-          
+      .bottom-content-cart {
+        .totcart {
           display: flex;
           justify-content: space-between;
         }
       }
-      
     }
-    .item-off{
+    .item-off {
       opacity: 0;
       display: flex;
       justify-content: space-between;
-      transition: all .2s linear .2s;
-      
+      transition: all 0.2s linear 0.2s;
     }
-    .item-on{
+    .item-on {
       display: flex;
       flex-direction: column;
       border: 1px solid white;
       height: auto;
       opacity: 1;
-      transition: all .2s linear .2s;
+      transition: all 0.2s linear 0.2s;
       gap: 1rem;
       padding: 15px;
-      .top-item{
+      .top-item {
         display: grid;
-        grid-template-columns: 3fr 1fr 1fr .5fr;
+        grid-template-columns: 3fr 1fr 1fr 0.5fr;
       }
-      .bottom-item{
+      .bottom-item {
         display: flex;
         //flex-direction: column;
-        
+
         flex-wrap: wrap;
         justify-content: space-between;
         // border: 2px solid rgb(11, 21, 116);
-        h3{
+        h3 {
           width: 100%;
           text-align: center;
         }
-        .removed, .addicted{
+        .removed,
+        .addicted {
           text-transform: lowercase;
           padding: 5px;
           width: 48%;
@@ -300,27 +346,23 @@ export default {
           flex-direction: column;
           gap: 3px;
         }
-        @media (max-width:$bp2) {
-          .removed, .addicted{
-            width: 100% !important
-            
+        @media (max-width: $bp2) {
+          .removed,
+          .addicted {
+            width: 100% !important;
           }
-          
         }
-        .removed{
-        // border: 2px solid rgb(11, 116, 71);
-          
+        .removed {
+          // border: 2px solid rgb(11, 116, 71);
         }
-        .addicted{
-        // border: 2px solid rgb(113, 11, 116);
-
+        .addicted {
+          // border: 2px solid rgb(113, 11, 116);
         }
       }
-      
-      svg{
+
+      svg {
         width: 90%;
       }
-      
     }
   }
 }
@@ -336,7 +378,7 @@ export default {
   .card {
     width: 95% !important;
   }
-  .month-container{
+  .month-container {
     flex-direction: column !important;
   }
 }

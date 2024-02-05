@@ -15,6 +15,7 @@ export default {
         telefono: null,
         n_persone: "",
         messaggio: "",
+        privacy: false,
       },
       inputs: [
         {

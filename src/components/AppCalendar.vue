@@ -104,6 +104,7 @@ export default {
           message: this.formValues.messaggio,
           date_slot: time_slot,
           date_id: this.dateId,
+          privacy: this.formValues.privacy,
         };
 
         const _order = {
@@ -114,6 +115,7 @@ export default {
           products: this.state.getServeCart(),
           date_slot: time_slot,
           date_id: this.dateId,
+          privacy: this.formValues.privacy,
         };
 
         // SE AVVIENE UNA PRENOTAZIONE TAVOLO
@@ -433,6 +435,15 @@ export default {
         >
         </textarea>
       </template>
+
+      <label for="privacy">Accetto i termini</label>
+      <input
+        @change="formValues.privacy = !formValues.privacy"
+        type="checkbox"
+        name="privacy"
+        id="privacy"
+      />
+
       <div>I campi contrassegnati con * sono obbligatori</div>
     </form>
 
