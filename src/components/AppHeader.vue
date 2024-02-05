@@ -81,7 +81,7 @@
         
         color: white;
         font-family: 'Playball', cursive;
-        font-size: 60px;
+        font-size: clamp(45px, 7vw, 90px);
         text-shadow: -3px -3px 15px black;
         text-align: center;
       }
@@ -118,8 +118,8 @@
 .par{
   color: white;
   text-shadow: 2px 2px 6px black;
-  padding-bottom: 1em;
-  width: 80%;
+  padding-bottom: 5px;
+  width: 95%;
   text-align: center;
 }
 
@@ -155,13 +155,6 @@
   }
 }
 
-@media (max-width:$bp3) {
-  
-  #title{
-    font-size: 50px;
-  }
-  
-}
 
 
 </style>

@@ -305,12 +305,12 @@ info-off {
     gap: 1rem;
 
     .nav-link {
-      max-width: 150px;
+      max-width: 170px;
       text-transform: uppercase;
 
       color: $c-nav-link;
       font-family: "Gabarito", cursive;
-      font-size: 1.8rem;
+      font-size: clamp(22px, 2vw, 30px)
     }
     .active-link {
       color: $c-white;
