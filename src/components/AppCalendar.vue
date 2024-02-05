@@ -341,7 +341,7 @@ export default {
           </div>
         </div>
         <template v-for="(month, monthIndex) in calendar" :key="monthIndex">
-          <Transition>
+          <Transition name="calendar">
             <!-- Vero e proprio calendario del mese  -->
 
             <div class="day_grid" v-if="formValues.mese == monthIndex">
@@ -355,9 +355,6 @@ export default {
                 }"
                 :style="{
                   gridColumnStart: day.day_w,
-                  // day.day_w === firstDayOfMonth
-                  //   ? getColumnStart(month)
-                  //   : 'auto',
                 }"
               >
                 <div>{{ dayIndex }}</div>
@@ -371,23 +368,28 @@ export default {
     <section class="orari-fasce">
       <h2>Seleziona la fascia oraria</h2>
 
-      <Transition>
-        <div v-if="dayTimes" class="time_container">
-          <template v-for="(time, i) in dayTimes">
-            <div
-              v-if="time.visible"
-              :key="i"
-              @click="getSeats(time.time)"
-              :class="{
-                time: true,
-                active: time.time === formValues.orario,
-              }"
-            >
-              {{ time.time }}
-            </div>
-          </template>
-        </div>
-      </Transition>
+      <!-- <Transition name="orari"> -->
+      <div
+        :class="{
+          time_container: true,
+          visible: dayTimes.length !== 0,
+        }"
+      >
+        <template v-for="(time, i) in dayTimes">
+          <div
+            v-if="time.visible"
+            :key="i"
+            @click="getSeats(time.time)"
+            :class="{
+              time: true,
+              active: time.time === formValues.orario,
+            }"
+          >
+            {{ time.time }}
+          </div>
+        </template>
+      </div>
+      <!-- </Transition> -->
       <div
         v-if="!loaderSeat"
         :class="{
@@ -571,6 +573,11 @@ h1 {
       @include dfc;
       width: 100%;
       justify-content: space-between;
+      opacity: 0;
+      &.visible {
+        opacity: 1;
+        transition: opacity 0.5s ease-in-out;
+      }
       .time {
         text-transform: uppercase;
         padding: 1rem 2rem;
@@ -648,6 +655,27 @@ h1 {
 .last_seats {
   color: red;
 }
+
+.calendar-enter-active {
+  transition: opacity 0.5s ease-in-out;
+  transition-delay: 0.1s;
+}
+
+.calendar-enter-from,
+.calendar-leave-from {
+  opacity: 0;
+}
+
+// .orari-enter-active,
+// .orari-leave-active {
+//   transition: opacity 0.5s ease-in-out;
+//   transition-delay: 0.4s;
+// }
+
+// .orari-enter-from,
+// .orari-leave-from {
+//   opacity: 0;
+// }
 
 @media (max-width: $bp2) {
   .months {
