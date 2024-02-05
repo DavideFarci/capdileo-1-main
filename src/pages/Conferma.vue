@@ -61,6 +61,9 @@ export default {
         }
       }
       this.getTot();
+
+      const jsonCart = JSON.stringify(this.state.arrCart);
+      localStorage.setItem("cart", jsonCart);
     },
     getTot() {
       this.state.totCart = 0;
@@ -86,7 +89,9 @@ export default {
       }
     },
   },
-  created() {},
+  created() {
+    this.state.arrCart = JSON.parse(localStorage.getItem("cart"));
+  },
 };
 </script>
 

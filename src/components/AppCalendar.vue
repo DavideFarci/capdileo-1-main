@@ -131,6 +131,7 @@ export default {
         } else {
           const data = await axios.post(state.baseUrl + "api/orders", _order);
           this.loader = false;
+          localStorage.clear();
           setTimeout(() => {
             this.$router.replace("/prenota");
           }, 2000);
@@ -146,7 +147,8 @@ export default {
           this.formValues.telefono = "";
           this.formValues.messaggio = "";
           this.formValues.privacy = false;
-          state.arrCart = [];
+          this.state.arrCart = [];
+          this.state.totCart = 0;
         }
       } catch (data) {
         if ((data.code = "ERR_NETWORK")) {
