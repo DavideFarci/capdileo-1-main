@@ -368,7 +368,6 @@ export default {
     <section class="orari-fasce">
       <h2>Seleziona la fascia oraria</h2>
 
-      <!-- <Transition name="orari"> -->
       <div
         :class="{
           time_container: true,
@@ -389,7 +388,6 @@ export default {
           </div>
         </template>
       </div>
-      <!-- </Transition> -->
       <div
         v-if="!loaderSeat"
         :class="{
