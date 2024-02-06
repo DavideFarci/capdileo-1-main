@@ -590,6 +590,7 @@ h1 {
       @include dfc;
       width: 100%;
       justify-content: space-between;
+      flex-wrap: wrap;
       opacity: 0;
       &.visible {
         opacity: 1;
@@ -699,6 +700,12 @@ h1 {
     flex-direction: column !important;
     width: 100%;
     .month_name {
+      width: 100%;
+    }
+  }
+  .time_container{
+    flex-direction: column !important;
+    .time{
       width: 100%;
     }
   }
