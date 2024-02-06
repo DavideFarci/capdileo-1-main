@@ -666,7 +666,7 @@ export default {
 
     .main-prenota {
       @include dfc;
-      margin-top: 2rem;
+      margin: 2rem 0;
       flex-wrap: wrap;
       gap: 1rem;
 
@@ -748,7 +748,7 @@ export default {
         right: 0;
         bottom: 0;
         width: 70%;
-        height: 70%;
+        //height: 80%;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -784,11 +784,11 @@ export default {
           width: 100% !important;
           padding: 2rem 0rem;
           padding-top: 100px;
-          width: 90%;
+          height: 100%;
           @include dfj;
           gap: 2rem;
           flex-direction: column;
-
+          justify-content: space-between;
           align-content: flex-end;
 
           .tags {
@@ -797,9 +797,11 @@ export default {
             padding: 1rem;
             min-height: 150px;
             display: flex;
+            flex-direction: column;
             align-items: flex-start;
             flex-wrap: wrap;
-            gap: 3px;
+            gap: 20px;
+            column-gap: 5px;
             h3 {
               width: 100%;
             }
@@ -810,6 +812,7 @@ export default {
           }
           .extra-tags {
             @include dfj;
+            padding: 1rem;
             flex-direction: column;
             width: 100%;
             gap: 0.4rem;
@@ -819,7 +822,7 @@ export default {
             width: 100%;
             background-color: $c-panna;
             padding: 1rem;
-            max-height: 300px;
+            max-height: 50vh;
             overflow: auto;
 
             .cont_ex_ing {
@@ -898,7 +901,7 @@ export default {
       .close {
         background-color: $c-nav;
         position: absolute;
-        top: 100px;
+        top: -50px;
         left: 10px;
         height: 40px;
         width: 40px;
