@@ -215,6 +215,7 @@ export const state = reactive({
     let arrVar = [];
     this.arrCart.forEach((element) => {
       let newi = {
+        name: element.title,
         p_id: element.p_id,
         counter: element.counter,
         deselected: element.deselected,

@@ -106,7 +106,7 @@ export default {
           date_id: this.dateId,
           privacy: this.formValues.privacy,
         };
-
+        
         const _order = {
           name: this.formValues.nome,
           phone: this.formValues.telefono,
@@ -116,6 +116,7 @@ export default {
           date_slot: time_slot,
           date_id: this.dateId,
           privacy: this.formValues.privacy,
+          totPrice: this.state.totCart,
         };
 
         // SE AVVIENE UNA PRENOTAZIONE TAVOLO
