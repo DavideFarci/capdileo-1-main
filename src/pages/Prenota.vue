@@ -541,13 +541,16 @@ export default {
               v-if="!selectedItem.expanded && selectedItem.addicted.length"
             >
               <h3>Ingredienti extra:</h3>
-              <span
-                class="tag-pills"
-                v-for="i in selectedItem.addicted"
-                :key="i"
-                @click="removeExtraTagShow(i)"
-                >- {{ i }}</span
-              >
+              <div class="et-c">
+
+                <span
+                  class="tag-pills"
+                  v-for="i in selectedItem.addicted"
+                  :key="i"
+                  @click="removeExtraTagShow(i)"
+                  >- {{ i }}</span
+                >
+              </div>
             </div>
             <div
               class="add-ingredient"
@@ -748,7 +751,7 @@ export default {
         right: 0;
         bottom: 0;
         width: 70%;
-        //height: 80%;
+        height: calc(100% - 120px);
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -782,42 +785,68 @@ export default {
         .content {
           background-color: $c-nav;
           width: 100% !important;
-          padding: 2rem 0rem;
-          padding-top: 100px;
+          padding:90px 0rem 2rem;
+          overflow: auto;
           height: 100%;
           @include dfj;
           gap: 2rem;
           flex-direction: column;
-          justify-content: space-between;
-          align-content: flex-end;
+          justify-content: flex-end;
+          align-content: flex-start;
 
           .tags {
             overflow: auto;
-
+            background-color: rgba(0, 0, 0, 0.191);
             padding: 1rem;
+            max-height: 270px;
             min-height: 150px;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 20px;
+            gap: 13px;
             column-gap: 5px;
-            h3 {
-              width: 100%;
+            div{
+
+              width: 100% !important;
             }
+            width: 100% !important;
+            
             .tag-pills {
+              display: block;
+              width: 100% !important;
               background-color: $c-panna;
               color: $c-nav !important;
             }
           }
           .extra-tags {
-            @include dfj;
-            padding: 1rem;
-            flex-direction: column;
+            background-color: rgba(0, 0, 0, 0.191);
+            
+            padding:1rem;
+            
             width: 100%;
-            gap: 0.4rem;
+            
+            overflow: auto;
+            
+            max-height: 27vh;
+            .et-c{
+              gap: 13px;
+              flex-direction: column;
+              @include dfj;
+            }
+            h3{
+             
+              color: white  !important;
+              margin-bottom: 15px;
+            }
+            
+            .tag-pills {
+              background-color: $c-header;
+              
+            }
           }
           .add-ingredient {
+            
+            align-self: flex-end;
             position: relative;
             width: 100%;
             background-color: $c-panna;
@@ -872,6 +901,8 @@ export default {
           }
 
           .add {
+            
+            align-self: center;
             @include dfc;
             gap: 2rem;
             .sec {

@@ -440,17 +440,16 @@ export default {
         >
         </textarea>
       </template>
+      <div class="privacy">
 
-      <label for="privacy"
-        >Ho letto e accetto la politica sulla privacy ai sensi del Regolamento
-        EU n. 679/2016</label
-      >
-      <input
-        @change="formValues.privacy = !formValues.privacy"
-        type="checkbox"
-        name="privacy"
-        id="privacy"
-      />
+        <div :class="formValues.privacy ? 'my-check-on' : 'my-check'" @click="formValues.privacy = !formValues.privacy" name="privacy">
+          <div class="int"></div>
+        </div>
+        <span @click="formValues.privacy = !formValues.privacy" for="privacy"
+          >Ho letto e accetto la politica sulla privacy ai sensi del Regolamento
+          EU n. 679/2016</span
+        >
+      </div>
 
       <div>I campi contrassegnati con * sono obbligatori</div>
     </form>
@@ -642,6 +641,12 @@ h1 {
   padding: 1.5rem;
   border-radius: 15px;
   font-size: 1.5rem;
+  li{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
   .reservation_date {
     width: 80%;
     margin: 0 auto;
@@ -683,7 +688,31 @@ h1 {
 .calendar-leave-from {
   opacity: 0;
 }
-
+.privacy{
+display: flex;
+align-content: center;
+gap: 10px;
+.my-check-on{
+  aspect-ratio: 1;
+  height: 20px;
+  width: 20px;
+  border: 2px solid white;
+  border-radius: 4px;
+  padding: 3px;
+  .int{
+    height: 100%;
+    width: 100%;
+    background-color: white;
+  }
+}
+.my-check{
+    aspect-ratio: 1;
+    height: 20px;
+    width: 20px;
+    border: 2px solid white;
+    border-radius: 4px;
+  }
+}
 // .orari-enter-active,
 // .orari-leave-active {
 //   transition: opacity 0.5s ease-in-out;
