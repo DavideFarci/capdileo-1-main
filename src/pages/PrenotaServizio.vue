@@ -52,11 +52,13 @@ export default {
 <template>
   <div class="prenota-servizio">
     <sh />
-    <app-calendar
-      :formValues="reservationValues"
-      :inputs="inputs"
-      :reservation="true"
-    />
+    <div class="cont">
+      <app-calendar
+        :formValues="reservationValues"
+        :inputs="inputs"
+        :reservation="true"
+      />
+    </div>
   </div>
 </template>
 
@@ -65,6 +67,9 @@ export default {
 .prenota-servizio {
   height: 100vh;
   overflow: auto;
+  .cont{
+    padding: 15% 0;
+  }
 }
 h1 {
   margin: 1rem;

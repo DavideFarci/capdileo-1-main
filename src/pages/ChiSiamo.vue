@@ -140,6 +140,7 @@
   flex-direction:column;
 
   .main-about{
+    padding-top: 40px;
     overflow: auto;
     padding: 2rem;
     height: 100%;

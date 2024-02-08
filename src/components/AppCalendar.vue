@@ -510,7 +510,7 @@ h1 {
   font-size: clamp(1.9rem, 6vw, 2.5rem);
 }
 .container_servizio {
-  padding: 3rem 0;
+  padding: 2rem 0;
   display: flex;
   flex-direction: column;
   gap: 3rem;

@@ -152,6 +152,7 @@
     overflow: auto;
     height: 100%;
     padding: 1rem 1rem ;
+    padding-top: 15%;
     h1{
       text-align: center;
       text-transform: uppercase;

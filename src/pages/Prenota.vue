@@ -695,7 +695,7 @@ export default {
   .prenota-cont {
     overflow: auto;
     height: 100%;
-    padding: 1rem 1rem;
+    padding: 15% 1rem;
     h1 {
       text-align: center;
       text-transform: uppercase;

@@ -34,6 +34,7 @@ body{
     // position: fixed;
     // top: 0;
     // right: 0;
+
     width: 70%;
     padding: 0 2rem ;
     overflow: hidden;
