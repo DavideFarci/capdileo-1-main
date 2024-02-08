@@ -7,8 +7,9 @@ import { validateReservation } from "../assets/validations/val_prenotaServizio";
 import { order_validations } from "../assets/validations/val_conferma";
 import AppMessageOverlay from "./AppMessageOverlay.vue";
 import AppLoader from "./AppLoader.vue";
+import AppLoaderFull from "./AppLoaderFull.vue";
 export default {
-  components: { AppMessageOverlay, AppLoader },
+  components: { AppMessageOverlay, AppLoader, AppLoaderFull },
   props: {
     formValues: {
       type: Object,
@@ -36,6 +37,7 @@ export default {
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
       success: true,
       loader: false,
+      loaderFull: false,
       loaderSeat: false,
       message: false,
     };
@@ -43,9 +45,11 @@ export default {
   methods: {
     // Chiamata API
     async getDates() {
+      this.loaderFull = true;
       const dates = await axios.get(state.baseUrl + "api/dates");
       this.currentDate = dates.data.data_e_ora_attuali;
       this.calendar = this.getCalendar(dates.data.results);
+      this.loaderFull = false;
       this.initialDates = dates.data.results;
     },
 
@@ -500,6 +504,8 @@ export default {
       @toggle_message="toggleMessage"
     />
   </div>
+
+  <app-loader-full v-if="loaderFull" />
 </template>
 
 <style scoped lang="scss">
