@@ -549,6 +549,9 @@ h1 {
   }
 
   .calendar_container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
     .calendar {
       .days_w {
         display: grid;
@@ -587,6 +590,7 @@ h1 {
     gap: 2rem;
     .time_container {
       @include dfc;
+      flex-wrap: wrap;
       width: 100%;
       justify-content: space-between;
       opacity: 0;
