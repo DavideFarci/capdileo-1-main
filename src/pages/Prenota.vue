@@ -646,6 +646,42 @@ export default {
   background-color: $c-nav-link;
   border: 2px solid $c-header;
 }
+.extra-tags::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.extra-tags::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: $c-header;
+}
+.extra-tags::-webkit-scrollbar-track {
+  border-radius: 20px;
+  background: rgba(52, 4, 7, 0.786);
+}
+.extra-tags::-webkit-scrollbar-thumb:hover {
+  border-radius: 20px;
+  background-color: $c-nav-link;
+  border: 2px solid $c-header;
+}
+.tags::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.tags::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: $c-header;
+}
+.tags::-webkit-scrollbar-track {
+  border-radius: 20px;
+  background: rgba(52, 4, 7, 0.786);
+}
+.tags::-webkit-scrollbar-thumb:hover {
+  border-radius: 20px;
+  background-color: $c-nav-link;
+  border: 2px solid $c-header;
+}
 .hd {
   box-shadow: 10px 10px 10px black;
 }
@@ -798,7 +834,7 @@ export default {
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.191);
             padding: 1rem;
-            max-height: 270px;
+            max-height: 27vh;
             min-height: 150px;
             display: flex;
             flex-direction: column;
@@ -826,8 +862,8 @@ export default {
             width: 100%;
             
             overflow: auto;
-            
-            max-height: 27vh;
+
+            max-height: 25vh;
             .et-c{
               gap: 13px;
               flex-direction: column;
@@ -901,18 +937,20 @@ export default {
           }
 
           .add {
-            
+            font-size: clamp(20px, 3vw, 25px);
             align-self: center;
             @include dfc;
-            gap: 2rem;
+            width: 100%;
+            justify-content: space-around;
             .sec {
               @include dfc;
-              gap: 0.5rem;
-
+              gap: 10px;
+              
               .plus,
               .minus {
-                height: 2rem;
-                width: 2rem;
+                font-size: 20px;
+                height: 40px;
+                width: 40px;
                 @include dfc;
                 border: 2px solid white;
                 border-radius: 20px;
@@ -926,6 +964,7 @@ export default {
               border: 2px solid white;
               border-radius: 20px;
             }
+            
           }
         }
       }
@@ -1127,12 +1166,7 @@ export default {
         width: 100% !important;
       }
     }
-    .removed {
-      // border: 2px solid rgb(11, 116, 71);
-    }
-    .addicted {
-      // border: 2px solid rgb(113, 11, 116);
-    }
+
   }
 
   svg {

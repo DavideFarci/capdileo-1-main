@@ -638,24 +638,24 @@ h1 {
 
 .reservation {
   border: 1px solid white;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 15px;
   font-size: 1.5rem;
   li{
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    width: 100%;
+
   }
   .reservation_date {
-    width: 80%;
+    width: 90%;
     margin: 0 auto;
     font-size: clamp(14px, 4vw, 20px);
     @include dfc;
-    flex-wrap: wrap;
+
     justify-content: space-between;
     gap: 0.2rem;
-    padding: 0.7rem 2.5rem;
+    padding: 0.7rem 2rem;
     margin-bottom: 1rem;
     border: 1px solid white;
     border-radius: 5px;
