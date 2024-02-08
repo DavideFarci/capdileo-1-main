@@ -31,8 +31,8 @@ export function order_validations(resValues) {
   // Telefono
   if (!resValues.telefono) {
     errValid.push("Il campo 'N° 'telefono' è richiesto!");
-  } else if (resValues.telefono.length !== 10) {
-    errValid.push("Il campo 'N° 'telefono' deve essere di 10 cifre!");
+  } else if (resValues.telefono.startsWith("+39")) {
+    errValid.push("Il 'N° 'telefono' non deve contenere il prefisso '+39'");
   }
 
   // Messaggio

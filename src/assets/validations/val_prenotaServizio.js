@@ -30,6 +30,8 @@ export function validateReservation(resValues) {
   // Telefono
   if (!resValues.telefono) {
     errValid.push("Il campo 'N° 'telefono' è richiesto!");
+  } else if (resValues.telefono.startsWith("+39")) {
+    errValid.push("Il 'N° 'telefono' non deve contenere il prefisso '+39'");
   }
 
   // N di persone
