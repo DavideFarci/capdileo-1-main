@@ -795,7 +795,7 @@ export default {
         gap: 2rem;
 
         h3 {
-          font-size: 25px;
+          font-size: 20px;
           text-transform: uppercase;
         }
 
@@ -811,7 +811,7 @@ export default {
           }
           img {
             width: 30%;
-            margin-bottom: -80px;
+            margin-bottom: -50px;
             z-index: 40;
             aspect-ratio: 1;
             object-fit: cover;
@@ -821,11 +821,11 @@ export default {
         .content {
           background-color: $c-nav;
           width: 100% !important;
-          padding:90px 0rem 2rem;
+          padding:60px 0rem 1rem;
           overflow: auto;
           height: 100%;
           @include dfj;
-          gap: 2rem;
+          
           flex-direction: column;
           justify-content: flex-end;
           align-content: flex-start;
@@ -834,20 +834,19 @@ export default {
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.191);
             padding: 1rem;
-            max-height: 27vh;
-            min-height: 150px;
+            max-height: 25vh;
+
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            //flex-direction: column;
+            align-items: center;
             gap: 13px;
             column-gap: 5px;
-            div{
+            h3{
 
-              width: 100% !important;
+              margin-right: 20px ;
             }
-            width: 100% !important;
-            
             .tag-pills {
+              white-space: nowrap;
               display: block;
               width: 100% !important;
               background-color: $c-panna;
@@ -856,13 +855,9 @@ export default {
           }
           .extra-tags {
             background-color: rgba(0, 0, 0, 0.191);
-            
             padding:1rem;
-            
             width: 100%;
-            
             overflow: auto;
-
             max-height: 25vh;
             .et-c{
               gap: 13px;
@@ -937,20 +932,21 @@ export default {
           }
 
           .add {
+            margin-top: 1rem;
             font-size: clamp(20px, 3vw, 25px);
             align-self: center;
             @include dfc;
             width: 100%;
             justify-content: space-around;
+            font-size: 18px;
             .sec {
               @include dfc;
-              gap: 10px;
+              gap: 15px;
               
               .plus,
               .minus {
-                font-size: 20px;
-                height: 40px;
-                width: 40px;
+                height: 30px;
+                width: 30px;
                 @include dfc;
                 border: 2px solid white;
                 border-radius: 20px;
