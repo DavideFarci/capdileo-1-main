@@ -119,6 +119,9 @@ export default {
           products: this.state.getServeCart(),
           date_slot: time_slot,
           date_id: this.dateId,
+          delivery: this.formValues.delivery,
+          city: this.formValues.comune,
+          address: this.formValues.indirizzo,
           privacy: this.formValues.privacy,
         };
 
@@ -134,8 +137,9 @@ export default {
           // SE AVVIENE UN ORDINE D'ASPORTO
         } else {
           const data = await axios.post(state.baseUrl + "api/orders", _order);
-          this.loader = false;
+          this.success && (this.formValues.delivery = false);
           localStorage.clear();
+          this.loader = false;
           setTimeout(() => {
             this.$router.replace("/prenota");
           }, 2000);
@@ -257,10 +261,10 @@ export default {
     },
 
     // settare mese e anno per la prenotazione (per evitare problemi se siamo a fine anno)
-    setMonthAndYear(month, monthIndex) {
+    setMonthAndYear(month, monthName) {
       const { year } = month;
       this.formValues.anno = year;
-      this.formValues.mese = monthIndex;
+      this.formValues.mese = monthName;
     },
 
     getFirstMonthAndYearValues() {
@@ -432,6 +436,18 @@ export default {
           :value="formValues[input.name]"
           @input="(e) => handleInputValue(e, input.name)"
         />
+        <input
+          v-else-if="
+            (input.name == `comune` || input.name == `indirizzo`) &&
+            !reservation
+          "
+          :disabled="!formValues.delivery"
+          :name="input.name"
+          :type="input.type"
+          :id="input.name"
+          :value="formValues[input.name]"
+          @input="(e) => handleInputValue(e, input.name)"
+        />
         <textarea
           v-else
           :name="input.name"
@@ -444,16 +460,32 @@ export default {
         </textarea>
       </template>
 
-      <label for="privacy"
-        >Ho letto e accetto la politica sulla privacy ai sensi del Regolamento
-        EU n. 679/2016</label
-      >
-      <input
-        @change="formValues.privacy = !formValues.privacy"
-        type="checkbox"
-        name="privacy"
-        id="privacy"
-      />
+      <div v-if="!reservation" class="delivery">
+        <div
+          :class="formValues.delivery ? 'my-check-on' : 'my-check'"
+          @click="formValues.delivery = !formValues.delivery"
+          name="delivery"
+        >
+          <div class="int"></div>
+        </div>
+        <span @click="formValues.delivery = !formValues.delivery" for="delivery"
+          >Consegna a domicilio</span
+        >
+      </div>
+
+      <div class="privacy">
+        <div
+          :class="formValues.privacy ? 'my-check-on' : 'my-check'"
+          @click="formValues.privacy = !formValues.privacy"
+          name="privacy"
+        >
+          <div class="int"></div>
+        </div>
+        <span @click="formValues.privacy = !formValues.privacy" for="privacy"
+          >Ho letto e accetto la politica sulla privacy ai sensi del Regolamento
+          EU n. 679/2016</span
+        >
+      </div>
 
       <div>I campi contrassegnati con * sono obbligatori</div>
     </form>
@@ -469,23 +501,33 @@ export default {
           </ul>
         </li>
         <li>
-          <span class="reservation_label">Nome: </span>{{ formValues?.nome }}
+          <span class="reservation_label">Nome: </span>{{ formValues.nome }}
         </li>
         <li>
           <span class="reservation_label">Telefono: </span
-          >{{ formValues?.telefono }}
+          >{{ formValues.telefono }}
         </li>
         <li>
-          <span class="reservation_label">Email: </span>{{ formValues?.email }}
+          <span class="reservation_label">Email: </span>{{ formValues.email }}
         </li>
         <li v-if="reservation">
           <span class="reservation_label">N° di persone: </span
-          >{{ formValues?.n_persone }}
+          >{{ formValues.n_persone }}
         </li>
         <li>
           <span class="reservation_label">Messaggio: </span
-          >{{ formValues?.messaggio }}
+          >{{ formValues.messaggio }}
         </li>
+        <div v-if="!reservation">
+          <li>
+            <span class="reservation_label">Città: </span
+            >{{ formValues.comune }}
+          </li>
+          <li>
+            <span class="reservation_label">Indirizzo: </span
+            >{{ formValues.indirizzo }}
+          </li>
+        </div>
       </ul>
     </section>
 
@@ -690,6 +732,33 @@ h1 {
 .calendar-enter-from,
 .calendar-leave-from {
   opacity: 0;
+}
+
+.privacy,
+.delivery {
+  display: flex;
+  align-content: center;
+  gap: 10px;
+  .my-check-on {
+    aspect-ratio: 1;
+    height: 20px;
+    width: 20px;
+    border: 2px solid white;
+    border-radius: 4px;
+    padding: 3px;
+    .int {
+      height: 100%;
+      width: 100%;
+      background-color: white;
+    }
+  }
+  .my-check {
+    aspect-ratio: 1;
+    height: 20px;
+    width: 20px;
+    border: 2px solid white;
+    border-radius: 4px;
+  }
 }
 
 // .orari-enter-active,

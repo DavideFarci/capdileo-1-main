@@ -19,6 +19,9 @@ export default {
         email: "",
         telefono: null,
         messaggio: "",
+        delivery: false,
+        comune: "",
+        indirizzo: "",
         privacy: false,
       },
       inputs: [
@@ -40,6 +43,15 @@ export default {
         {
           name: "messaggio",
           label: "Messaggio",
+        },
+        {
+          name: "comune",
+          label: "Città",
+          type: "text",
+        },
+        {
+          name: "indirizzo",
+          label: "Indirizzo e N° civico",
           type: "text",
         },
       ],
