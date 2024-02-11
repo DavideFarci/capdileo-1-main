@@ -67,17 +67,15 @@ export default {
     },
     getTot() {
       this.state.totCart = 0;
+      this.state.nPezzi = 0;
       this.state.arrCart.forEach((element) => {
-        console.log(element.totprice);
         this.state.totCart = this.state.totCart + element.totprice;
-      });
+        this.state.nPezzi += parseInt(element.slot) * element.counter
+      }); 
     },
     getPrice(cent, sum) {
       if (sum) {
-        // console.log(cent)
-        // console.log(sum)
         let num1 = parseFloat(cent);
-
         let num = (num1 + sum) / 100;
         num = "€" + num;
         return num;
@@ -92,7 +90,7 @@ export default {
   created() {
     localStorage.getItem("cart") &&
       (this.state.arrCart = JSON.parse(localStorage.getItem("cart")));
-    this.getTot;
+    this.getTot();
   },
 };
 </script>
@@ -202,19 +200,8 @@ export default {
     </div>
   </div>
 
-  <div v-if="loading" class="loop cubes">
-    <div class="item cubes"></div>
-    <div class="item cubes"></div>
-    <div class="item cubes"></div>
-    <div class="item cubes"></div>
-    <div class="item cubes"></div>
-    <div class="item cubes"></div>
-  </div>
-</template>
-<!-- <form  action="http://127.0.0.1:8000/api/orders" method="POST">
-    <button class="g-recaptcha" data-sitekey="6Ld254ooAAAAAPDhJAkgpIIaJe09mlZxpuDULufz" data-callback='onSubmit'
-    data-action='submit'>Submit</button>
-  </form> -->
+ </template>
+
 
 <style scoped lang="scss">
 @use "../assets/styles/general.scss" as *;

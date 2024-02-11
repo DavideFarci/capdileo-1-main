@@ -8,6 +8,8 @@ export const state = reactive({
   arrCart: [],
   arrVariation: [],
 
+  maxPezzi: 0,
+  nPezzi: 0,
   totCart: 0,
   //setting:[],
   setting: [{ status: 1 }, { status: 1 }, { status: 1 }],

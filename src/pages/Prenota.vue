@@ -29,6 +29,7 @@ export default {
         counter: 1,
         expanded: 0,
         opened: false,
+        category_slot: '',
       },
       arrCorrectIngredient: [],
     };
@@ -81,7 +82,7 @@ export default {
         return elemento !== stringaDaEliminare;
       });
     },
-    openShow(name, id, tags, price, image) {
+    openShow(name, id, tags, price, image, cat) {
       this.selectedItem.name = name;
       this.selectedItem.id = id;
       this.selectedItem.tags = tags;
@@ -89,6 +90,12 @@ export default {
       this.selectedItem.price = price;
       this.selectedItem.opened = true;
       this.arrCorrectIngredient = [];
+      this.arrCategory.forEach(element => {
+        if(element.id == cat){
+          this.selectedItem.category_slot = element.slot;
+
+        } 
+      });
       this.openIng();
     },
     closeShow() {
@@ -99,9 +106,11 @@ export default {
       this.selectedItem.addicted = [];
       this.selectedItem.image = "";
       this.selectedItem.price = 0;
+      this.selectedItem.counter = 1;
       this.selectedItem.expanded = 0;
       this.selectedItem.price_variation = 0;
       this.selectedItem.opened = false;
+      this.selectedItem.category_slot = '';
       this.arrCorrectIngredient = [];
       this.arrProduct.forEach((element) => {
         element.tags.forEach((element) => {
@@ -168,7 +177,7 @@ export default {
       });
     },
 
-    newItem(p_id, title, counter, totprice, addicted, deselected) {
+    newItem(p_id, title, counter, totprice, addicted, deselected, slot) {
       let newitem = {
         p_id,
         title,
@@ -176,6 +185,7 @@ export default {
         totprice,
         deselected,
         addicted,
+        slot,
       };
       return newitem;
     },
@@ -189,10 +199,7 @@ export default {
       let double_check = false;
       let r_id = "";
 
-      if (
-        this.selectedItem.deselected.length == 0 &&
-        this.selectedItem.addicted.length == 0
-      ) {
+      if (this.selectedItem.deselected.length == 0 && this.selectedItem.addicted.length == 0) {
         this.state.arrCart.forEach((element, i) => {
           if (
             element.p_id == this.selectedItem.id &&
@@ -243,16 +250,7 @@ export default {
 
       //se l'item non era gia presente lo aggiungo ora per la prima volta a tutti gli array
       if (!check) {
-        let newitem = this.newItem(
-          this.selectedItem.id,
-          this.selectedItem.name,
-          this.selectedItem.counter,
-          (parseInt(this.selectedItem.price) +
-            this.selectedItem.price_variation) *
-            this.selectedItem.counter,
-          this.selectedItem.addicted,
-          this.selectedItem.deselected
-        );
+        let newitem = this.newItem( this.selectedItem.id, this.selectedItem.name, this.selectedItem.counter, (parseInt(this.selectedItem.price) + this.selectedItem.price_variation) * this.selectedItem.counter, this.selectedItem.addicted, this.selectedItem.deselected, this.selectedItem.category_slot);
 
         this.state.arrCart.push(newitem);
       }
@@ -333,9 +331,11 @@ export default {
     },
     getTot() {
       this.state.totCart = 0;
+      this.state.nPezzi = 0;
       this.state.arrCart.forEach((element) => {
         this.state.totCart = this.state.totCart + element.totprice;
-      });
+        this.state.nPezzi += parseInt(element.slot) * element.counter
+      }); 
     },
     openIng() {
       let obs = false;
@@ -358,13 +358,13 @@ export default {
   },
   created() {
     localStorage.getItem("cart") &&
-      (this.state.arrCart = JSON.parse(localStorage.getItem("cart")));
+    (this.state.arrCart = JSON.parse(localStorage.getItem("cart")));
     this.getTot();
+
     this.getProduct(0);
     this.getCategory();
     this.getIngredients();
 
-    this.state.actvPage = 5;
   },
 };
 </script>
@@ -476,20 +476,13 @@ export default {
       </div>
 
       <div class="main-prenota">
-        <div
-          class="card-default"
-          @click="
-            openShow(item.name, item.id, item.tags, item.price, item.image)
-          "
-          v-for="item in arrProduct"
-          :key="item.id"
-        >
+        <div  class="card-default" @click="openShow(item.name, item.id, item.tags, item.price, item.image, item.category_id)" v-for="item in arrProduct" :key="item.id" >
           <img :src="state.getImageUrl(item.image)" alt="" />
 
           <div class="title">{{ item.name }}</div>
           <div class="c-tp">
             <div class="tags">
-              <span>{{ fixtag(item.tags) }}</span>
+              <span class="def_tag" >{{ fixtag(item.tags) }}</span>
             </div>
             <div class="price">{{ getPrice(item.price) }}</div>
           </div>
@@ -517,7 +510,7 @@ export default {
           </div>
 
           <div class="content">
-            <div class="tags" v-if="!selectedItem.expanded">
+            <div class="tags" v-if="!selectedItem.expanded  && selectedItem.category_slot > 0">
               <h3>Modifica ingredienti:</h3>
               <div v-for="tag in selectedItem.tags" :key="tag.name">
                 <span
@@ -536,10 +529,14 @@ export default {
                 >
               </div>
             </div>
-            <div
-              class="extra-tags"
-              v-if="!selectedItem.expanded && selectedItem.addicted.length"
-            >
+            <div class="description" v-if="selectedItem.category_slot == 0">
+              <h3>Descrizione:</h3>
+              <div class="desc">
+                <span class="def_tag" >{{ fixtag(selectedItem.tags) }}</span>
+                <!-- <span v-for="tag in selectedItem.tags" :key="tag.name" > {{ tag.name }}</span> -->
+              </div>
+            </div>
+            <div class="extra-tags" v-if="!selectedItem.expanded && selectedItem.addicted.length  && selectedItem.category_slot > 0" >
               <h3>Ingredienti extra:</h3>
               <div class="et-c">
 
@@ -552,10 +549,7 @@ export default {
                 >
               </div>
             </div>
-            <div
-              class="add-ingredient"
-              :class="selectedItem.expanded ? '' : 'add-off'"
-            >
+            <div class="add-ingredient" v-if="selectedItem.category_slot > 0" :class="selectedItem.expanded ? '' : 'add-off'">
               <img
                 :class="selectedItem.expanded ? 'open' : ''"
                 v-if="selectedItem.expanded"
@@ -829,7 +823,16 @@ export default {
           flex-direction: column;
           justify-content: flex-end;
           align-content: flex-start;
-
+          .description{
+            margin: 4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            .desc{
+              @include dfc;
+              gap: 2rem;
+            }
+          }
           .tags {
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.191);
@@ -992,6 +995,9 @@ export default {
       }
     }
   }
+}
+.def_tag{
+  text-transform: capitalize;
 }
 .tag-off {
   opacity: 0.2;

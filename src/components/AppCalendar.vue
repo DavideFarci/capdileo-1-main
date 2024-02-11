@@ -79,7 +79,7 @@ export default {
       this.errorValidation = "";
       this.isValid = this.reservation
         ? validateReservation(this.formValues)
-        : order_validations(this.formValues, this.errorValidation);
+        : order_validations(this.formValues, this.state.maxPezzi, this.state.nPezzi);
 
       if (this.isValid.length !== 0) {
         return;
@@ -184,11 +184,13 @@ export default {
           this.dateId = id;
           // Imposto il num di posti disponibili per l'orario scelto
           this.seats = max_res - reserved;
+          this.state.maxPezzi = this.seats;
         } else {
           const { id, reserved_pz, max_pz } = data.data.results[0];
           this.dateId = id;
           // Imposto il num di pezzi disponibili per l'orario scelto
           this.seats = max_pz - reserved_pz;
+          this.state.maxPezzi = this.seats;
         }
       } catch (data) {
         if (data.code == "ERR_NETWORK") {
@@ -226,16 +228,25 @@ export default {
       for (const key in grouped) {
         const el = grouped[key];
         let _day_visible = true;
-
+        
+        let obsc = 0
+        let obsz = false
         for (let z = 0; z < el.times.length; z++) {
+          obsc = 0
           const element = el.times[z];
           if (!element.visible) {
-            _day_visible = false;
-            break; // Se uno degli elementi è visibile, non c'è bisogno di controllare gli altri
+            obsc ++
+            if(obsc == el.times.length){
+              obsz = true
+            }
+            //break; // Se uno degli elementi è visibile, non c'è bisogno di controllare gli altri.... Ah si? e chi la detto???? hahahahahahhahahahahahah
           }
         }
-
+        if(obsz){
+          _day_visible = false;
+        }
         el.day_visible = _day_visible;
+        
       }
 
       return grouped;
