@@ -46,12 +46,12 @@ export default {
         },
         {
           name: "comune",
-          label: "Città",
+          label: "Città *",
           type: "text",
         },
         {
           name: "indirizzo",
-          label: "Indirizzo e N° civico",
+          label: "Indirizzo e N° civico *",
           type: "text",
         },
       ],

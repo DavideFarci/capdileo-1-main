@@ -91,13 +91,6 @@ export default {
       this.message = true;
       this.loader = true;
 
-      // Compongo la data intera con orario (formato dd/mm/yyyy hh:mm)
-      const time_slot = `${numberInCalendar(
-        this.formValues.giorno
-      )}/${numberInCalendar(monthConvert(this.formValues.mese))}/${
-        this.formValues.anno
-      } ${this.formValues.orario}`;
-
       await this.findIdRequest();
       try {
         const _reservation = {
@@ -106,7 +99,6 @@ export default {
           email: this.formValues.email,
           n_person: this.formValues.n_persone,
           message: this.formValues.messaggio,
-          date_slot: time_slot,
           date_id: this.dateId,
           privacy: this.formValues.privacy,
         };
@@ -117,7 +109,6 @@ export default {
           email: this.formValues.email,
           message: this.formValues.messaggio,
           products: this.state.getServeCart(),
-          date_slot: time_slot,
           date_id: this.dateId,
           delivery: this.formValues.delivery,
           city: this.formValues.comune,
@@ -215,14 +206,14 @@ export default {
       const grouped = {};
       month.forEach((item) => {
         if (!grouped[item.day]) {
-          // Se non esiste la chiave day, crea un array
+          // Se non esiste la chiave day, crea un oggetto
           grouped[item.day] = {
             times: [],
-            day_w: "",
+            day_w: "0",
             day_visible: true,
           };
         }
-        // Aggiungi l'orario e il giorno della settimana all'array
+        // Aggiungi l'orario e il giorno della settimana all'oggetto
         grouped[item.day].times.push({
           time: item.time,
           visible: item.visible,
@@ -245,6 +236,7 @@ export default {
         el.day_visible = _day_visible;
       }
 
+      log(grouped);
       return grouped;
     },
 
@@ -298,6 +290,20 @@ export default {
     toggleMessage() {
       this.loader = false;
       this.message = false;
+    },
+
+    showInput(inputName) {
+      if (inputName !== "messaggio") {
+        if (
+          (inputName == `comune` || inputName == `indirizzo`) &&
+          !this.formValues.delivery &&
+          !this.reservation
+        ) {
+          return false;
+        }
+        return true;
+      }
+      return false;
     },
   },
   async created() {
@@ -356,7 +362,7 @@ export default {
         </div>
         <template v-for="(month, monthIndex) in calendar" :key="monthIndex">
           <Transition name="calendar">
-            <!-- Vero e proprio calendario del mese  -->
+            <!-- calendario mensile  -->
 
             <div class="day_grid" v-if="formValues.mese == monthIndex">
               <div
@@ -427,29 +433,22 @@ export default {
       <h2>Inserisci i tuoi dati</h2>
       <!-- Nome  -->
       <template v-for="(input, i) in inputs" :key="i">
-        <label :for="input.name">{{ input.label }}</label>
+        <label v-if="showInput(input.name)" :for="input.name">{{
+          input.label
+        }}</label>
         <input
-          v-if="input.name !== `messaggio`"
+          v-if="showInput(input.name)"
           :name="input.name"
           :type="input.type"
           :id="input.name"
           :value="formValues[input.name]"
           @input="(e) => handleInputValue(e, input.name)"
         />
-        <input
-          v-else-if="
-            (input.name == `comune` || input.name == `indirizzo`) &&
-            !reservation
-          "
-          :disabled="!formValues.delivery"
-          :name="input.name"
-          :type="input.type"
-          :id="input.name"
-          :value="formValues[input.name]"
-          @input="(e) => handleInputValue(e, input.name)"
-        />
+        <label v-if="input.name === `messaggio`" :for="input.name">{{
+          input.label
+        }}</label>
         <textarea
-          v-else
+          v-if="input.name === `messaggio`"
           :name="input.name"
           :id="input.name"
           :value="formValues[input.name]"
@@ -547,7 +546,7 @@ export default {
     />
   </div>
 
-  <app-loader-full v-if="loaderFull" />
+  <AppLoaderFull v-if="loaderFull" />
 </template>
 
 <style scoped lang="scss">
