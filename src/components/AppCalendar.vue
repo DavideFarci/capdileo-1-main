@@ -7,8 +7,9 @@ import { validateReservation } from "../assets/validations/val_prenotaServizio";
 import { order_validations } from "../assets/validations/val_conferma";
 import AppMessageOverlay from "./AppMessageOverlay.vue";
 import AppLoader from "./AppLoader.vue";
+import AppLoaderFull from "./AppLoaderFull.vue";
 export default {
-  components: { AppMessageOverlay, AppLoader },
+  components: { AppMessageOverlay, AppLoader, AppLoaderFull },
   props: {
     formValues: {
       type: Object,
@@ -36,6 +37,7 @@ export default {
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
       success: true,
       loader: false,
+      loaderFull: false,
       loaderSeat: false,
       message: false,
     };
@@ -43,9 +45,11 @@ export default {
   methods: {
     // Chiamata API
     async getDates() {
+      this.loaderFull = true;
       const dates = await axios.get(state.baseUrl + "api/dates");
       this.currentDate = dates.data.data_e_ora_attuali;
       this.calendar = this.getCalendar(dates.data.results);
+      this.loaderFull = false;
       this.initialDates = dates.data.results;
     },
 
@@ -79,7 +83,11 @@ export default {
       this.errorValidation = "";
       this.isValid = this.reservation
         ? validateReservation(this.formValues, this.state.maxPosti)
-        : order_validations(this.formValues, this.state.maxPosti, this.state.nPezzi);
+        : order_validations(
+            this.formValues,
+            this.state.maxPosti,
+            this.state.nPezzi
+          );
 
       if (this.isValid.length !== 0) {
         return;
@@ -106,7 +114,7 @@ export default {
           date_id: this.dateId,
           privacy: this.formValues.privacy,
         };
-        
+
         const _order = {
           name: this.formValues.nome,
           phone: this.formValues.telefono,
@@ -228,25 +236,24 @@ export default {
       for (const key in grouped) {
         const el = grouped[key];
         let _day_visible = true;
-        
-        let obsc = 0
-        let obsz = false
+
+        let obsc = 0;
+        let obsz = false;
         for (let z = 0; z < el.times.length; z++) {
-          obsc = 0
+          obsc = 0;
           const element = el.times[z];
           if (!element.visible) {
-            obsc ++
-            if(obsc == el.times.length){
-              obsz = true
+            obsc++;
+            if (obsc == el.times.length) {
+              obsz = true;
             }
             //break; // Se uno degli elementi è visibile, non c'è bisogno di controllare gli altri.... Ah si? e chi la detto???? hahahahahahhahahahahahah
           }
         }
-        if(obsz){
+        if (obsz) {
           _day_visible = false;
         }
         el.day_visible = _day_visible;
-        
       }
 
       return grouped;
@@ -452,8 +459,11 @@ export default {
         </textarea>
       </template>
       <div class="privacy">
-
-        <div :class="formValues.privacy ? 'my-check-on' : 'my-check'" @click="formValues.privacy = !formValues.privacy" name="privacy">
+        <div
+          :class="formValues.privacy ? 'my-check-on' : 'my-check'"
+          @click="formValues.privacy = !formValues.privacy"
+          name="privacy"
+        >
           <div class="int"></div>
         </div>
         <span @click="formValues.privacy = !formValues.privacy" for="privacy"
@@ -510,6 +520,8 @@ export default {
       }"
       @toggle_message="toggleMessage"
     />
+
+    <AppLoaderFull v-if="loaderFull" />
   </div>
 </template>
 
@@ -652,11 +664,10 @@ h1 {
   padding: 1rem;
   border-radius: 15px;
   font-size: 1.5rem;
-  li{
+  li {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-
   }
   .reservation_date {
     width: 90%;
@@ -699,24 +710,24 @@ h1 {
 .calendar-leave-from {
   opacity: 0;
 }
-.privacy{
-display: flex;
-align-content: center;
-gap: 10px;
-.my-check-on{
-  aspect-ratio: 1;
-  height: 20px;
-  width: 20px;
-  border: 2px solid white;
-  border-radius: 4px;
-  padding: 3px;
-  .int{
-    height: 100%;
-    width: 100%;
-    background-color: white;
+.privacy {
+  display: flex;
+  align-content: center;
+  gap: 10px;
+  .my-check-on {
+    aspect-ratio: 1;
+    height: 20px;
+    width: 20px;
+    border: 2px solid white;
+    border-radius: 4px;
+    padding: 3px;
+    .int {
+      height: 100%;
+      width: 100%;
+      background-color: white;
+    }
   }
-}
-.my-check{
+  .my-check {
     aspect-ratio: 1;
     height: 20px;
     width: 20px;
@@ -743,9 +754,9 @@ gap: 10px;
       width: 100%;
     }
   }
-  .time_container{
+  .time_container {
     flex-direction: column !important;
-    .time{
+    .time {
       width: 100%;
     }
   }
