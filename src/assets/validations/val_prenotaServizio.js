@@ -1,4 +1,4 @@
-export function validateReservation(resValues) {
+export function validateReservation(resValues, maxPerson) {
   let errValid = [];
   // Giorno e ora
   if (!resValues.giorno || !resValues.orario) {
@@ -36,6 +36,8 @@ export function validateReservation(resValues) {
   if (!resValues.n_persone) {
     errValid.push("Seleziona una numero di ospiti!");
   } else if (resValues.n_persone < 1) {
+    errValid.push("Il numero di persone deve essere almeno 1");
+  } else if (resValues.n_persone > maxPerson) {
     errValid.push("Il numero di persone deve essere almeno 1");
   }
 

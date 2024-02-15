@@ -78,8 +78,8 @@ export default {
     async getRequest() {
       this.errorValidation = "";
       this.isValid = this.reservation
-        ? validateReservation(this.formValues)
-        : order_validations(this.formValues, this.state.maxPezzi, this.state.nPezzi);
+        ? validateReservation(this.formValues, this.state.maxPosti)
+        : order_validations(this.formValues, this.state.maxPosti, this.state.nPezzi);
 
       if (this.isValid.length !== 0) {
         return;
@@ -184,13 +184,13 @@ export default {
           this.dateId = id;
           // Imposto il num di posti disponibili per l'orario scelto
           this.seats = max_res - reserved;
-          this.state.maxPezzi = this.seats;
+          this.state.maxPosti = this.seats;
         } else {
           const { id, reserved_pz, max_pz } = data.data.results[0];
           this.dateId = id;
           // Imposto il num di pezzi disponibili per l'orario scelto
           this.seats = max_pz - reserved_pz;
-          this.state.maxPezzi = this.seats;
+          this.state.maxPosti = this.seats;
         }
       } catch (data) {
         if (data.code == "ERR_NETWORK") {

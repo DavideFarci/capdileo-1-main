@@ -98,6 +98,7 @@ export default {
     </div>
     <div :class="state.sideMenuValue ? 'top-on' : 'top-off'">
       <router-link
+        v-if="!state.infomenu"
         :to="{ name: 'home' }"
         class="nav-link"
         active-class="active-link"
@@ -105,6 +106,7 @@ export default {
         >home</router-link
       >
       <router-link
+        v-if="!state.infomenu"
         :to="{ name: 'menu' }"
         class="nav-link"
         active-class="active-link"
@@ -112,6 +114,7 @@ export default {
         >menu</router-link
       >
       <router-link
+        v-if="!state.infomenu"
         :to="{ name: 'chi-siamo' }"
         class="nav-link"
         active-class="active-link"
@@ -119,6 +122,7 @@ export default {
         >chi siamo?</router-link
       >
       <router-link
+        v-if="!state.infomenu"
         :to="{ name: 'contatti' }"
         class="nav-link"
         active-class="active-link"
@@ -126,6 +130,7 @@ export default {
         >contatti</router-link
       >
       <router-link
+        v-if="!state.infomenu"
         :to="{ name: 'prenota' }"
         class="nav-link"
         active-class="active-link"
@@ -133,6 +138,7 @@ export default {
         >Ordina d'Asporto</router-link
       >
       <router-link
+        v-if="!state.infomenu"
         :to="{ name: 'prenotaServizio' }"
         class="nav-link"
         active-class="active-link"
@@ -312,10 +318,8 @@ info-off {
       font-family: "Gabarito", cursive;
       font-size: clamp(22px, 2vw, 30px)
     }
-    .active-link {
-      color: $c-white;
-    }
   }
+
   .bottom-footer * {
     color: $c-f-t;
   }
@@ -375,6 +379,9 @@ info-off {
   width: 100%;
   height: 100%;
   transition: all 0.3s linear;
+}
+.active-link {
+  color: $c-white;
 }
 .burger-close-on {
   transition: all 1s linear 2s;

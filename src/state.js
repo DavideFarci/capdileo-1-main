@@ -8,7 +8,8 @@ export const state = reactive({
   arrCart: [],
   arrVariation: [],
 
-  maxPezzi: 0,
+  maxPosti: 0,
+
   nPezzi: 0,
   totCart: 0,
   //setting:[],
@@ -30,15 +31,13 @@ export const state = reactive({
       {
         img: "../../public/pizza-alto.png",
         titolo: "PARMIGIANA",
-        ingredienti:
-          "pomodoro, mozzarella fior di latte, melanzane grigliate, parmigiano, pesto della casa",
+        ingredienti: "pomodoro, mozzarella fior di latte, melanzane grigliate, parmigiano, pesto della casa",
         prezzo: "8,00€",
       },
       {
         img: "../../public/pizza-alto.png",
         titolo: "TRENTINA",
-        ingredienti:
-          "mozzarella fior di latte, rucola, carne salada trentina, scaglie di grana",
+        ingredienti: "mozzarella fior di latte, rucola, carne salada trentina, scaglie di grana",
         prezzo: "8,00€",
       },
       {
