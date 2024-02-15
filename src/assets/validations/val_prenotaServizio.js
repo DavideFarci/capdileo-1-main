@@ -1,4 +1,4 @@
-export function validateReservation(resValues, maxPerson) {
+export function validateReservation(resValues) {
   let errValid = [];
   // Giorno e ora
   if (!resValues.giorno || !resValues.orario) {
@@ -30,6 +30,8 @@ export function validateReservation(resValues, maxPerson) {
   // Telefono
   if (!resValues.telefono) {
     errValid.push("Il campo 'N° 'telefono' è richiesto!");
+  } else if (resValues.telefono.startsWith("+39")) {
+    errValid.push("Il 'N° 'telefono' non deve contenere il prefisso '+39'");
   }
 
   // N di persone
@@ -37,10 +39,6 @@ export function validateReservation(resValues, maxPerson) {
     errValid.push("Seleziona una numero di ospiti!");
   } else if (resValues.n_persone < 1) {
     errValid.push("Il numero di persone deve essere almeno 1");
-  } else if (resValues.n_persone == maxPerson + 1) {
-    errValid.push("Sembra che per poco tu non possa prenotare questo tavolo, puoi sempre provare a chiamare e chiedere direttamente al personale del locale");
-  } else if (resValues.n_persone > maxPerson + 1) {
-    errValid.push("Il numero di persone selezionato non è disponibile, controlla la disponibilità sotto la fascia oraria");
   }
 
   // Messaggio

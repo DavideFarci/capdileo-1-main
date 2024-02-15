@@ -1,4 +1,4 @@
-export function order_validations(resValues, maxPezzi, nPezzi) {
+export function order_validations(resValues) {
   let errValid = [];
 
   // Giorno e ora
@@ -31,8 +31,8 @@ export function order_validations(resValues, maxPezzi, nPezzi) {
   // Telefono
   if (!resValues.telefono) {
     errValid.push("Il campo 'N° 'telefono' è richiesto!");
-  } else if (resValues.telefono.length !== 10) {
-    errValid.push("Il campo 'N° 'telefono' deve essere di 10 cifre!");
+  } else if (resValues.telefono.startsWith("+39")) {
+    errValid.push("Il 'N° 'telefono' non deve contenere il prefisso '+39'");
   }
 
   // Messaggio
@@ -47,10 +47,5 @@ export function order_validations(resValues, maxPezzi, nPezzi) {
     errValid.push("Accetta i termini della privacy");
   }
 
-  // N pezzi
-  if (nPezzi > maxPezzi) {
-    errValid.push("Numero di pezzi non disponibile per la fascia oraria selezionata, controllare disponibilità sotto scelta fascia oraria");
-  }
-    
   return errValid;
 }

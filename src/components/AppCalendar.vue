@@ -572,6 +572,9 @@ h1 {
   }
 
   .calendar_container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
     .calendar {
       .days_w {
         display: grid;
