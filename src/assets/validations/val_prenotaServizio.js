@@ -37,8 +37,10 @@ export function validateReservation(resValues, maxPerson) {
     errValid.push("Seleziona una numero di ospiti!");
   } else if (resValues.n_persone < 1) {
     errValid.push("Il numero di persone deve essere almeno 1");
-  } else if (resValues.n_persone > maxPerson) {
-    errValid.push("Il numero di persone deve essere almeno 1");
+  } else if (resValues.n_persone == maxPerson + 1) {
+    errValid.push("Sembra che per poco tu non possa prenotare questo tavolo, puoi sempre provare a chiamare e chiedere direttamente al personale del locale");
+  } else if (resValues.n_persone > maxPerson + 1) {
+    errValid.push("Il numero di persone selezionato non è disponibile, controlla la disponibilità sotto la fascia oraria");
   }
 
   // Messaggio
