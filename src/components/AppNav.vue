@@ -54,7 +54,7 @@ export default {
     <div class="bottom-footer">
       <div class="sec-1">
         <h3>DOVE PUOI TROVARCI</h3>
-        <p>Borghetto | via borghetto 69</p>
+        <p>Via Enrico Fermi 2B 60037 | Borghetto (An)</p>
       </div>
       <div class="sec-2">
         <h3>ORARI D'APERTURA</h3>
@@ -76,8 +76,9 @@ export default {
         </div>
       </div>
       <div class="sec-3">
-        Capriccio di leo S.r.l, PI: 1231231231231, privacy policy, product by
-        FUTURE+
+        Capriccio di leo, PI: 02729120424, privacy policy, 
+          <a href="https://future-plus.it">product by
+          FUTURE+</a>
       </div>
     </div>
   </div>
@@ -161,7 +162,7 @@ export default {
         <div :class="state.infomenu ? 'main-info-on' : 'main-info-off'">
           <div class="sec-1">
             <h4>Dove puoi trovarci</h4>
-            <p>Borghetto | via borghetto 69</p>
+            <p>Via Enrico Fermi 2B 60037 | Borghetto (An)</p>
           </div>
 
           <div class="sec-2">
@@ -186,8 +187,9 @@ export default {
         </div>
 
         <div :class="state.infomenu ? 'sec-3' : 'sec-3-off'">
-          Capriccio di leo S.r.l, PI: 1231231231231, privacy policy, product by
-          FUTURE+
+          Capriccio di leo, PI: 02729120424, privacy policy, 
+          <a href="https://future-plus.it">product by
+          FUTURE+</a>
         </div>
       </div>
     </div>

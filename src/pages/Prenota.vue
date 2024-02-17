@@ -572,25 +572,27 @@ export default {
                 :class="selectedItem.expanded ? 'cont_ex_ing' : 'cont_ex_off'"
               >
                 <div
-                  class="ex_ing tag-pills"
+                  class=""
                   :class="ing.active ? 'tag-off' : ''"
                   v-for="(ing, i) in arrCorrectIngredient"
                   :key="i"
                 >
-                  <span
-                    class="minus"
-                    @click="addRemoveExtraTag(ing.name, ing.price)"
-                    v-if="ing.active"
-                    >- {{ ing.name }}</span
-                  >
-                  <span
-                    class="plus"
-                    @click="addRemoveExtraTag(ing.name, ing.price, 'remove')"
-                    v-if="!ing.active"
-                    >+ {{ ing.name }}</span
-                  >
+                  <div class="ex_ing tag-pills" v-if="ing.price !== 0">
+                    <span 
+                      class="minus"
+                      @click="addRemoveExtraTag(ing.name, ing.price)"
+                      v-if="ing.active && ing.price !== 0"
+                      >- {{ ing.name }}</span
+                    >
+                    <span
+                      class="plus"
+                      @click="addRemoveExtraTag(ing.name, ing.price, 'remove')"
+                      v-if="!ing.active && ing.price !== 0"
+                      >+ {{ ing.name }}</span
+                    >
 
-                  <span>{{ getPrice(ing.price) }}</span>
+                    <span >{{ getPrice(ing.price) }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1012,9 +1014,9 @@ export default {
 /*** */
 
 .categorie {
-  max-width: 450px;
+  max-width: 550px;
   width: 100%;
-  height: 160px;
+  height: 250px;
   border-radius: 4px;
   padding-bottom: 0.4rem;
   margin: 0 auto;
@@ -1070,7 +1072,7 @@ export default {
 
   border: 1px solid $c-nav-link;
   background-color: $c-header;
-  max-width: 450px;
+  max-width: 550px;
   width: 100%;
   border-radius: 4px;
   padding: 0.4rem;
