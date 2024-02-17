@@ -67,7 +67,7 @@ export default {
 .prenota-servizio {
   height: 100vh;
   overflow: auto;
-  .cont{
+  .cont {
     padding: 15% 0;
   }
 }

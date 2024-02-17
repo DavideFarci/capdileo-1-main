@@ -2,7 +2,7 @@
 const { log } = console;
 import { state } from "../state";
 import axios from "axios";
-import { monthConvert, numberInCalendar } from "../utilities/functions";
+import { monthConvert } from "../utilities/functions";
 import { validateReservation } from "../assets/validations/val_prenotaServizio";
 import { order_validations } from "../assets/validations/val_conferma";
 import AppMessageOverlay from "./AppMessageOverlay.vue";
@@ -95,13 +95,6 @@ export default {
       this.message = true;
       this.loader = true;
 
-      // Compongo la data intera con orario (formato dd/mm/yyyy hh:mm)
-      const time_slot = `${numberInCalendar(
-        this.formValues.giorno
-      )}/${numberInCalendar(monthConvert(this.formValues.mese))}/${
-        this.formValues.anno
-      } ${this.formValues.orario}`;
-
       await this.findIdRequest();
       try {
         const _reservation = {
@@ -110,7 +103,6 @@ export default {
           email: this.formValues.email,
           n_person: this.formValues.n_persone,
           message: this.formValues.messaggio,
-          date_slot: time_slot,
           date_id: this.dateId,
           privacy: this.formValues.privacy,
         };
@@ -121,7 +113,6 @@ export default {
           email: this.formValues.email,
           message: this.formValues.messaggio,
           products: this.state.getServeCart(),
-          date_slot: time_slot,
           date_id: this.dateId,
           privacy: this.formValues.privacy,
           totPrice: this.state.totCart,
@@ -543,6 +534,9 @@ h1 {
 
   section,
   form {
+    border-radius: 16px;
+    box-shadow: -4px 6px 5px 4px #370603;
+    border: 1px solid #370603;
     background-color: $c-nav;
     padding: 2rem;
     h2 {
@@ -738,16 +732,6 @@ h1 {
     border-radius: 4px;
   }
 }
-// .orari-enter-active,
-// .orari-leave-active {
-//   transition: opacity 0.5s ease-in-out;
-//   transition-delay: 0.4s;
-// }
-
-// .orari-enter-from,
-// .orari-leave-from {
-//   opacity: 0;
-// }
 
 @media (max-width: $bp2) {
   .months {
