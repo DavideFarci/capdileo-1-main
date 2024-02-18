@@ -18,7 +18,7 @@
     <div class="btn-menu" @click="state.openside">Menu</div>
     <div class="cont">
       <div class="center">
-        <h1 id="title">Il Capriccio <br> di Leo</h1>
+        <img src="../assets/img/logoblack.png" alt="" class="logo">
         <div class="img">
           <p>"la nostra storia è qualità raggiunta per essere gustata"</p>
           <div class="overlay"></div>
@@ -85,7 +85,10 @@
         text-shadow: -3px -3px 15px black;
         text-align: center;
       }
-      
+      .logo{
+        filter: invert(100);
+        width: clamp(400px, 50%, 450px);
+      }
       .img{
         background-image: url('../assets/img/pizza-olio.png');
         background-size: cover;
