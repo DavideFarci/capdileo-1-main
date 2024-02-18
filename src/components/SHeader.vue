@@ -13,7 +13,7 @@ export default {
 <template>
   <header v-if="!state.sideMenuValue" class="hd">
     <h1>Il Capriccio di Leo</h1>
-    <div class="btn-menu" @click="state.openside">. . .</div>
+    <div class="btn-menu" @click="state.openside">menu</div>
   </header>
 </template>
 <!-- 
@@ -42,10 +42,10 @@ header {
 
     text-transform: uppercase;
     background-color: $c-footer-nav;
-    color: $c-nav-link;
+    
     font-weight: bolder;
     width: fit-content;
-    padding: 0.1rem 1rem 1rem;
+    padding: 1rem 1rem 1rem;
     border-radius: 0 0 20px 20px;
 
     position: absolute;

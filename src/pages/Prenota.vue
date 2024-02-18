@@ -36,6 +36,7 @@ export default {
   },
   methods: {
     getProduct(cat) {
+      this.arrProduct = [];
       (this.categoryId = cat),
         axios
           .get(this.state.baseUrl + "api/projects", {
@@ -44,7 +45,13 @@ export default {
             },
           })
           .then((response) => {
-            this.arrProduct = response.data.results.data;
+            let firstarrProduct = response.data.results.data;
+            firstarrProduct.forEach(element => {
+              if(element.category_id !== 2 && element.category_id !== 3 && element.category_id !== 4)
+              this.arrProduct.push(element);
+            });
+
+
             this.arrProduct.forEach((element) => {
               element.deselected = [];
               element.tags.forEach((element) => {
@@ -55,8 +62,14 @@ export default {
     },
 
     getIngredients() {
+      this.arrIngredient = [];
       axios.get(state.baseUrl + "api/tag", {}).then((response) => {
-        this.arrIngredient = response.data.results;
+        let firstarrIngredient = response.data.results;
+        firstarrIngredient.forEach(element => {
+          if(element.price !== 0){
+            this.arrIngredient.push(element) 
+          }
+        });
         this.arrIngredient.forEach((element) => {
           element.active = false;
         });
@@ -64,7 +77,13 @@ export default {
     },
     getCategory() {
       axios.get(state.baseUrl + "api/categories", {}).then((response) => {
-        this.arrCategory = response.data.results;
+        let firstarrCategory = response.data.results;
+        firstarrCategory.forEach(element => {
+          if(element.id !== 2 && element.id !== 3 && element.id !== 4){
+
+            this.arrCategory.push(element);
+          }
+        });
       });
     },
     changeCategory(value) {
@@ -572,27 +591,25 @@ export default {
                 :class="selectedItem.expanded ? 'cont_ex_ing' : 'cont_ex_off'"
               >
                 <div
-                  class=""
+                  class="ex_ing tag-pills"
                   :class="ing.active ? 'tag-off' : ''"
                   v-for="(ing, i) in arrCorrectIngredient"
                   :key="i"
                 >
-                  <div class="ex_ing tag-pills" v-if="ing.price !== 0">
-                    <span 
-                      class="minus"
-                      @click="addRemoveExtraTag(ing.name, ing.price)"
-                      v-if="ing.active && ing.price !== 0"
-                      >- {{ ing.name }}</span
-                    >
-                    <span
-                      class="plus"
-                      @click="addRemoveExtraTag(ing.name, ing.price, 'remove')"
-                      v-if="!ing.active && ing.price !== 0"
-                      >+ {{ ing.name }}</span
-                    >
+                  <span
+                    class="minus"
+                    @click="addRemoveExtraTag(ing.name, ing.price)"
+                    v-if="ing.active"
+                    >- {{ ing.name }}</span
+                  >
+                  <span
+                    class="plus"
+                    @click="addRemoveExtraTag(ing.name, ing.price, 'remove')"
+                    v-if="!ing.active"
+                    >+ {{ ing.name }}</span
+                  >
 
-                    <span >{{ getPrice(ing.price) }}</span>
-                  </div>
+                  <span>{{ getPrice(ing.price) }}</span>
                 </div>
               </div>
             </div>

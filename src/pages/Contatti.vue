@@ -63,7 +63,7 @@ img{
     flex-direction: column;
     gap: 2rem;
     padding: 2rem;
-    padding-top: 15%;
+    padding-top: 20%;
     text-align: center;
     h1{
       text-transform: uppercase
