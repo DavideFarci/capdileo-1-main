@@ -822,7 +822,7 @@ export default {
           justify-content: space-between;
           h3 {
             padding: 0 1rem;
-            font-size: clamp(20px, 3.2vw, 45px);
+            font-size: clamp(23px, 3.3vw, 45px);
             text-transform: uppercase;
             text-shadow: 0 10px 20px black;
           }
