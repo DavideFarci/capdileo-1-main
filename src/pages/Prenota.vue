@@ -506,7 +506,7 @@ export default {
             <div class="price">{{ getPrice(item.price) }}</div>
           </div>
         </div>
-        <div v-if="selectedItem.opened" class="overlay"></div>
+        <div v-if="selectedItem.opened" @click="closeShow" class="overlay"></div>
         <div class="card-show" v-if="selectedItem.opened">
           <div class="img-title">
             <h3 class="title">{{ selectedItem.name }}</h3>
@@ -531,21 +531,24 @@ export default {
           <div class="content">
             <div class="tags" v-if="!selectedItem.expanded  && selectedItem.category_slot > 0">
               <h3>Modifica ingredienti:</h3>
-              <div v-for="tag in selectedItem.tags" :key="tag.name">
-                <span
-                  class="tag-pills"
-                  :class="tag.deselected ? 'tag-off' : ''"
-                  @click="addremoveTagDefault(tag.name, 'remove')"
-                  v-if="!tag.deselected"
-                  >- {{ tag.name }}</span
-                >
-                <span
-                  class="tag-pills"
-                  :class="tag.deselected ? 'tag-off' : ''"
-                  @click="addremoveTagDefault(tag.name)"
-                  v-if="tag.deselected"
-                  >+ {{ tag.name }}</span
-                >
+              <div class="tags-c">
+
+                <div v-for="tag in selectedItem.tags" :key="tag.name">
+                  <span
+                    class="tag-pills"
+                    :class="tag.deselected ? 'tag-off' : ''"
+                    @click="addremoveTagDefault(tag.name, 'remove')"
+                    v-if="!tag.deselected"
+                    >- {{ tag.name }}</span
+                  >
+                  <span
+                    class="tag-pills"
+                    :class="tag.deselected ? 'tag-off' : ''"
+                    @click="addremoveTagDefault(tag.name)"
+                    v-if="tag.deselected"
+                    >+ {{ tag.name }}</span
+                  >
+                </div>
               </div>
             </div>
             <div class="description" v-if="selectedItem.category_slot == 0">
@@ -677,20 +680,21 @@ export default {
   background-color: $c-nav-link;
   border: 2px solid $c-header;
 }
-.tags::-webkit-scrollbar {
+.tags-c::-webkit-scrollbar {
   width: 10px;
   height: 10px;
+  
 }
 
-.tags::-webkit-scrollbar-thumb {
+.tags-c::-webkit-scrollbar-thumb {
   border-radius: 20px;
   background: $c-header;
 }
-.tags::-webkit-scrollbar-track {
+.tags-c::-webkit-scrollbar-track {
   border-radius: 20px;
   background: rgba(52, 4, 7, 0.786);
 }
-.tags::-webkit-scrollbar-thumb:hover {
+.tags-c::-webkit-scrollbar-thumb:hover {
   border-radius: 20px;
   background-color: $c-nav-link;
   border: 2px solid $c-header;
@@ -785,7 +789,7 @@ export default {
       }
       .overlay {
         position: fixed;
-        z-index: 20;
+        z-index: 2000;
         right: 0;
         bottom: 0;
         top: 0;
@@ -796,7 +800,7 @@ export default {
       }
       .card-show {
         position: fixed;
-        z-index: 30;
+        z-index: 3000;
         right: 0;
         bottom: 0;
         width: 70%;
@@ -808,7 +812,7 @@ export default {
         gap: 2rem;
 
         h3 {
-          font-size: 20px;
+          font-size: clamp(17px, 3vw, 25px);
           text-transform: uppercase;
         }
 
@@ -818,7 +822,7 @@ export default {
           justify-content: space-between;
           h3 {
             padding: 0 1rem;
-            font-size: 40px;
+            font-size: clamp(17px, 2.5vw, 45px);
             text-transform: uppercase;
             text-shadow: 0 10px 20px black;
           }
@@ -853,27 +857,36 @@ export default {
             }
           }
           .tags {
-            overflow: auto;
+            
             background-color: rgba(0, 0, 0, 0.191);
-            padding: 1rem;
+            padding:  10px  0 0 10px ;
             max-height: 25vh;
 
             display: flex;
-            //flex-direction: column;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-start;
             gap: 13px;
             column-gap: 5px;
-            h3{
-
-              margin-right: 20px ;
-            }
-            .tag-pills {
+            .tags-c{
+              width: 100%;
+              display: flex;
+              justify-content: flex-start;
+              gap: .4rem;
+              overflow: auto;
+              padding: 0px 10px 10px 0px;
+              .tag-pills {
               white-space: nowrap;
               display: block;
               width: 100% !important;
               background-color: $c-panna;
               color: $c-nav !important;
             }
+            }
+            h3{
+
+              margin-right: 20px ;
+            }
+            
           }
           .extra-tags {
             background-color: rgba(0, 0, 0, 0.191);
