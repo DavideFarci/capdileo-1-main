@@ -12,8 +12,8 @@ export default {
 
 <template>
   <header v-if="!state.sideMenuValue" class="hd">
-    <h1>Il Capriccio di Leo</h1>
     <div class="btn-menu" @click="state.openside">menu</div>
+    <h1>Il Capriccio di Leo</h1>
   </header>
 </template>
 <!-- 
@@ -24,13 +24,15 @@ export default {
 @use "../assets/styles/general.scss" as *;
 header {
   position: fixed;
-  padding: 10px 0;
+  padding: 10px 20px;
   background-color: $c-header;
   width: 100%;
   z-index: 1000;
+  display: flex;
+  justify-content: space-between;
   h1 {
     // max-width:150px;
-    // margin: 0 auto;
+    margin-left:40%;
     text-align: center;
     font-size: 30px;
     color: white;
@@ -42,21 +44,21 @@ header {
 
     text-transform: uppercase;
     background-color: $c-footer-nav;
-    
+    margin-top: -10px;
     font-weight: bolder;
     width: fit-content;
     padding: 1rem 1rem 1rem;
     border-radius: 0 0 20px 20px;
 
-    position: absolute;
-    left: 6px;
-    top: 0px;
-    z-index: 10;
+  
   }
 }
 @media (max-width: $bp1) {
   .btn-menu {
     display: block !important;
+  }
+  h1{
+    margin-left:0 !important
   }
 }
 </style>

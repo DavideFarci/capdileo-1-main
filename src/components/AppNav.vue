@@ -76,7 +76,11 @@ export default {
         </div>
       </div>
       <div class="sec-3">
-        Capriccio di leo, PI: 02729120424, privacy policy, 
+        Capriccio di leo, PI: 02729120424, 
+          <a href="https://www.iubenda.com/privacy-policy/82753739/cookie-policy">
+          cookie policy, </a>
+          <a href="https://www.iubenda.com/privacy-policy/82753739">
+          privacy policy, </a>
           <a href="https://future-plus.it">product by
           FUTURE+</a>
       </div>
@@ -187,7 +191,11 @@ export default {
         </div>
 
         <div :class="state.infomenu ? 'sec-3' : 'sec-3-off'">
-          Capriccio di leo, PI: 02729120424, privacy policy, 
+          Capriccio di leo, PI: 02729120424, 
+          <a href="https://www.iubenda.com/privacy-policy/82753739/cookie-policy">
+          cookie policy, </a>
+          <a href="https://www.iubenda.com/privacy-policy/82753739">
+          privacy policy, </a>
           <a href="https://future-plus.it">product by
           FUTURE+</a>
         </div>

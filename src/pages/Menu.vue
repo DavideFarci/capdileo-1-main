@@ -244,9 +244,9 @@
 /*** */
 
 .categorie {
-  max-width: 450px;
+  max-width: 550px;
   width: 100%;
-  height: 160px;
+  height: 250px;
   border-radius: 4px;
   display: flex;
   gap: 5px;
