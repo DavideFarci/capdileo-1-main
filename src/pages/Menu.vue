@@ -99,7 +99,7 @@
       <div class="main-menu">
   
        <div class="card" v-for="item in arrProduct">
-        <img :src="state.getImageUrl(item.image)" alt="">
+        <img draggable="false" :src="state.getImageUrl(item.image)" alt="">
         <div class="title">{{ item.name }}</div>
         <div class="c-tp">
 

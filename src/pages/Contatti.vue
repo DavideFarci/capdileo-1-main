@@ -40,7 +40,7 @@
         <h1>Dove trovarci</h1>
   
         <a href="https://www.google.com/maps/place/Pizzeria+Il+Capriccio+di+Leo/@43.5948219,13.2980245,17z/data=!3m1!4b1!4m6!3m5!1s0x132d9dbad592a331:0x349d7e3dd6b01160!8m2!3d43.5948219!4d13.3005994!16s%2Fg%2F11dxlc9msx?entry=ttu">
-          <img src="../assets/img/googlemaps.png"  alt="">
+          <img draggable="false" src="../assets/img/googlemaps.png"  alt="">
         </a>
       </div>
     </div>

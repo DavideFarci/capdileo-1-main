@@ -520,6 +520,7 @@ export default {
               fill="currentColor"
               class="bi bi-arrow-return-left"
               viewBox="0 0 16 16"
+              draggable="false"
             >
               <path
                 fill-rule="evenodd"
@@ -578,12 +579,14 @@ export default {
                 @click="selectedItem.expanded = !selectedItem.expanded"
                 src="../assets/img/plus.png"
                 alt=""
+                draggable="false"
               />
 
               <h3 @click="selectedItem.expanded = !selectedItem.expanded">
                 Aggiungi un ingrediente
               </h3>
               <img
+                draggable="false"
                 v-if="!selectedItem.expanded"
                 @click="selectedItem.expanded = !selectedItem.expanded"
                 src="../assets/img/plus.png"
@@ -658,6 +661,24 @@ export default {
   background: rgba(52, 4, 7, 0.786);
 }
 .prenota-cont::-webkit-scrollbar-thumb:hover {
+  border-radius: 20px;
+  background-color: $c-nav-link;
+  border: 2px solid $c-header;
+}
+.add-ingredient::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.add-ingredient::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: $c-header;
+}
+.add-ingredient::-webkit-scrollbar-track {
+  border-radius: 20px;
+  background: rgba(64, 18, 21, 0);
+}
+.add-ingredient::-webkit-scrollbar-thumb:hover {
   border-radius: 20px;
   background-color: $c-nav-link;
   border: 2px solid $c-header;
@@ -857,11 +878,11 @@ export default {
             }
           }
           .tags {
-            
+            margin-bottom: 5px;
             background-color: rgba(0, 0, 0, 0.191);
             padding:  10px  0 0 10px ;
             max-height: 25vh;
-
+            min-height: 85px;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -946,9 +967,10 @@ export default {
               color: $c-nav !important;
             }
             img {
+              
               height: 30px;
               border-radius: 15px;
-              box-shadow: 0 0 10px black;
+              box-shadow: 0 0 5px black;
             }
 
             .open {
