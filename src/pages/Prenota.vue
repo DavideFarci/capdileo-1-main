@@ -54,6 +54,12 @@ export default {
 
             this.arrProduct.forEach((element) => {
               element.deselected = [];
+              this.arrCategory.forEach(e => {
+                if(element.category_id == e.id){
+                  element.category_slot = e.slot; 
+                }
+                
+              });
               element.tags.forEach((element) => {
                 element.deselected = 0;
               });
@@ -109,12 +115,8 @@ export default {
       this.selectedItem.price = price;
       this.selectedItem.opened = true;
       this.arrCorrectIngredient = [];
-      this.arrCategory.forEach(element => {
-        if(element.id == cat){
-          this.selectedItem.category_slot = element.slot;
-
-        } 
-      });
+      this.selectedItem.category_slot = cat;
+ 
       this.openIng();
     },
     closeShow() {
@@ -495,13 +497,13 @@ export default {
       </div>
 
       <div class="main-prenota">
-        <div  class="card-default" @click="openShow(item.name, item.id, item.tags, item.price, item.image, item.category_id)" v-for="item in arrProduct" :key="item.id" >
+        <div  class="card-default" @click="openShow(item.name, item.id, item.tags, item.price, item.image, item.category_slot)" v-for="item in arrProduct" :key="item.id" >
           <img :src="state.getImageUrl(item.image)" alt="" />
 
           <div class="title">{{ item.name }}</div>
           <div class="c-tp">
             <div class="tags">
-              <span class="def_tag" >{{ fixtag(item.tags) }}</span>
+              <span  :class="item.category_slot == 0 ? 'desc' : 'def_tag'" >{{ fixtag(item.tags) }}</span>
             </div>
             <div class="price">{{ getPrice(item.price) }}</div>
           </div>
@@ -799,6 +801,13 @@ export default {
               font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
                 "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
               font-weight: bold !important;
+
+              text-overflow: ellipsis;
+            }
+            .desc{
+              max-width: 100%;
+              white-space: nowrap;
+              overflow:hidden;
             }
           }
           .price {

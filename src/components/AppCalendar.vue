@@ -55,9 +55,14 @@ export default {
 
     // Elaborare i dati in arrivo e formattarli in un calendario (obj)
     getCalendar(arrDates) {
-      const _status = this.reservation ? 1 : 2;
+      let _status = []
+      if(this.reservation){
+       _status = [2, 3, 5, 7]
+      }else{
+       _status = [1, 3, 6, 7]
+      }
 
-      arrDates = arrDates.filter((day) => day.status !== _status);
+      arrDates = arrDates.filter((day) => day.status == _status[0] || day.status == _status[0] || day.status == _status[0] || day.status == _status[0]);
 
       // Sostituisco i numeri con i nomi dei mesi
       for (let i = 0; i < arrDates.length; i++) {
