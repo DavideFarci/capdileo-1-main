@@ -62,7 +62,7 @@ export default {
        _status = [1, 3, 6, 7]
       }
 
-      arrDates = arrDates.filter((day) => day.status == _status[0] || day.status == _status[0] || day.status == _status[0] || day.status == _status[0]);
+      arrDates = arrDates.filter((day) => day.status == _status[0] || day.status == _status[1] || day.status == _status[2] || day.status == _status[3]);
 
       // Sostituisco i numeri con i nomi dei mesi
       for (let i = 0; i < arrDates.length; i++) {
@@ -222,11 +222,13 @@ export default {
           };
         }
         // Aggiungi l'orario e il giorno della settimana all'array
-        grouped[item.day].times.push({
-          time: item.time,
-          visible: item.visible,
-        });
-        grouped[item.day].day_w = item.day_w;
+          grouped[item.day].times.push({
+            time: item.time,
+            visible: item.visible,
+          });
+          grouped[item.day].day_w = item.day_w;
+
+        
       });
 
       for (const key in grouped) {
@@ -261,9 +263,11 @@ export default {
       this.dayTimes = [];
 
       this.formValues.giorno = day;
-
       arrTimes.forEach((item) => {
+      //if(this.formValues.delivery && item.visible_domicilio){
+
         this.dayTimes.push(item);
+      //}
       });
     },
 
@@ -306,7 +310,23 @@ export default {
       this.loader = false;
       this.message = false;
     },
-  },
+    showInput(inputName) {
+      if (inputName !== "messaggio") {
+        if (
+          (inputName == 'comune' || 
+            inputName == 'indirizzo' || 
+            inputName == 'civico' ) &&
+          !this.formValues.delivery &&
+          !this.reservation
+        ) {
+          return false;
+        }
+        return true;
+      }
+      return false;
+    },
+},
+ 
   async created() {
     await this.getDates();
     this.getFirstMonthAndYearValues();
@@ -332,8 +352,20 @@ export default {
 </script>
 
 <template>
-  <h1>{{ reservation ? "Prenota il tuo tavolo" : `Procedi all'ordine` }}</h1>
+  
   <div class="container_servizio">
+    <div v-if="!reservation && this.state.setting[3].status" class="delivery">
+        <div
+          :class="formValues.delivery ? 'my-check-on' : 'my-check'"
+          @click="formValues.delivery = !formValues.delivery"
+          name="delivery"
+        >
+          <div class="int"></div>
+        </div>
+        <span @click="formValues.delivery = !formValues.delivery" for="delivery"
+          >Consegna a domicilio</span
+        >
+      </div>
     <section class="month-container">
       <h2>Seleziona il mese</h2>
       <div class="months">
@@ -434,17 +466,22 @@ export default {
       <h2>Inserisci i tuoi dati</h2>
       <!-- Nome  -->
       <template v-for="(input, i) in inputs" :key="i">
-        <label :for="input.name">{{ input.label }}</label>
+        <label v-if="showInput(input.name)" :for="input.name">{{
+          input.label
+        }}</label>
         <input
-          v-if="input.name !== `messaggio`"
+          v-if="showInput(input.name)"
           :name="input.name"
           :type="input.type"
           :id="input.name"
           :value="formValues[input.name]"
           @input="(e) => handleInputValue(e, input.name)"
         />
+        <label v-if="input.name === messaggio" :for="input.name">{{
+          input.label
+        }}</label>
         <textarea
-          v-else
+          v-if="input.name === messaggio"
           :name="input.name"
           :id="input.name"
           :value="formValues[input.name]"
@@ -454,6 +491,9 @@ export default {
         >
         </textarea>
       </template>
+
+ 
+
       <div class="privacy">
         <div
           :class="formValues.privacy ? 'my-check-on' : 'my-check'"
@@ -712,6 +752,7 @@ h1 {
 .calendar-leave-from {
   opacity: 0;
 }
+.delivery,
 .privacy {
   display: flex;
   align-content: center;

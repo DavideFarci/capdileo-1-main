@@ -20,6 +20,10 @@ export default {
         telefono: null,
         messaggio: "",
         privacy: false,
+        delivery: false,
+        comune: '',
+        civico: '',
+        indirizzo: '',
       },
       inputs: [
         {
@@ -40,6 +44,21 @@ export default {
         {
           name: "messaggio",
           label: "Messaggio",
+          type: "text",
+        },
+        {
+          name: "comune",
+          label: "Città ",
+          type: "text",
+        },
+        {
+          name: "indirizzo",
+          label: "Indirizzo e N° civico",
+          type: "text",
+        },
+        {
+          name: "civico",
+          label: "N° civico *",
           type: "text",
         },
       ],
@@ -91,6 +110,7 @@ export default {
     localStorage.getItem("cart") &&
       (this.state.arrCart = JSON.parse(localStorage.getItem("cart")));
     this.getTot();
+    axios.get(state.baseUrl + 'api/setting', {}).then(response=> this.state.setting = response.data.results );
   },
 };
 </script>

@@ -53,6 +53,7 @@ export default {
   <div class="prenota-servizio">
     <sh />
     <div class="cont">
+      <h1>Prenota il tuo tavolo</h1>
       <app-calendar
         :formValues="reservationValues"
         :inputs="inputs"
