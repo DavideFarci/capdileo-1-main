@@ -20,7 +20,7 @@ export default {
         telefono: null,
         messaggio: "",
         privacy: false,
-        delivery: true,
+        delivery: false,
         comune: "",
         civico: "",
         indirizzo: "",
@@ -42,11 +42,6 @@ export default {
           type: "text",
         },
         {
-          name: "messaggio",
-          label: "Messaggio",
-          type: "text",
-        },
-        {
           name: "comune",
           label: "Città ",
           type: "text",
@@ -59,6 +54,11 @@ export default {
         {
           name: "civico",
           label: "N° civico *",
+          type: "text",
+        },
+        {
+          name: "messaggio",
+          label: "Messaggio",
           type: "text",
         },
       ],
@@ -87,11 +87,18 @@ export default {
     },
     getTot() {
       this.state.totCart = 0;
-      this.state.nPezzi = 0;
+      this.state.nPezzi[0] = 0;
+      this.state.nPezzi[1] = 0;
       this.state.arrCart.forEach((element) => {
         this.state.totCart = this.state.totCart + element.totprice;
-        this.state.nPezzi += parseInt(element.slot) * element.counter;
-      });
+        if(element.type == 'q'){
+          this.state.nPezzi[0] +=( parseInt(element.slot) * element.counter);
+        }else if(element.type == 't'){
+          console.log(this.state.nPezzi)
+          this.state.nPezzi[1] += (parseInt(element.slot) * element.counter)
+        }
+
+      }); 
     },
     getPrice(cent, sum) {
       if (sum) {

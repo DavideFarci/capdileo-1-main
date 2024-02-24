@@ -1,4 +1,4 @@
-export function order_validations(resValues) {
+export function order_validations(resValues, max, pez) {
   let errValid = [];
 
   // Giorno e ora
@@ -45,6 +45,13 @@ export function order_validations(resValues) {
   // Privacy
   if (!resValues.privacy) {
     errValid.push("Accetta i termini della privacy");
+  }
+  // pezzi
+  if (pez[0] > max[0]) {
+    errValid.push("Il numero di pezzi al taglio richiesto non è disponibile per quest'orario");
+  }
+  if (pez[1] > max[1]) {
+    errValid.push("Il numero di pizze al taglio richiesto non è disponibile per quest'orario");
   }
 
   return errValid;

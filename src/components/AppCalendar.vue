@@ -31,7 +31,10 @@ export default {
       calendar: {}, // calendar = {"Gennaio" : [{objDate} ...]}, {"Febbraio" : [{objDate} ...]}, ... }
       dayTimes: [], // Fasce orarie per il giorno selezionato
       dateId: null, // ID della data scelta
-      seats: "Seleziona un orario per vedere le disponibilità", // usato sia per i posti che per i pezzi
+      seats: [
+      "Seleziona un orario per vedere le disponibilità", // usato sia per i posti che per i pezzi
+      "", // usato sia per i posti che per i pezzi
+      ],  
       isValid: [],
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
@@ -48,7 +51,17 @@ export default {
     // Chiamata API
     async getDates() {
       this.loaderFull = true;
-      const dates = await axios.get(state.baseUrl + "api/dates");
+      let params = {}
+      if(this.reservation){
+        params = { wcf: '0'};
+      }else if(!this.reservation && !this.formValues.delivery){
+        params = { wcf: '1'};
+      }else if(!this.reservation && this.formValues.delivery){        
+        params = { wcf: '2'};
+      }
+      const dates = await axios.get(state.baseUrl + "api/dates", {
+        params
+      });
       this.currentDate = dates.data.data_e_ora_attuali;
       this.calendar = this.getCalendar(dates.data.results);
       this.loaderFull = false;
@@ -98,11 +111,7 @@ export default {
       this.errorValidation = "";
       this.isValid = this.reservation
         ? validateReservation(this.formValues, this.state.maxPosti)
-        : order_validations(
-            this.formValues,
-            this.state.maxPosti,
-            this.state.nPezzi
-          );
+        : order_validations(this.formValues, this.state.maxPosti, this.state.nPezzi);
 
       if (this.isValid.length !== 0) {
         return;
@@ -185,7 +194,7 @@ export default {
       const params = {
         year: this.formValues.anno,
         month: mese,
-        day: +this.formValues.giorno,
+        day: this.formValues.giorno,
         time: this.formValues.orario,
       };
       try {
@@ -197,14 +206,16 @@ export default {
           const { id, reserved, max_res } = data.data.results[0];
           this.dateId = id;
           // Imposto il num di posti disponibili per l'orario scelto
-          this.seats = max_res - reserved;
-          this.state.maxPosti = this.seats;
+          this.seats[0] = max_res - reserved;
+          this.state.maxPosti[0] =  max_res - reserved;
         } else {
-          const { id, reserved_pz, max_pz } = data.data.results[0];
+          const { id, reserved_pz_q, max_pz_q, reserved_pz_t, max_pz_t, } = data.data.results[0];
           this.dateId = id;
           // Imposto il num di pezzi disponibili per l'orario scelto
-          this.seats = max_pz - reserved_pz;
-          this.state.maxPosti = this.seats;
+          this.seats[0] = max_pz_q - reserved_pz_q;
+          this.seats[1] = max_pz_t - reserved_pz_t;
+          this.state.maxPosti[0] = max_pz_q - reserved_pz_q;
+          this.state.maxPosti[1] = max_pz_t - reserved_pz_t;
         }
       } catch (data) {
         if (data.code == "ERR_NETWORK") {
@@ -234,34 +245,24 @@ export default {
         // Aggiungi l'orario e il giorno della settimana all'array
         grouped[item.day].times.push({
           time: item.time,
-          visible: item.visible,
-          visible_domicilio: item.visible_domicilio,
+          // visible: item.visible,
+          // visible_domicilio: item.visible_domicilio,
         });
         grouped[item.day].day_w = item.day_w;
       });
 
-      for (const key in grouped) {
-        const el = grouped[key];
-        let _day_visible = true;
-
-        let obsc = 0;
-        let obsz = false;
-        for (let z = 0; z < el.times.length; z++) {
-          obsc = 0;
-          const element = el.times[z];
-          if (!element.visible) {
-            obsc++;
-            if (obsc == el.times.length) {
-              obsz = true;
-            }
-            //break; // Se uno degli elementi è visibile, non c'è bisogno di controllare gli altri.... Ah si? e chi la detto???? hahahahahahhahahahahahah
-          }
-        }
-        if (obsz) {
-          _day_visible = false;
-        }
-        el.day_visible = _day_visible;
-      }
+      // for (const key in grouped) {
+      //   const el = grouped[key];
+      //   let _day_visible = true;
+      //   if (this.reservation) {
+          
+      //   } else if (!this.reservation && this.formValues.delivery) {
+          
+      //   } else {
+          
+      //   }
+      //   el.day_visible = _day_visible;
+      //}
 
       return grouped;
     },
@@ -275,7 +276,7 @@ export default {
 
       arrTimes.forEach((item) => {
         this.dayTimes.push(item);
-        //}
+        
       });
     },
 
@@ -319,20 +320,22 @@ export default {
       this.message = false;
     },
 
-    showInput(inputName) {
-      if (inputName !== "messaggio") {
-        if (
-          (inputName == "comune" ||
-            inputName == "indirizzo" ||
-            inputName == "civico") &&
-          !this.formValues.delivery &&
-          !this.reservation
-        ) {
+    showInput(inputName, text) {
+      if (text && inputName === "messaggio"){
+        return true;
+      }else if (inputName !== "messaggio" && !text) {
+        if ( (inputName == "comune" || inputName == "indirizzo" || inputName == "civico")){
+          if(this.formValues.delivery){
+            return true;
+          }
           return false;
         }
         return true;
+      }else{
+
+        return false;
       }
-      return false;
+      
     },
 
     showTimes(time) {
@@ -340,7 +343,17 @@ export default {
         return time.visible_domicilio;
       }
     },
+    async changeDelivery(){
+      this.formValues.delivery = !this.formValues.delivery;
+      this.calendar = {} 
+      this.dayTimes = [] 
+      this.dateId = null 
+      this.seats = [ "Seleziona un orario per vedere le disponibilità", "" ] 
+      await this.getDates();
+      this.getFirstMonthAndYearValues();
+    }
   },
+
 
   async created() {
     await this.getDates();
@@ -358,11 +371,11 @@ export default {
       if (this.formValues.giorno) {
         this.formValues.giorno = "";
       }
-      this.seats = "Seleziona un orario per vedere le disponibilità";
+      this.seats = [ "Seleziona un orario per vedere le disponibilità", "" ]       
     },
 
     "formValues.giorno": function () {
-      this.seats = "Seleziona un orario per vedere le disponibilità";
+      this.seats = [ "Seleziona un orario per vedere le disponibilità", "" ] 
       if (this.formValues.orario) {
         this.formValues.orario = "";
       }
@@ -376,12 +389,12 @@ export default {
     <div v-if="!reservation && _delivery" class="delivery">
       <div
         :class="formValues.delivery ? 'my-check-on' : 'my-check'"
-        @click="formValues.delivery = !formValues.delivery"
+        @click="changeDelivery"
         name="delivery"
       >
         <div class="int"></div>
       </div>
-      <span @click="formValues.delivery = !formValues.delivery" for="delivery"
+      <span @click="changeDelivery" for="delivery"
         >Consegna a domicilio</span
       >
     </div>
@@ -447,13 +460,10 @@ export default {
           visible: dayTimes.length !== 0,
         }"
       >
-        <template v-for="(time, i) in dayTimes">
+        <template :key="i" v-for="(time, i) in dayTimes">
           <div
-            v-if="
-              (reservation && time.visible) ||
-              (time.visible && time.visible_domicilio)
-            "
-            :key="i"
+
+            
             @click="getSeats(time.time)"
             :class="{
               time: true,
@@ -464,24 +474,17 @@ export default {
           </div>
         </template>
       </div>
-      <div
-        v-if="!loaderSeat"
-        :class="{
-          seats: seats > 3,
-          last_seats: seats <= 3,
-        }"
-      >
-        {{ seats }}
-        <span
-          v-if="formValues.orario"
-          :class="{
-            seats: seats > 3,
-            last_seats: seats <= 3,
-          }"
-        >
-          {{ reservation ? "posti disponibili" : "pezzi disponibili" }}
+      <div v-if="!loaderSeat" >
+        {{ seats[0] }}
+        <span v-if="formValues.orario">
+          {{ reservation ? "posti disponibili" : "pezzi al taglio disponibili" }}
         </span>
       </div>
+      <div v-if="!loaderSeat && !reservation">
+         {{ seats[1] }}
+        <span v-if="formValues.orario"> pizze al piatto disponibili </span>
+      </div>
+
       <app-loader v-else :show="loaderSeat" />
     </section>
 
@@ -500,11 +503,11 @@ export default {
           :value="formValues[input.name]"
           @input="(e) => handleInputValue(e, input.name)"
         />
-        <label v-if="showInput(input.name)" :for="input.name">{{
+        <label v-if="showInput(input.name, true)" :for="input.name">{{
           input.label
         }}</label>
         <textarea
-          v-if="showInput(input.name)"
+          v-if="showInput(input.name, true)"
           :name="input.name"
           :id="input.name"
           :value="formValues[input.name]"

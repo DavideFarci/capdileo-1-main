@@ -30,6 +30,7 @@ export default {
         expanded: 0,
         opened: false,
         category_slot: '',
+        category_type: '',
       },
       arrCorrectIngredient: [],
     };
@@ -45,18 +46,13 @@ export default {
             },
           })
           .then((response) => {
-            let firstarrProduct = response.data.results.data;
-            firstarrProduct.forEach(element => {
-              if(element.category_id !== 2 && element.category_id !== 3 && element.category_id !== 4)
-              this.arrProduct.push(element);
-            });
-
-
+            this.arrProduct = response.data.results.data;
             this.arrProduct.forEach((element) => {
               element.deselected = [];
               this.arrCategory.forEach(e => {
                 if(element.category_id == e.id){
                   element.category_slot = e.slot; 
+                  element.category_type = e.type; 
                 }
                 
               });
@@ -83,13 +79,7 @@ export default {
     },
     getCategory() {
       axios.get(state.baseUrl + "api/categories", {}).then((response) => {
-        let firstarrCategory = response.data.results;
-        firstarrCategory.forEach(element => {
-          if(element.id !== 2 && element.id !== 3 && element.id !== 4){
-
-            this.arrCategory.push(element);
-          }
-        });
+        this.arrCategory = response.data.results;
       });
     },
     changeCategory(value) {
@@ -107,7 +97,7 @@ export default {
         return elemento !== stringaDaEliminare;
       });
     },
-    openShow(name, id, tags, price, image, cat) {
+    openShow(name, id, tags, price, image, cat, type) {
       this.selectedItem.name = name;
       this.selectedItem.id = id;
       this.selectedItem.tags = tags;
@@ -116,6 +106,8 @@ export default {
       this.selectedItem.opened = true;
       this.arrCorrectIngredient = [];
       this.selectedItem.category_slot = cat;
+      this.selectedItem.category_type = type;
+
  
       this.openIng();
     },
@@ -198,7 +190,7 @@ export default {
       });
     },
 
-    newItem(p_id, title, counter, totprice, addicted, deselected, slot) {
+    newItem(p_id, title, counter, totprice, addicted, deselected, slot, type) {
       let newitem = {
         p_id,
         title,
@@ -207,6 +199,7 @@ export default {
         deselected,
         addicted,
         slot,
+        type,
       };
       return newitem;
     },
@@ -271,14 +264,23 @@ export default {
 
       //se l'item non era gia presente lo aggiungo ora per la prima volta a tutti gli array
       if (!check) {
-        let newitem = this.newItem( this.selectedItem.id, this.selectedItem.name, this.selectedItem.counter, (parseInt(this.selectedItem.price) + this.selectedItem.price_variation) * this.selectedItem.counter, this.selectedItem.addicted, this.selectedItem.deselected, this.selectedItem.category_slot);
+        let newitem = this.newItem( 
+          this.selectedItem.id, 
+          this.selectedItem.name, 
+          this.selectedItem.counter, 
+          (parseInt(this.selectedItem.price) + this.selectedItem.price_variation) * this.selectedItem.counter, 
+          this.selectedItem.addicted, 
+          this.selectedItem.deselected, 
+          this.selectedItem.category_slot,
+          this.selectedItem.category_type
+        );
 
         this.state.arrCart.push(newitem);
       }
-      //reimposto il counter a 1
-      this.selectedItem.counter = 1;
       //ricalcolo il totale
       this.getTot();
+      //reimposto il counter a 1
+      this.selectedItem.counter = 1;
       //riporto gli ingredienti deselezionati alla stato di default
       this.arrProduct.forEach((element) => {
         element.deselected = [];
@@ -352,10 +354,17 @@ export default {
     },
     getTot() {
       this.state.totCart = 0;
-      this.state.nPezzi = 0;
+      this.state.nPezzi[0] = 0;
+      this.state.nPezzi[1] = 0;
       this.state.arrCart.forEach((element) => {
         this.state.totCart = this.state.totCart + element.totprice;
-        this.state.nPezzi += parseInt(element.slot) * element.counter
+        if(element.type == 'q'){
+          this.state.nPezzi[0] +=( parseInt(element.slot) * element.counter);
+        }else if(element.type == 't'){
+          console.log(this.state.nPezzi)
+          this.state.nPezzi[1] += (parseInt(element.slot) * element.counter)
+        }
+
       }); 
     },
     openIng() {
@@ -380,6 +389,7 @@ export default {
   created() {
     localStorage.getItem("cart") &&
     (this.state.arrCart = JSON.parse(localStorage.getItem("cart")));
+    console.log(this.state.nPezzi)
     this.getTot();
 
     this.getProduct(0);
@@ -497,7 +507,7 @@ export default {
       </div>
 
       <div class="main-prenota">
-        <div  class="card-default" @click="openShow(item.name, item.id, item.tags, item.price, item.image, item.category_slot)" v-for="item in arrProduct" :key="item.id" >
+        <div  class="card-default" @click="openShow(item.name, item.id, item.tags, item.price, item.image, item.category.slot, item.category.type)" v-for="item in arrProduct" :key="item.id" >
           <img :src="state.getImageUrl(item.image)" alt="" />
 
           <div class="title">{{ item.name }}</div>
