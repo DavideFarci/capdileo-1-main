@@ -20,10 +20,10 @@ export default {
         telefono: null,
         messaggio: "",
         privacy: false,
-        delivery: false,
-        comune: '',
-        civico: '',
-        indirizzo: '',
+        delivery: true,
+        comune: "",
+        civico: "",
+        indirizzo: "",
       },
       inputs: [
         {
@@ -62,6 +62,7 @@ export default {
           type: "text",
         },
       ],
+      settings: [],
       cartError: "",
       loading: false,
     };
@@ -89,8 +90,8 @@ export default {
       this.state.nPezzi = 0;
       this.state.arrCart.forEach((element) => {
         this.state.totCart = this.state.totCart + element.totprice;
-        this.state.nPezzi += parseInt(element.slot) * element.counter
-      }); 
+        this.state.nPezzi += parseInt(element.slot) * element.counter;
+      });
     },
     getPrice(cent, sum) {
       if (sum) {
@@ -106,11 +107,12 @@ export default {
       }
     },
   },
-  created() {
+  async created() {
     localStorage.getItem("cart") &&
       (this.state.arrCart = JSON.parse(localStorage.getItem("cart")));
     this.getTot();
-    axios.get(state.baseUrl + 'api/setting', {}).then(response=> this.state.setting = response.data.results );
+    const settings = await axios.get(state.baseUrl + "api/setting", {});
+    this.settings = settings.data.results;
   },
 };
 </script>
@@ -219,9 +221,7 @@ export default {
       />
     </div>
   </div>
-
- </template>
-
+</template>
 
 <style scoped lang="scss">
 @use "../assets/styles/general.scss" as *;

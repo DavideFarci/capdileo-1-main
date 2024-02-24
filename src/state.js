@@ -12,13 +12,13 @@ export const state = reactive({
 
   nPezzi: 0,
   totCart: 0,
-  setting:[],
-  
+  setting: [],
+
   actvPage: 1,
-    //baseUrl: 'https://db.dashboardristorante.it/',
+  //baseUrl: 'https://db.dashboardristorante.it/',
   baseUrl: "http://127.0.0.1:8000/",
   getImageUrl(image) {
-    return this.baseUrl + 'public/storage/' + image;
+    return this.baseUrl + "public/storage/" + image;
   },
   fakemenu: [
     [
@@ -31,13 +31,15 @@ export const state = reactive({
       {
         img: "../../public/pizza-alto.png",
         titolo: "PARMIGIANA",
-        ingredienti: "pomodoro, mozzarella fior di latte, melanzane grigliate, parmigiano, pesto della casa",
+        ingredienti:
+          "pomodoro, mozzarella fior di latte, melanzane grigliate, parmigiano, pesto della casa",
         prezzo: "8,00€",
       },
       {
         img: "../../public/pizza-alto.png",
         titolo: "TRENTINA",
-        ingredienti: "mozzarella fior di latte, rucola, carne salada trentina, scaglie di grana",
+        ingredienti:
+          "mozzarella fior di latte, rucola, carne salada trentina, scaglie di grana",
         prezzo: "8,00€",
       },
       {

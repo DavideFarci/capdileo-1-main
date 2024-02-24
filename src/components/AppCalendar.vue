@@ -35,11 +35,13 @@ export default {
       isValid: [],
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
+      settings: [],
       success: true,
       loader: false,
       loaderFull: false,
       loaderSeat: false,
       message: false,
+      _delivery: false,
     };
   },
   methods: {
@@ -55,14 +57,22 @@ export default {
 
     // Elaborare i dati in arrivo e formattarli in un calendario (obj)
     getCalendar(arrDates) {
-      let _status = []
-      if(this.reservation){
-       _status = [2, 3, 5, 7]
-      }else{
-       _status = [1, 3, 6, 7]
+      let _status = [];
+      if (this.reservation) {
+        _status = [2, 3, 5, 7];
+      } else if (!this.reservation && this.formValues.delivery) {
+        _status = [1, 3, 4, 5, 6, 7];
+      } else {
+        _status = [1, 3, 6, 7];
       }
 
-      arrDates = arrDates.filter((day) => day.status == _status[0] || day.status == _status[1] || day.status == _status[2] || day.status == _status[3]);
+      arrDates = arrDates.filter(
+        (day) =>
+          day.status == _status[0] ||
+          day.status == _status[1] ||
+          day.status == _status[2] ||
+          day.status == _status[3]
+      );
 
       // Sostituisco i numeri con i nomi dei mesi
       for (let i = 0; i < arrDates.length; i++) {
@@ -222,13 +232,12 @@ export default {
           };
         }
         // Aggiungi l'orario e il giorno della settimana all'array
-          grouped[item.day].times.push({
-            time: item.time,
-            visible: item.visible,
-          });
-          grouped[item.day].day_w = item.day_w;
-
-        
+        grouped[item.day].times.push({
+          time: item.time,
+          visible: item.visible,
+          visible_domicilio: item.visible_domicilio,
+        });
+        grouped[item.day].day_w = item.day_w;
       });
 
       for (const key in grouped) {
@@ -263,11 +272,10 @@ export default {
       this.dayTimes = [];
 
       this.formValues.giorno = day;
-      arrTimes.forEach((item) => {
-      //if(this.formValues.delivery && item.visible_domicilio){
 
+      arrTimes.forEach((item) => {
         this.dayTimes.push(item);
-      //}
+        //}
       });
     },
 
@@ -310,12 +318,13 @@ export default {
       this.loader = false;
       this.message = false;
     },
+
     showInput(inputName) {
       if (inputName !== "messaggio") {
         if (
-          (inputName == 'comune' || 
-            inputName == 'indirizzo' || 
-            inputName == 'civico' ) &&
+          (inputName == "comune" ||
+            inputName == "indirizzo" ||
+            inputName == "civico") &&
           !this.formValues.delivery &&
           !this.reservation
         ) {
@@ -325,11 +334,22 @@ export default {
       }
       return false;
     },
-},
- 
+
+    showTimes(time) {
+      if (!this.reservation) {
+        return time.visible_domicilio;
+      }
+    },
+  },
+
   async created() {
     await this.getDates();
     this.getFirstMonthAndYearValues();
+    const settings = await axios.get(state.baseUrl + "api/setting", {});
+    this.state.setting = settings.data.results;
+    if (this.state.setting[3].status) {
+      this._delivery = true;
+    }
   },
   watch: {
     "formValues.mese": function () {
@@ -352,20 +372,20 @@ export default {
 </script>
 
 <template>
-  
   <div class="container_servizio">
-    <div v-if="!reservation && this.state.setting[3].status" class="delivery">
-        <div
-          :class="formValues.delivery ? 'my-check-on' : 'my-check'"
-          @click="formValues.delivery = !formValues.delivery"
-          name="delivery"
-        >
-          <div class="int"></div>
-        </div>
-        <span @click="formValues.delivery = !formValues.delivery" for="delivery"
-          >Consegna a domicilio</span
-        >
+    <div v-if="!reservation && _delivery" class="delivery">
+      <div
+        :class="formValues.delivery ? 'my-check-on' : 'my-check'"
+        @click="formValues.delivery = !formValues.delivery"
+        name="delivery"
+      >
+        <div class="int"></div>
       </div>
+      <span @click="formValues.delivery = !formValues.delivery" for="delivery"
+        >Consegna a domicilio</span
+      >
+    </div>
+
     <section class="month-container">
       <h2>Seleziona il mese</h2>
       <div class="months">
@@ -429,7 +449,10 @@ export default {
       >
         <template v-for="(time, i) in dayTimes">
           <div
-            v-if="time.visible"
+            v-if="
+              (reservation && time.visible) ||
+              (time.visible && time.visible_domicilio)
+            "
             :key="i"
             @click="getSeats(time.time)"
             :class="{
@@ -477,11 +500,11 @@ export default {
           :value="formValues[input.name]"
           @input="(e) => handleInputValue(e, input.name)"
         />
-        <label v-if="input.name === messaggio" :for="input.name">{{
+        <label v-if="showInput(input.name)" :for="input.name">{{
           input.label
         }}</label>
         <textarea
-          v-if="input.name === messaggio"
+          v-if="showInput(input.name)"
           :name="input.name"
           :id="input.name"
           :value="formValues[input.name]"
@@ -491,8 +514,6 @@ export default {
         >
         </textarea>
       </template>
-
- 
 
       <div class="privacy">
         <div
