@@ -45,6 +45,7 @@ export default {
       loaderSeat: false,
       message: false,
       _delivery: false,
+      arrAddress:[],
     };
   },
   methods: {
@@ -70,23 +71,6 @@ export default {
 
     // Elaborare i dati in arrivo e formattarli in un calendario (obj)
     getCalendar(arrDates) {
-      let _status = [];
-      if (this.reservation) {
-        _status = [2, 3, 5, 7];
-      } else if (!this.reservation && this.formValues.delivery) {
-        _status = [1, 3, 4, 5, 6, 7];
-      } else {
-        _status = [1, 3, 6, 7];
-      }
-
-      arrDates = arrDates.filter(
-        (day) =>
-          day.status == _status[0] ||
-          day.status == _status[1] ||
-          day.status == _status[2] ||
-          day.status == _status[3]
-      );
-
       // Sostituisco i numeri con i nomi dei mesi
       for (let i = 0; i < arrDates.length; i++) {
         arrDates[i].month = monthConvert(arrDates[i].month);
@@ -245,24 +229,9 @@ export default {
         // Aggiungi l'orario e il giorno della settimana all'array
         grouped[item.day].times.push({
           time: item.time,
-          // visible: item.visible,
-          // visible_domicilio: item.visible_domicilio,
         });
         grouped[item.day].day_w = item.day_w;
       });
-
-      // for (const key in grouped) {
-      //   const el = grouped[key];
-      //   let _day_visible = true;
-      //   if (this.reservation) {
-          
-      //   } else if (!this.reservation && this.formValues.delivery) {
-          
-      //   } else {
-          
-      //   }
-      //   el.day_visible = _day_visible;
-      //}
 
       return grouped;
     },
@@ -350,6 +319,10 @@ export default {
       this.dateId = null 
       this.seats = [ "Seleziona un orario per vedere le disponibilità", "" ] 
       await this.getDates();
+      if(this.formValues.delivery){
+
+        this.arrAddress = await axios.get(state.baseUrl + "api/addresses");
+      }
       this.getFirstMonthAndYearValues();
     }
   },
