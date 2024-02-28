@@ -32,9 +32,9 @@ export default {
       dayTimes: [], // Fasce orarie per il giorno selezionato
       dateId: null, // ID della data scelta
       seats: [
-      "Seleziona un orario per vedere le disponibilità", // usato sia per i posti che per i pezzi
-      "", // usato sia per i posti che per i pezzi
-      ],  
+        "Seleziona un orario per vedere le disponibilità", // usato sia per i posti che per i pezzi
+        "", // usato sia per i posti che per i pezzi
+      ],
       isValid: [],
       firstDayOfMonth: 1, // Giorno della settimana con cui inizia il mese selez.
       daysWeek: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
@@ -45,23 +45,23 @@ export default {
       loaderSeat: false,
       message: false,
       _delivery: false,
-      arrAddress:[],
+      arrAddress: [],
     };
   },
   methods: {
     // Chiamata API
     async getDates() {
       this.loaderFull = true;
-      let params = {}
-      if(this.reservation){
-        params = { wcf: '0'};
-      }else if(!this.reservation && !this.formValues.delivery){
-        params = { wcf: '1'};
-      }else if(!this.reservation && this.formValues.delivery){        
-        params = { wcf: '2'};
+      let params = {};
+      if (this.reservation) {
+        params = { wcf: "0" };
+      } else if (!this.reservation && !this.formValues.delivery) {
+        params = { wcf: "1" };
+      } else if (!this.reservation && this.formValues.delivery) {
+        params = { wcf: "2" };
       }
       const dates = await axios.get(state.baseUrl + "api/dates", {
-        params
+        params,
       });
       this.currentDate = dates.data.data_e_ora_attuali;
       this.calendar = this.getCalendar(dates.data.results);
@@ -95,7 +95,11 @@ export default {
       this.errorValidation = "";
       this.isValid = this.reservation
         ? validateReservation(this.formValues, this.state.maxPosti)
-        : order_validations(this.formValues, this.state.maxPosti, this.state.nPezzi);
+        : order_validations(
+            this.formValues,
+            this.state.maxPosti,
+            this.state.nPezzi
+          );
 
       if (this.isValid.length !== 0) {
         return;
@@ -120,6 +124,9 @@ export default {
           phone: this.formValues.telefono,
           email: this.formValues.email,
           message: this.formValues.messaggio,
+          comune: this.formValues.comune,
+          indirizzo: this.formValues.indirizzo,
+          civico: this.formValues.civico,
           products: this.state.getServeCart(),
           date_id: this.dateId,
           privacy: this.formValues.privacy,
@@ -134,17 +141,20 @@ export default {
           );
           this.loader = false;
           this.success = data.data.success;
-          console.log(this.success)
-          console.log(data.status)
-          console.log(data)
+          console.log(this.success);
+          console.log(data.status);
+          console.log(data);
           // SE AVVIENE UN ORDINE D'ASPORTO
         } else {
           const data = await axios.post(state.baseUrl + "api/orders", _order);
+          this.success = data.data.success;
           this.loader = false;
-          localStorage.clear();
-          setTimeout(() => {
-            this.$router.replace("/prenota");
-          }, 2000);
+          if (this.success) {
+            localStorage.clear();
+            setTimeout(() => {
+              this.$router.replace("/prenota");
+            }, 2000);
+          }
         }
 
         if (this.success) {
@@ -157,7 +167,7 @@ export default {
           this.formValues.telefono = "";
           this.formValues.messaggio = "";
           this.formValues.privacy = false;
-          this.formValues.n_persone = ""
+          this.formValues.n_persone = "";
           this.state.arrCart = [];
           this.state.totCart = 0;
         }
@@ -171,7 +181,6 @@ export default {
           this.loader = false;
           this.success = false;
         }
-
       }
     },
 
@@ -195,9 +204,10 @@ export default {
           this.dateId = id;
           // Imposto il num di posti disponibili per l'orario scelto
           this.seats[0] = max_res - reserved;
-          this.state.maxPosti[0] =  max_res - reserved;
+          this.state.maxPosti[0] = max_res - reserved;
         } else {
-          const { id, reserved_pz_q, max_pz_q, reserved_pz_t, max_pz_t, } = data.data.results[0];
+          const { id, reserved_pz_q, max_pz_q, reserved_pz_t, max_pz_t } =
+            data.data.results[0];
           this.dateId = id;
           // Imposto il num di pezzi disponibili per l'orario scelto
           this.seats[0] = max_pz_q - reserved_pz_q;
@@ -249,7 +259,6 @@ export default {
 
       arrTimes.forEach((item) => {
         this.dayTimes.push(item);
-        
       });
     },
 
@@ -294,21 +303,30 @@ export default {
     },
 
     showInput(inputName, text, select) {
-      if(text && inputName === "messaggio"){
-        return true
-      }
-      else if(select && inputName === "comune"){
-        if(this.formValues.delivery){
-            return true;
-          }
-      }
-      else if (!select && !text && (inputName == "nome" || inputName == "telefono" || inputName == "email" || inputName == "n_persone")){
+      if (text && inputName === "messaggio") {
         return true;
-      }else if (!select && !text && this.formValues.delivery && inputName !== "comune" && inputName !== "messaggio") { 
+      } else if (select && inputName === "comune") {
+        if (this.formValues.delivery) {
+          return true;
+        }
+      } else if (
+        !select &&
+        !text &&
+        (inputName == "nome" ||
+          inputName == "telefono" ||
+          inputName == "email" ||
+          inputName == "n_persone")
+      ) {
         return true;
-         
+      } else if (
+        !select &&
+        !text &&
+        this.formValues.delivery &&
+        inputName !== "comune" &&
+        inputName !== "messaggio"
+      ) {
+        return true;
       }
-      
     },
 
     showTimes(time) {
@@ -316,21 +334,20 @@ export default {
         return time.visible_domicilio;
       }
     },
-    async changeDelivery(){
+    async changeDelivery() {
       this.formValues.delivery = !this.formValues.delivery;
-      this.calendar = {} 
-      this.dayTimes = [] 
-      this.dateId = null 
-      this.seats = [ "Seleziona un orario per vedere le disponibilità", "" ] 
+      this.calendar = {};
+      this.dayTimes = [];
+      this.dateId = null;
+      this.seats = ["Seleziona un orario per vedere le disponibilità", ""];
       await this.getDates();
-      if(this.formValues.delivery){
+      if (this.formValues.delivery) {
         let data = await axios.get(state.baseUrl + "api/addresses");
-        this.arrAddress = data.data.results
+        this.arrAddress = data.data.results;
       }
       this.getFirstMonthAndYearValues();
-    }
+    },
   },
-
 
   async created() {
     await this.getDates();
@@ -348,11 +365,11 @@ export default {
       if (this.formValues.giorno) {
         this.formValues.giorno = "";
       }
-      this.seats = [ "Seleziona un orario per vedere le disponibilità", "" ]       
+      this.seats = ["Seleziona un orario per vedere le disponibilità", ""];
     },
 
     "formValues.giorno": function () {
-      this.seats = [ "Seleziona un orario per vedere le disponibilità", "" ] 
+      this.seats = ["Seleziona un orario per vedere le disponibilità", ""];
       if (this.formValues.orario) {
         this.formValues.orario = "";
       }
@@ -371,9 +388,7 @@ export default {
       >
         <div class="int"></div>
       </div>
-      <span @click="changeDelivery" for="delivery"
-        >Consegna a domicilio</span
-      >
+      <span @click="changeDelivery" for="delivery">Consegna a domicilio</span>
     </div>
 
     <section class="month-container">
@@ -439,8 +454,6 @@ export default {
       >
         <template :key="i" v-for="(time, i) in dayTimes">
           <div
-
-            
             @click="getSeats(time.time)"
             :class="{
               time: true,
@@ -451,14 +464,16 @@ export default {
           </div>
         </template>
       </div>
-      <div v-if="!loaderSeat" >
+      <div v-if="!loaderSeat">
         {{ seats[0] }}
         <span v-if="formValues.orario">
-          {{ reservation ? "posti disponibili" : "pezzi al taglio disponibili" }}
+          {{
+            reservation ? "posti disponibili" : "pezzi al taglio disponibili"
+          }}
         </span>
       </div>
       <div v-if="!loaderSeat && !reservation">
-         {{ seats[1] }}
+        {{ seats[1] }}
         <span v-if="formValues.orario"> pizze al piatto disponibili </span>
       </div>
 
@@ -493,7 +508,7 @@ export default {
           rows="10"
         >
         </textarea>
-        <label v-if="showInput(input.name,false, true)" :for="input.name">{{
+        <label v-if="showInput(input.name, false, true)" :for="input.name">{{
           input.label
         }}</label>
         <select
@@ -504,7 +519,13 @@ export default {
           @change="(e) => handleInputValue(e, input.name)"
         >
           <option value="0">seleziona un comune</option>
-          <option v-for="item in arrAddress" :key="item.comune" :value="item.comune">{{ item.comune }}</option>
+          <option
+            v-for="item in arrAddress"
+            :key="item.comune"
+            :value="item.comune"
+          >
+            {{ item.comune }}
+          </option>
         </select>
       </template>
 
