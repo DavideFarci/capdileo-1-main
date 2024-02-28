@@ -44,11 +44,11 @@ export default {
         {
           name: "comune",
           label: "Città ",
-          type: "text",
+          type: "select",
         },
         {
           name: "indirizzo",
-          label: "Indirizzo e N° civico",
+          label: "Indirizzo",
           type: "text",
         },
         {

@@ -389,7 +389,6 @@ export default {
   created() {
     localStorage.getItem("cart") &&
     (this.state.arrCart = JSON.parse(localStorage.getItem("cart")));
-    console.log(this.state.nPezzi)
     this.getTot();
 
     this.getProduct(0);

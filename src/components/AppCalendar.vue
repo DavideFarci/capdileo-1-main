@@ -133,8 +133,10 @@ export default {
             _reservation
           );
           this.loader = false;
-          this.success && (this.formValues.n_persone = "");
-
+          this.success = data.data.success;
+          console.log(this.success)
+          console.log(data.status)
+          console.log(data)
           // SE AVVIENE UN ORDINE D'ASPORTO
         } else {
           const data = await axios.post(state.baseUrl + "api/orders", _order);
@@ -155,6 +157,7 @@ export default {
           this.formValues.telefono = "";
           this.formValues.messaggio = "";
           this.formValues.privacy = false;
+          this.formValues.n_persone = ""
           this.state.arrCart = [];
           this.state.totCart = 0;
         }
@@ -168,6 +171,7 @@ export default {
           this.loader = false;
           this.success = false;
         }
+
       }
     },
 
@@ -289,20 +293,20 @@ export default {
       this.message = false;
     },
 
-    showInput(inputName, text) {
-      if (text && inputName === "messaggio"){
-        return true;
-      }else if (inputName !== "messaggio" && !text) {
-        if ( (inputName == "comune" || inputName == "indirizzo" || inputName == "civico")){
-          if(this.formValues.delivery){
+    showInput(inputName, text, select) {
+      if(text && inputName === "messaggio"){
+        return true
+      }
+      else if(select && inputName === "comune"){
+        if(this.formValues.delivery){
             return true;
           }
-          return false;
-        }
+      }
+      else if (!select && !text && (inputName == "nome" || inputName == "telefono" || inputName == "email" || inputName == "n_persone")){
         return true;
-      }else{
-
-        return false;
+      }else if (!select && !text && this.formValues.delivery && inputName !== "comune" && inputName !== "messaggio") { 
+        return true;
+         
       }
       
     },
@@ -320,8 +324,8 @@ export default {
       this.seats = [ "Seleziona un orario per vedere le disponibilità", "" ] 
       await this.getDates();
       if(this.formValues.delivery){
-
-        this.arrAddress = await axios.get(state.baseUrl + "api/addresses");
+        let data = await axios.get(state.baseUrl + "api/addresses");
+        this.arrAddress = data.data.results
       }
       this.getFirstMonthAndYearValues();
     }
@@ -489,6 +493,19 @@ export default {
           rows="10"
         >
         </textarea>
+        <label v-if="showInput(input.name,false, true)" :for="input.name">{{
+          input.label
+        }}</label>
+        <select
+          v-if="showInput(input.name, false, true)"
+          :name="input.name"
+          :id="input.name"
+          :value="formValues[input.name]"
+          @change="(e) => handleInputValue(e, input.name)"
+        >
+          <option value="0">seleziona un comune</option>
+          <option v-for="item in arrAddress" :key="item.comune" :value="item.comune">{{ item.comune }}</option>
+        </select>
       </template>
 
       <div class="privacy">
@@ -681,6 +698,7 @@ h1 {
     input {
       height: 3rem;
     }
+    select,
     input,
     textarea {
       font-size: 1.4rem;
