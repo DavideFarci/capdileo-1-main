@@ -288,11 +288,12 @@ info-off {
       }
     }
   }
+
 }
 .sec-3 {
   background-color: rgba(0, 0, 0, 0.43);
-  font-size: 14px;
-  padding: 10px;
+  font-size: 12px;
+  padding: 8px;
 }
 .sec-3-off {
   display: none;
