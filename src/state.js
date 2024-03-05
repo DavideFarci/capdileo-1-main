@@ -15,8 +15,8 @@ export const state = reactive({
   setting: [],
 
   actvPage: 1,
-  //baseUrl: 'https://db.dashboardristorante.it/',
-  baseUrl: "http://127.0.0.1:8000/",
+  baseUrl: 'https://db.pizzeria-capricciodileo.it/',
+  //baseUrl: "http://127.0.0.1:8000/",
   getImageUrl(image) {
     return this.baseUrl + "public/storage/" + image;
   },
