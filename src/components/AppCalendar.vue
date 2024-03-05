@@ -141,9 +141,9 @@ export default {
           );
           this.loader = false;
           this.success = data.data.success;
-          console.log(this.success);
-          console.log(data.status);
-          console.log(data);
+          setTimeout(() => {
+            this.$router.replace("/");
+          }, 2000);
           // SE AVVIENE UN ORDINE D'ASPORTO
         } else {
           const data = await axios.post(state.baseUrl + "api/orders", _order);
