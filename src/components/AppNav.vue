@@ -1,13 +1,26 @@
 <script>
 import { state } from "../state.js";
+import axios from "axios";
 
 export default {
   data() {
     return {
       state,
+      asporto: true,
+      tavoli: true,
     };
   },
   methods: {},
+  async created() {
+    const settings = await axios.get(state.baseUrl + "api/setting", {});
+    this.state.setting = settings.data.results;
+    if (!state.setting[0].status) {
+      this.asporto = false;
+    }
+    if (!state.setting[1].status) {
+      this.tavoli = false;
+    }
+  },
 };
 </script>
 
@@ -39,12 +52,14 @@ export default {
         >contatti</router-link
       >
       <router-link
+        v-if="asporto"
         :to="{ name: 'prenota' }"
         class="nav-link"
         active-class="active-link"
         >Ordina d'asporto</router-link
       >
       <router-link
+        v-if="tavoli"
         :to="{ name: 'prenotaServizio' }"
         class="nav-link"
         active-class="active-link"
@@ -76,13 +91,14 @@ export default {
         </div>
       </div>
       <div class="sec-3">
-        Capriccio di leo, PI: 02729120424, 
-          <a href="https://www.iubenda.com/privacy-policy/82753739/cookie-policy">
-          cookie policy, </a>
-          <a href="https://www.iubenda.com/privacy-policy/82753739">
-          privacy policy, </a>
-          <a href="https://future-plus.it">product by
-          FUTURE+</a>
+        Capriccio di leo, PI: 02729120424,
+        <a href="https://www.iubenda.com/privacy-policy/82753739/cookie-policy">
+          cookie policy,
+        </a>
+        <a href="https://www.iubenda.com/privacy-policy/82753739">
+          privacy policy,
+        </a>
+        <a href="https://future-plus.it">product by FUTURE+</a>
       </div>
     </div>
   </div>
@@ -135,7 +151,7 @@ export default {
         >contatti</router-link
       >
       <router-link
-        v-if="!state.infomenu"
+        v-if="!state.infomenu && asporto"
         :to="{ name: 'prenota' }"
         class="nav-link"
         active-class="active-link"
@@ -143,7 +159,7 @@ export default {
         >Ordina d'Asporto</router-link
       >
       <router-link
-        v-if="!state.infomenu"
+        v-if="!state.infomenu && tavoli"
         :to="{ name: 'prenotaServizio' }"
         class="nav-link"
         active-class="active-link"
@@ -191,13 +207,16 @@ export default {
         </div>
 
         <div :class="state.infomenu ? 'sec-3' : 'sec-3-off'">
-          Capriccio di leo, PI: 02729120424, 
-          <a href="https://www.iubenda.com/privacy-policy/82753739/cookie-policy">
-          cookie policy, </a>
+          Capriccio di leo, PI: 02729120424,
+          <a
+            href="https://www.iubenda.com/privacy-policy/82753739/cookie-policy"
+          >
+            cookie policy,
+          </a>
           <a href="https://www.iubenda.com/privacy-policy/82753739">
-          privacy policy, </a>
-          <a href="https://future-plus.it">product by
-          FUTURE+</a>
+            privacy policy,
+          </a>
+          <a href="https://future-plus.it">product by FUTURE+</a>
         </div>
       </div>
     </div>
@@ -288,7 +307,6 @@ info-off {
       }
     }
   }
-
 }
 .sec-3 {
   background-color: rgba(0, 0, 0, 0.43);
@@ -327,7 +345,7 @@ info-off {
 
       color: $c-nav-link;
       font-family: "Gabarito", cursive;
-      font-size: clamp(22px, 2vw, 30px)
+      font-size: clamp(22px, 2vw, 30px);
     }
   }
 
@@ -392,7 +410,7 @@ info-off {
   transition: all 0.3s linear;
 }
 .active-link {
-  color: $c-white;
+  color: $c-white !important;
 }
 .burger-close-on {
   transition: all 1s linear 2s;

@@ -8,14 +8,14 @@ export const state = reactive({
   arrCart: [],
   arrVariation: [],
 
-  maxPosti: [ 0, 0 ], //q, t
+  maxPosti: [0, 0], //q, t
 
-  nPezzi: [ 0, 0 ], //q, t
+  nPezzi: [0, 0], //q, t
   totCart: 0,
   setting: [],
 
   actvPage: 1,
-  baseUrl: 'https://db.pizzeria-capricciodileo.it/',
+  baseUrl: "https://db.pizzeria-capricciodileo.it/",
   //baseUrl: "http://127.0.0.1:8000/",
   getImageUrl(image) {
     return this.baseUrl + "public/storage/" + image;
