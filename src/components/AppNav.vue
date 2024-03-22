@@ -363,19 +363,19 @@ info-off {
     background-color: $c-footer-nav;
     h3 {
       width: 100%;
-      margin-bottom: 10px;
-      font-size: clamp(20px, 3vw, 22px);
+      margin-bottom:5px;
+      font-size: clamp(16px, 2vw, 22px);
     }
     .sec-1 {
       @include dfj;
       flex-direction: column;
-      gap: 1rem;
+      
       width: 100%;
     }
     .sec-2 {
       @include dfa;
       flex-wrap: wrap;
-      gap: 5%;
+      gap: 2%;
       width: 100%;
       justify-content: space-around;
       .cont-giorni,
@@ -386,7 +386,7 @@ info-off {
         gap: 0.5rem;
         text-align: left;
         text-transform: uppercase;
-        font-size: clamp(16px, 1vw, 20px);
+        font-size: clamp(13px, 1vw, 18px);
         .time {
           text-align: center;
         }
