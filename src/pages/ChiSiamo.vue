@@ -223,12 +223,14 @@
     @include dfc;
     flex-direction: column;
     gap: 2rem;
-    padding-top: 20%;
+    padding: 20% 0 30px 0;
+    margin-bottom: 10px;
     text-align: center;
     width: 100%;
     padding-inline: 10px;
     overflow: auto;
     position: relative;
+    //padding-bottom: 40vh;
     h1{
       margin-top: 20px;
       font-size: clamp(28px, 3.2vw, 40px);
@@ -260,12 +262,14 @@
     .back{
       margin: 0 0 0 5px;
       left: 5px;
-    }  
+    }
+    
+
+
     .post-container{
       height: 100%;
-
+      
       margin-top: 1rem;
-      padding-bottom: 40vh;
       display: flex;
       flex-direction: column;
       gap: 2rem;
