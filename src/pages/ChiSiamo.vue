@@ -66,7 +66,7 @@
     <sh class="sh"/>
     <div v-if="set == 0" class="choice">
       <div class="button" :class="choice == 1 ? 'active' : ''" @click="choice = 1" > 
-          <h2>In viaggio con leo...</h2>
+          <h2>In viaggio con leo</h2>
           <div @click="set = 1" class="btn">scopri</div>
         </div>
         <div class="button" :class="choice == 2 ? 'active' : ''" @click="choice = 2" >
@@ -79,8 +79,8 @@
     <div v-if="set" class="main-about">
       <div class="back" @click="set=0; choice = 0">indietro</div>
       <div class="other" @click="other">{{ other(set) }}</div>
-      <h1 v-if="set == 2">LA NOSTRA PIZZERIA</h1>
-      <h1 v-if="set == 1">In Viaggio con Leo...</h1>
+      <h1 v-if="set == 2 ">LA NOSTRA PIZZERIA</h1>
+      <h1 v-if="set == 1" >IN VIAGGIO CON LEO</h1>
       <div class="post-container">
         <div class="post" v-if="set == 1"  >
           <img class="image" src="../assets/img/leo.png" alt="locandina di leonardo rocchetti">
@@ -229,24 +229,42 @@
     padding-inline: 10px;
     overflow: auto;
     position: relative;
+    h1{
+      margin-top: 20px;
+      font-size: clamp(28px, 3.2vw, 40px);
+    }
     .other, .back{
       position: absolute;
       top: 5px;
       text-transform: uppercase;
       border: 2px solid white;
       border-radius: 30px;
-      padding: .3em 1em ;
+      padding: .1em .6em ;
+      opacity: .6;
+      font-size: clamp(11px, 2vw, 12px);
+    }
+    @media (min-width:800px) {
+      
+      .other:hover, .back:hover{
+        scale: 1.1;
+        background-color: $c-nav;
+        transition: all .2s ease-in-out;
+        margin:0 0 0 0;
+      }
     }
     .other{
-      right: 5px;
+      right: 8px;
+      margin: 0 5px 0 0;
+      font-family: "Nunito", sans-serif;
     }
     .back{
+      margin: 0 0 0 5px;
       left: 5px;
     }  
     .post-container{
       height: 100%;
 
-      margin-top: 2rem;
+      margin-top: 1rem;
       display: flex;
       flex-direction: column;
       gap: 2rem;
@@ -269,6 +287,11 @@
         a{
           left: auto;
           right: 25px;
+        }
+        .text{
+          text-align: left;
+
+        
         }
         .img-cont{
           align-items: flex-start;
@@ -305,11 +328,15 @@
           flex-direction: column;
           gap: .5rem;
           width: 40%;
+          text-align: right;
           h4{
-            font-size: 18px;
+            
+            font-size: clamp(18px, 2.2vw, 25px);
           }
           p{
-            font-size: 10px;
+            font-family: "Nunito", sans-serif;
+            font-weight: lighter;
+            font-size: clamp(14px, 1.8vw, 18px);
           }
         }
         .img-cont{
@@ -322,7 +349,7 @@
           gap: 10px;
           img{
             width: 100%;
-            //max-width: 300px;
+            max-width: 400px;
             box-shadow: 17px 10px 38px black;
           }
           .hashtags{
@@ -331,6 +358,10 @@
             gap: .3rem;
             flex-wrap: wrap;
             width: 100%;
+            span{
+
+              color: $c-panna !important;
+            }
           }
         }
 
