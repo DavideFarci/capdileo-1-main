@@ -265,6 +265,7 @@
       height: 100%;
 
       margin-top: 1rem;
+      padding-bottom: 40vh;
       display: flex;
       flex-direction: column;
       gap: 2rem;
