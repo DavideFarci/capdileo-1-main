@@ -9,7 +9,11 @@
     data(){
         return{     
             state,
+            arrPost1:[],
+            arrPost2:[],
             arrPost:[],
+            choice : 0,
+            set: 0,
         }
     },
     methods:{
@@ -18,7 +22,35 @@
 				  .get(state.baseUrl + 'api/post', {})
             .then(response => {
               this.arrPost = response.data.results.data;
+
+              this.arrPost.forEach(element => {
+                if(element.type == 1){
+                  this.arrPost1.push(element)
+                } else{              
+                  this.arrPost2.push(element)
+                }
+              });
             });
+      },
+      getset(){
+        if(this.set == 1){
+          return this.arrPost1
+        } else if(this.set == 2){
+          return this.arrPost2
+        }
+      },
+      other( i ){
+        if (i == 1){
+          return 'La Nostra Storia'
+        }else if(i == 2){
+          return 'in Viaggio con Leo'
+        }
+        if(this.set == 1){
+          this.set = 2
+        } else if(this.set == 2){
+          this.set = 1
+        }
+
       }
     },
     created(){
@@ -31,11 +63,26 @@
 
 <template>
   <div class="about">
-    <sh/>
-    <div class="main-about">
-      <h1>LA NOSTRA PIZZERIA</h1>
+    <sh class="sh"/>
+    <div v-if="set == 0" class="choice">
+      <div class="button" :class="choice == 1 ? 'active' : ''" @click="choice = 1" > 
+          <h2>In viaggio con leo...</h2>
+          <div @click="set = 1" class="btn">scopri</div>
+        </div>
+        <div class="button" :class="choice == 2 ? 'active' : ''" @click="choice = 2" >
+          <h2>La nostra storia</h2>
+          <div @click="set = 2" class="btn">scopri</div>
+      </div>
+    </div>
+    
+
+    <div v-if="set" class="main-about">
+      <div class="back" @click="set=0; choice = 0">indietro</div>
+      <div class="other" @click="other">{{ other(set) }}</div>
+      <h1 v-if="set == 2">LA NOSTRA PIZZERIA</h1>
+      <h1 v-if="set == 1">In Viaggio con Leo...</h1>
       <div class="post-container">
-        <div class="post" >
+        <div class="post" v-if="set == 1"  >
           <img class="image" src="../assets/img/leo.png" alt="locandina di leonardo rocchetti">
           
           <div class="text">
@@ -45,9 +92,9 @@
           <div class="img-cont">
             <img src="../assets/img/leo.png" alt="locandina di leonardo rocchetti">
             <div class="hashtags">
-              <span  >#Sigep </span>
-              <span  >#SigepRimini </span>
-              <span  >#SigepRimini2024 </span>
+              <span>#Sigep </span>
+              <span>#SigepRimini </span>
+              <span>#SigepRimini2024 </span>
             </div>
           </div>
           <a href="https://www.instagram.com/p/C2Sc0hAohVz/?hl=it&img_index=2">
@@ -57,7 +104,7 @@
           </a>
         </div>
 
-        <div v-for="post in arrPost" :key="post.id" class="post" >
+        <div v-for="post in getset()" :key="post.id" class="post" >
           <img class="image" :src=" state.getImageUrl(post.image)" alt="">
           
           <div class="text">
@@ -121,16 +168,84 @@
   border: 2px solid $c-header;
     
 }
-
 .about{
+  display: flex;
+  flex-direction: column;
+  height: 100vh !important;
+  .sh{
+    position:static
+  }
+  .choice{
+    padding: 1rem;
+    @include dfc;
+    
+    width: 100%;
+    height: 100%;
+    gap: 10px;
+    .button{
+      @include dfc;
+      flex-direction: column;
+      gap: 6%;
+      text-align: center;
+      flex-grow: 1;
+      height: 100%;
+      background: radial-gradient(circle, $c-nav 50% , $c-footer-nav );
+      opacity: .6;
+      font-size: 110%;
+      transition: all 0.3s ease-in-out;
+      text-transform: uppercase;
+      padding: 10px;
+      .btn{
+        opacity: 0;
+      }
+    }
+    .button:hover{
+      font-size: 150%;
+      flex-grow: 2;
+      opacity: .8;
+      transition: all 0.3s ease-in-out;
+      .btn{
+        opacity: .7;
+      }
+    }
+    .active{
+      font-size: 190% !important;
+      flex-grow: 2;
+      opacity: 1 !important;
+      transition: all 0.3s ease-in-out;
+      .btn{
+        opacity: 1 !important;
+      }
+    }
+    
+ }
   .main-about{
     @include dfc;
     flex-direction: column;
     gap: 2rem;
-    padding: 2rem;
     padding-top: 20%;
     text-align: center;
+    width: 100%;
+    padding-inline: 10px;
+    overflow: auto;
+    position: relative;
+    .other, .back{
+      position: absolute;
+      top: 5px;
+      text-transform: uppercase;
+      border: 2px solid white;
+      border-radius: 30px;
+      padding: .3em 1em ;
+    }
+    .other{
+      right: 5px;
+    }
+    .back{
+      left: 5px;
+    }  
     .post-container{
+      height: 100%;
+
       margin-top: 2rem;
       display: flex;
       flex-direction: column;
@@ -207,7 +322,7 @@
           gap: 10px;
           img{
             width: 100%;
-            max-width: 300px;
+            //max-width: 300px;
             box-shadow: 17px 10px 38px black;
           }
           .hashtags{

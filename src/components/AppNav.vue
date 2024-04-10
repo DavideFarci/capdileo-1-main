@@ -87,7 +87,7 @@ export default {
           <span class="time">16:00 - 22:00</span>
           <span class="time">16:00 - 22:00</span>
           <span class="time">16:00 - 22:00</span>
-          <span class="time">16:00 - 22:00</span>
+          <span class="time">17:30 - 22:00</span>
         </div>
       </div>
       <div class="sec-3">
@@ -201,7 +201,7 @@ export default {
               <span class="time">16:00 - 22:00</span>
               <span class="time">16:00 - 22:00</span>
               <span class="time">16:00 - 22:00</span>
-              <span class="time">16:00 - 22:00</span>
+              <span class="time">17:30 - 22:00</span>
             </div>
           </div>
         </div>
