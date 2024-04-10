@@ -123,7 +123,7 @@
             </svg>
           </a>
         </div>
-
+        <div class="spacer"></div>
 
       </div>
     </div>
@@ -223,7 +223,7 @@
     @include dfc;
     flex-direction: column;
     gap: 2rem;
-    padding: 20% 0 30px 0;
+    padding: 20% 0 0 0;
     margin-bottom: 10px;
     text-align: center;
     width: 100%;

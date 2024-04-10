@@ -98,7 +98,7 @@
   
       <div class="main-menu">
   
-       <div class="card" v-for="item in arrProduct">
+        <div class="card" v-for="item in arrProduct">
         <img draggable="false" :src="state.getImageUrl(item.image)" alt="">
         <div class="title">{{ item.name }}</div>
         <div class="c-tp">
@@ -106,8 +106,8 @@
           <div class="tags"> <span>{{fixtag(item.tags) }}</span></div>
           <div class="price">{{ getPrice(item.price) }}</div>
         </div>
-       </div>
-  
+        </div>
+        <div class="spacer"></div>
       </div>
     </div>
   </div>
