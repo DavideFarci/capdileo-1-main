@@ -28,30 +28,35 @@ export default {
   <div class="nav">
     <div class="top">
       <router-link
+        @click="state.actvPage = 2"
         :to="{ name: 'home' }"
         class="nav-link"
         active-class="active-link"
         >Home</router-link
       >
       <router-link
+        @click="state.actvPage = 2"
         :to="{ name: 'menu' }"
         class="nav-link"
         active-class="active-link"
         >menu</router-link
       >
       <router-link
+        @click="state.actvPage = 2"
         :to="{ name: 'chi-siamo' }"
         class="nav-link"
         active-class="active-link"
         >chi siamo?</router-link
       >
       <router-link
+        @click="state.actvPage = 2"
         :to="{ name: 'contatti' }"
         class="nav-link"
         active-class="active-link"
         >contatti</router-link
       >
       <router-link
+        @click="state.actvPage = 2"
         v-if="asporto"
         :to="{ name: 'prenota' }"
         class="nav-link"
@@ -66,6 +71,7 @@ export default {
         >Ordina d'asporto</a
       >
       <router-link
+        @click="state.actvPage = 2"
         v-if="tavoli"
         :to="{ name: 'prenotaServizio' }"
         class="nav-link"
@@ -126,43 +132,43 @@ export default {
     </div>
     <div :class="state.sideMenuValue ? 'top-on' : 'top-off'">
       <router-link
+        @click="state.actvPage = 2; state.sideMenuValue = 0"
         v-if="!state.infomenu"
         :to="{ name: 'home' }"
         class="nav-link"
         active-class="active-link"
-        @click="state.updateActvPage()"
         >home</router-link
       >
       <router-link
+        @click="state.actvPage = 2; state.sideMenuValue = 0"
         v-if="!state.infomenu"
         :to="{ name: 'menu' }"
         class="nav-link"
         active-class="active-link"
-        @click="state.updateActvPage()"
         >menu</router-link
       >
       <router-link
+        @click="state.actvPage = 2; state.sideMenuValue = 0"
         v-if="!state.infomenu"
         :to="{ name: 'chi-siamo' }"
         class="nav-link"
         active-class="active-link"
-        @click="state.updateActvPage()"
         >chi siamo?</router-link
       >
       <router-link
+        @click="state.actvPage = 2; state.sideMenuValue = 0"
         v-if="!state.infomenu"
         :to="{ name: 'contatti' }"
         class="nav-link"
         active-class="active-link"
-        @click="state.updateActvPage()"
         >contatti</router-link
       >
       <router-link
+        @click="state.actvPage = 2; state.sideMenuValue = 0"
         v-if="!state.infomenu && asporto"
         :to="{ name: 'prenota' }"
         class="nav-link"
         active-class="active-link"
-        @click="state.updateActvPage()"
         >Ordina d'Asporto</router-link
       >
       <a
@@ -174,11 +180,11 @@ export default {
         >Ordina d'Asporto</a
       >
       <router-link
+        @click="state.actvPage = 2; state.sideMenuValue = 0"
         v-if="!state.infomenu && tavoli"
         :to="{ name: 'prenotaServizio' }"
         class="nav-link"
         active-class="active-link"
-        @click="state.updateActvPage()"
         >Prenota tavolo</router-link
       >
       <div

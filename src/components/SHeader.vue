@@ -22,8 +22,6 @@ export default {
       this.fromto.push(this.state.setting[2].from)
       this.fromto.push(this.state.setting[2].to)
     }
-   
-    this.state.actvPage = 1;
   },
 };
 </script>

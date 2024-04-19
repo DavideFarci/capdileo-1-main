@@ -89,7 +89,7 @@ export default {
               assolutamente vedere il nostro menù
             </span>
           </div>
-          <router-link :to="{ name: 'menu' }" class="btn">Menù</router-link>
+          <router-link :to="{ name: 'menu' }" @click="state.actvPage = 2" class="btn">Menù</router-link>
         </div>
       </div>
       <!-- <div class="par par-3" id="par3" v-if="tavoli">
