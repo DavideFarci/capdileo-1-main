@@ -58,6 +58,13 @@ export default {
         active-class="active-link"
         >Ordina d'asporto</router-link
       >
+      <a
+        v-if="!asporto"
+        href="tel:3663694915"
+        class="nav-link"
+        active-class="active-link"
+        >Ordina d'asporto</a
+      >
       <router-link
         v-if="tavoli"
         :to="{ name: 'prenotaServizio' }"
@@ -157,6 +164,14 @@ export default {
         active-class="active-link"
         @click="state.updateActvPage()"
         >Ordina d'Asporto</router-link
+      >
+      <a
+        v-if="!state.infomenu && !asporto"
+        href="tel:3663694915"
+        class="nav-link"
+        active-class="active-link"
+       
+        >Ordina d'Asporto</a
       >
       <router-link
         v-if="!state.infomenu && tavoli"

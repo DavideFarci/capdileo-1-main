@@ -1,23 +1,33 @@
 <script>
 import { state } from "../state.js";
 import axios from "axios";
-import AppHeader from "../components/AppHeader.vue";
+import sHeader from "../components/SHeader.vue";
 export default {
-  components: { AppHeader },
+  components: { sHeader },
 
   data() {
     return {
       state,
-      _delivery: false,
+      asporto: false,
+      tavoli: false,
     };
+  },
+  methods:{
+    actvpage(){
+      localStorage.setItem("actvPage", 1);
+      
+    }
   },
   async created() {
     const settings = await axios.get(state.baseUrl + "api/setting", {});
     this.state.setting = settings.data.results;
     if (this.state.setting[0].status) {
-      this._delivery = true;
+      this.asporto = true;
     }
-
+    if (this.state.setting[1].status) {
+      this.tavoli = true;
+    }
+   
     this.state.actvPage = 1;
   },
 };
@@ -25,13 +35,13 @@ export default {
 
 <template>
   <div class="home">
-    <AppHeader class="hd" />
+    <sHeader class="hd" />
     <div class="main-home">
-      <div class="par par-1" id="par1" v-if="_delivery">
+      <div class="par par-1" id="par1" >
         <div class="overlay">
           <div class="arrow">
             1
-            <a href="#par2">
+            <a @click="actvpage" href="#par2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -53,70 +63,39 @@ export default {
               <span class="s2">ASPORTO</span>
             </h2>
             <span
-              >La serata perfetta non esis... E invece esiste eccome! Nasce
+              >La serata perfetta non esis... E invece esiste eccome! Parte
               proprio dal pasto perfetto, quindi che aspetti prenota ora la tua
-              pizza o il tavolo per poterla gustare da noi
+              pizza da noi
             </span>
           </div>
-          <router-link :to="{ name: 'prenota' }" class="btn"
-            >Prenota asporto</router-link
-          >
+          <router-link :to="{ name: 'prenota' }" class="btn" v-if="asporto">Prenota asporto</router-link>
+          <a href="tel:3663694915" class="btn" v-if="!asporto">Prenota asporto</a>
         </div>
       </div>
-      <div class="par par-2" id="par2" v-if="state.setting[1].status">
+      <div class="par par-2" id="par2">
         <div class="overlay">
           <div class="arrow">
-            <a href="#par1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-arrow-left"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
-                />
+            <a @click="actvpage" href="#par1">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
               </svg>
             </a>
             2
-            <a href="#par3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-arrow-right"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
-                />
-              </svg>
-            </a>
           </div>
           <div class="t-c">
-            <h2 id="h2par2">
-              <span class="s1 s1-m">PRENOTA ORA</span> IL TUO
-              <span class="s2 s2-m">TAVOLO</span>
-            </h2>
-            <span
-              >E se volessi cenare proprio da noi? Prenota subito il tuo tavolo
-              ti aspettiamo a cena da noi!</span
-            >
+            <h2 id="h2par3">SCOPRI IL NOSTRO MENU</h2>
+            <span>
+              Se ancora non hai provato le sfiziosità della nostra cucina devi
+              assolutamente vedere il nostro menù
+            </span>
           </div>
-          <router-link :to="{ name: 'prenotaServizio' }" class="btn"
-            >Prenota un tavolo</router-link
-          >
+          <router-link :to="{ name: 'menu' }" class="btn">Menù</router-link>
         </div>
       </div>
-      <div class="par par-3" id="par3">
+      <!-- <div class="par par-3" id="par3" v-if="tavoli">
         <div class="overlay">
           <div class="arrow">
-            <a href="#par2">
+            <a @click="actvpage" href="#par1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -132,17 +111,23 @@ export default {
               </svg>
             </a>
             3
+            
           </div>
           <div class="t-c">
-            <h2 id="h2par3">SCOPRI IL NOSTRO MENU</h2>
-            <span>
-              Se ancora non hai provato le sfiziosità della nostra cucina devi
-              assolutamente vedere il nostro menù
-            </span>
+            <h2 id="h2par2">
+              <span class="s1 s1-m">PRENOTA ORA</span> IL TUO
+              <span class="s2 s2-m">TAVOLO</span>
+            </h2>
+            <span
+              >E se volessi cenare proprio da noi? Prenota subito il tuo tavolo
+              ti aspettiamo a cena da noi!</span
+            >
           </div>
-          <router-link :to="{ name: 'menu' }" class="btn">Menù</router-link>
+          <router-link :to="{ name: 'prenotaServizio' }" class="btn"
+            >Prenota un tavolo</router-link
+          >
         </div>
-      </div>
+      </div>      -->
     </div>
   </div>
 </template>
@@ -172,24 +157,23 @@ export default {
   background-color: $c-nav-link;
   border: 2px solid $c-header;
 }
-.hd {
-  box-shadow: 10px 10px 10px black;
-}
+
 .home {
   position: fixed;
-  top: 0;
+  bottom: 0;
   right: 0;
   overflow: hidden;
   padding-bottom: 1rem;
-  height: calc(100%);
+  height: 100%;
   .main-home {
+    margin-left: 1rem;
     padding-bottom: 1rem;
-    //margin-bottom: 1rem;
+    
     overflow-x: scroll;
     scroll-snap-type: x mandatory;
-    height: 60%;
+    height: calc(100% - 85px);
     width: calc(100% - 2rem);
-    margin-left: 2rem;
+    //margin-left: 2rem;
     display: flex;
     gap: 3rem;
 
@@ -256,17 +240,24 @@ export default {
 .par-3 {
   background-image: url("../assets/img/pizza-olio.png");
 }
-@media (max-width: $bp1) {
+@media (max-width: $bp2) {
   .home {
     padding: 0 !important;
+    
   }
   .main-home {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
+    height: calc(100% - 250px) !important;
   }
   .overlay {
+    
     flex-direction: column !important;
+    justify-content: flex-end !important; 
+    .par{
+      
+    }
   }
 
   #h2par1,
@@ -275,6 +266,5 @@ export default {
     font-size: 28px;
   }
 }
-@media (max-width: $bp1) {
-}
+
 </style>

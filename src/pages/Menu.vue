@@ -86,7 +86,7 @@
 
 <template>
   <div class="menu">
-    <sh/>
+    <sh class="hd" />
     <div class="menu-cont">
 
       <h1>Menu</h1>
@@ -148,11 +148,13 @@
   display: flex;
   flex-direction: column;
 
+
   .menu-cont{
     overflow: auto;
-    height: 100%;
-    padding: 1rem 1rem ;
-    padding-top: 15%;
+    //height: 100%;
+    flex-grow: 1;
+    //padding: 1rem 1rem ;
+    //padding-top: 15%;
     h1{
       text-align: center;
       text-transform: uppercase;

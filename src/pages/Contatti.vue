@@ -28,11 +28,11 @@
   
         <div class="contact">
           <div class="cnt-name">email</div>
-          <div class="cnt">pizzeria@gmail.com</div>
+          <a href="mailto:96leonardorocchetti@gmail.com" class="cnt">96leonardorocchetti@gmail.com</a>
         </div>    
         <div class="contact">
           <div class="cnt-name">telefono</div>
-          <a href="tel:+393334422266" class="cnt">+39 3334422266</a>
+          <a href="tel:3663694915" class="cnt">+39 3663694915</a>
         </div>    
       </div>
   
@@ -115,7 +115,7 @@ img{
         .cnt{
           color: $c-white;
           width: 70%;
-          background-color: $c-black-op-med;
+          background-color: rgb(72, 49, 49);
           padding: 1em;
       
         }
@@ -194,7 +194,7 @@ img{
 .card {
   width: fit-content;
   height: fit-content;
-  background-color: rgba(238, 238, 238, 0.4);
+  background-color:rgb(72, 49, 49);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,7 +208,7 @@ img{
 .socialContainer {
   width: 52px;
   height: 52px;
-  background-color: rgba(44, 44, 44, 0.563);
+  background-color: rgba(101, 15, 15, 0.563);
   border-radius: 100%;
   display: flex;
   align-items: center;
