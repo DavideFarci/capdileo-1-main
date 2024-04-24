@@ -46,7 +46,7 @@ export default {
 @use "../assets/styles/general.scss" as *;
 header {
   padding: 10px 20px;
-  background-color: rgba(142, 32, 32, 0.596);
+  background-color: $c-header;
   width: 100% !important;
   z-index: 1000;
   display: flex;
@@ -88,7 +88,7 @@ header {
 .header-home {
   height: 85px;
   padding: 10px 20px;
-  background-color: rgba(142, 32, 32, 0.596);
+  background-color: $c-header;
   margin-left: 1rem;
  // width: 70%;
   z-index: 1000;
@@ -145,7 +145,7 @@ header {
   .header-home{
     flex-direction: column;
     align-items: center;
-    background-color: rgba(142, 32, 32, 0.596);
+    background-color: $c-header;
     height: 250px;
     margin: 0 !important;
     img{
