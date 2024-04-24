@@ -51,6 +51,16 @@
           this.set = 1
         }
 
+      },
+      desk (d){
+        let arrComp = []
+        let arrAcapo = d.split('/**/')
+        console.log(arrAcapo)
+        arrAcapo.forEach(e => {
+          let arrG = e.split('***')
+          arrComp.push(arrG)
+        });
+        return arrComp
       }
     },
     created(){
@@ -109,7 +119,9 @@
           
           <div class="text">
             <h4>{{ post.title }}</h4>
-            <p> {{ post.description }}</p>
+            <p v-for="d in desk(post.description)"> 
+              <span :class="i% 2 == 0 ? 'strong': ''" :key="i" v-for="(g, i) in d" >{{ g }}</span>
+            </p>
           </div>
           <div class="img-cont">
             <img :src=" state.getImageUrl(post.image)" alt="">
@@ -137,6 +149,11 @@
 
 <style scoped lang="scss">
 @use '../assets/styles/general.scss' as *;
+
+span.strong{
+  font-weight: lighter !important;
+  font-family: "Nunito", sans-serif;
+}
 
 .btn-menu{
   display: none;
