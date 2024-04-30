@@ -97,6 +97,7 @@ img{
       gap: 1.5rem;
       width: clamp(300px, 60%, 450px);
       .contact{
+        font-size:  clamp( 13px, 2.3vw, 17px);
         display: flex;
         overflow: hidden;
         color: $c-white;

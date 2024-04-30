@@ -166,6 +166,7 @@ span.strong{
 .about{
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   height: 100vh !important;
   .sh{
     position:static
@@ -173,9 +174,9 @@ span.strong{
   .choice{
     padding: 1rem;
     @include dfc;
-    
+    flex-grow: 1;
     width: 100%;
-    height: 100%;
+    
     gap: 10px;
     .button{
       @include dfc;

@@ -59,13 +59,12 @@ export default {
           </div>
           <div class="t-c">
             <h2 id="h2par1">
-              <span class="s1">ORDINA</span> IL NOSTRO
-              <span class="s2">ASPORTO</span>
+               HAI <br> 
+              <span class="s2">FAME?</span>
             </h2>
             <span
-              >La serata perfetta non esis... E invece esiste eccome! Parte
-              proprio dal pasto perfetto, quindi che aspetti prenota ora la tua
-              pizza da noi
+              >La serata perfetta non esist…e invece esiste eccome!
+              Parte proprio dal pasto perfetto 😎
             </span>
           </div>
           <router-link :to="{ name: 'prenota' }" class="btn" v-if="asporto">Prenota asporto</router-link>
@@ -85,8 +84,7 @@ export default {
           <div class="t-c">
             <h2 id="h2par3">SCOPRI IL NOSTRO MENU</h2>
             <span>
-              Se ancora non hai provato le sfiziosità della nostra cucina devi
-              assolutamente vedere il nostro menù
+              Se ancora non hai provato le nostre sfiziosità...
             </span>
           </div>
           <router-link :to="{ name: 'menu' }" @click="state.actvPage = 2" class="btn">Menù</router-link>
@@ -180,11 +178,13 @@ export default {
     .arrow {
       position: absolute;
       top: 0;
-      right: 0;
+      left: 0;
       z-index: 100;
       display: flex;
       padding: 10px;
       gap: 0.4rem;
+      font-size: clamp(25px, 3vw, 20px);
+      opacity: .7;
     }
     .par {
       scroll-snap-align: start;
@@ -235,7 +235,7 @@ export default {
   background-position: center !important;
 }
 .par-2 {
-  background-image: url("../assets/img/pizza-2.png");
+  background-image: url("../assets/img/asporto.jpg");
 }
 .par-3 {
   background-image: url("../assets/img/pizza-olio.png");
@@ -249,7 +249,7 @@ export default {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
-    height: calc(100% - 250px) !important;
+    height: calc(100% - 45vh) !important;
   }
   .overlay {
     

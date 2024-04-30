@@ -43,10 +43,18 @@ export default {
       >
       <router-link
         @click="state.actvPage = 2"
+        v-if="asporto"
+        :to="{ name: 'prenota' }"
+        class="nav-link"
+        active-class="active-link"
+        >Ordina d'asporto</router-link
+      >
+      <router-link
+        @click="state.actvPage = 2"
         :to="{ name: 'chi-siamo' }"
         class="nav-link"
         active-class="active-link"
-        >chi siamo?</router-link
+        >about</router-link
       >
       <router-link
         @click="state.actvPage = 2"
@@ -55,14 +63,7 @@ export default {
         active-class="active-link"
         >contatti</router-link
       >
-      <router-link
-        @click="state.actvPage = 2"
-        v-if="asporto"
-        :to="{ name: 'prenota' }"
-        class="nav-link"
-        active-class="active-link"
-        >Ordina d'asporto</router-link
-      >
+
       <a
         v-if="!asporto"
         href="tel:3663694915"
@@ -149,11 +150,19 @@ export default {
       >
       <router-link
         @click="state.actvPage = 2; state.sideMenuValue = 0"
+        v-if="!state.infomenu && asporto"
+        :to="{ name: 'prenota' }"
+        class="nav-link"
+        active-class="active-link"
+        >Ordina d'Asporto</router-link
+      >
+      <router-link
+        @click="state.actvPage = 2; state.sideMenuValue = 0"
         v-if="!state.infomenu"
         :to="{ name: 'chi-siamo' }"
         class="nav-link"
         active-class="active-link"
-        >chi siamo?</router-link
+        >about</router-link
       >
       <router-link
         @click="state.actvPage = 2; state.sideMenuValue = 0"
@@ -163,14 +172,7 @@ export default {
         active-class="active-link"
         >contatti</router-link
       >
-      <router-link
-        @click="state.actvPage = 2; state.sideMenuValue = 0"
-        v-if="!state.infomenu && asporto"
-        :to="{ name: 'prenota' }"
-        class="nav-link"
-        active-class="active-link"
-        >Ordina d'Asporto</router-link
-      >
+
       <a
         v-if="!state.infomenu && !asporto"
         href="tel:3663694915"

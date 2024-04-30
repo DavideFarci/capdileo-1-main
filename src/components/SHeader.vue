@@ -32,9 +32,14 @@ export default {
     <img src="../assets/img/logoblack.png" alt="" class="logo">
     <p v-if=" ferie">altro Siamo chiusi dal {{fromto[0] }} al {{ fromto[1] }}</p>
   </header>
+
   <div v-if="!state.sideMenuValue && state.actvPage == 1" class="header-home">
     <div class="btn-menu" @click="state.openside">menu</div>
-    <img src="../assets/img/logoblack.png" alt="" class="logo">
+    <div class="overlay">
+
+      <img src="../assets/img/logoblack.png" alt="" class="logo">
+    </div>
+
     <p v-if=" ferie">home Siamo chiusi dal {{fromto[0] }} al {{ fromto[1] }}</p>
   </div>
 </template>
@@ -114,7 +119,7 @@ header {
     display: none;
 
     text-transform: uppercase;
-    background-color: $c-footer-nav;
+    background-color: $c-header;
     margin-top: -10px;
     font-weight: bolder;
     width: fit-content;
@@ -123,10 +128,16 @@ header {
 
   
   }
-  img{
+  .overlay{
+    @include dfc;
+    width: 100%;
     height: 100%;
-    filter: invert(100);
-    
+
+    img{
+      height: 100%;
+      filter: invert(100);
+      
+    }
   }
 }
 @media (max-width: $bp1) {
@@ -134,28 +145,48 @@ header {
     width: 100%;
     justify-content: space-between !important;
   }
+  
   .btn-menu {
     display: block !important;
   }
   h1{
     margin-left:0 !important
   }
-}
-@media (max-width: $bp2) {
   .header-home{
+    border-bottom: 3px solid rgba(178, 178, 178, 0.524);
+    background-image: url('../assets/img/pizza-olio.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
     flex-direction: column;
     align-items: center;
     background-color: $c-header;
-    height: 250px;
+    height: 45vh;
     margin: 0 !important;
     img{
       margin-top: -5%;
-      height: 70% !important;
+      height: auto !important;
+      width: clamp(100px, 75vw, 450px );
+
       
     }
     .btn-menu{
       align-self: flex-start !important;
+      background-color: black;
+      border: 2px solid white;
+      border-top: 0px;
+      box-shadow: 0 1px 6px rgba(255, 255, 255, 0.578);
     }
+  }
+  .overlay{
+    top: 60px;
+    left: 0;
+    height: 60% !important;
+    background-color: rgba(0, 0, 0, 0.476);
+    box-shadow: 0 0 10px black;
+   
+    position: absolute;
   }
   
 }
