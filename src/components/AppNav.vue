@@ -6,19 +6,19 @@ export default {
   data() {
     return {
       state,
-      asporto: true,
-      tavoli: true,
+      asporto: false,
+      tavoli: false,
     };
   },
   methods: {},
   async created() {
     const settings = await axios.get(state.baseUrl + "api/setting", {});
     this.state.setting = settings.data.results;
-    if (!state.setting[0].status) {
-      this.asporto = false;
+    if (state.setting[0].status) {
+      this.asporto = true;
     }
-    if (!state.setting[1].status) {
-      this.tavoli = false;
+    if (state.setting[1].status) {
+      this.tavoli = true;
     }
   },
 };
@@ -49,6 +49,13 @@ export default {
         active-class="active-link"
         >Ordina d'asporto</router-link
       >
+      <a
+        v-if="!asporto"
+        href="tel:3663694915"
+        class="nav-link"
+        active-class="active-link"
+        >Ordina d'asporto</a
+      >
       <router-link
         @click="state.actvPage = 2"
         :to="{ name: 'chi-siamo' }"
@@ -64,21 +71,15 @@ export default {
         >contatti</router-link
       >
 
-      <a
-        v-if="!asporto"
-        href="tel:3663694915"
-        class="nav-link"
-        active-class="active-link"
-        >Ordina d'asporto</a
-      >
-      <router-link
+
+      <!-- <router-link
         @click="state.actvPage = 2"
         v-if="tavoli"
         :to="{ name: 'prenotaServizio' }"
         class="nav-link"
         active-class="active-link"
         >prenota tavolo</router-link
-      >
+      > -->
     </div>
     <div class="bottom-footer">
       <div class="sec-1">
@@ -148,6 +149,14 @@ export default {
         active-class="active-link"
         >menu</router-link
       >
+      <a
+        v-if="!state.infomenu && !asporto"
+        href="tel:3663694915"
+        class="nav-link"
+        active-class="active-link"
+       
+        >Ordina d'Asporto</a
+      >
       <router-link
         @click="state.actvPage = 2; state.sideMenuValue = 0"
         v-if="!state.infomenu && asporto"
@@ -173,22 +182,15 @@ export default {
         >contatti</router-link
       >
 
-      <a
-        v-if="!state.infomenu && !asporto"
-        href="tel:3663694915"
-        class="nav-link"
-        active-class="active-link"
-       
-        >Ordina d'Asporto</a
-      >
-      <router-link
+
+      <!-- <router-link
         @click="state.actvPage = 2; state.sideMenuValue = 0"
         v-if="!state.infomenu && tavoli"
         :to="{ name: 'prenotaServizio' }"
         class="nav-link"
         active-class="active-link"
         >Prenota tavolo</router-link
-      >
+      > -->
       <div
         class="nav-link info"
         :class="state.infomenu ? 'info-on' : 'info-off'"
